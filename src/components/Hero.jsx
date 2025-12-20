@@ -66,7 +66,7 @@ export default function Hero() {
             rel="noopener noreferrer"
             className="rounded-xl bg-blue-600 px-8 py-3 text-sm font-semibold text-white hover:bg-blue-500 transition shadow-lg shadow-blue-600/30"
           >
-            Join TIE DAO
+            Join TIES DAO
           </a>
 
           {/* Explore App (Coming Soon) */}
@@ -123,7 +123,7 @@ export default function Hero() {
                 🚧 Coming Soon
               </h3>
               <p className="mt-3 text-gray-600 dark:text-gray-300">
-                The TIE DAO app is currently in development.  
+                The TIES DAO app is currently in development.  
                 Stay tuned — big things are coming.
               </p>
 

@@ -54,7 +54,7 @@ export default function Community() {
         <h2 className="mt-6 text-4xl sm:text-5xl font-extrabold tracking-tight text-black dark:text-white">
           Join the <br />
           <span className="bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
-            TIE DAO Community
+            TIES DAO Community
           </span>
         </h2>
 

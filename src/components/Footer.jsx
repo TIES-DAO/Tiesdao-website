@@ -25,7 +25,7 @@ export default function Footer() {
 
       {/* Copy Right */}
       <p className="mb-6 text-gray-400">
-        © {new Date().getFullYear()} TIE DAO. All rights reserved.
+        © {new Date().getFullYear()} TIES DAO. All rights reserved.
       </p>
 
       {/* Social Icons */}

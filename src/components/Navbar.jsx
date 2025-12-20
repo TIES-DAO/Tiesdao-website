@@ -29,7 +29,7 @@ export default function Navbar() {
               alt="TIE DAO Logo"
               className="h-10 w-10 rounded-full border border-white/20 object-cover"
             />
-            <span className="font-bold text-lg text-white">TIE DAO</span>
+            <span className="font-bold text-lg text-white">TIES DAO</span>
           </motion.div>
 
           {/* Nav Links */}

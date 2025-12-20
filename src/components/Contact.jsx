@@ -63,7 +63,7 @@ export default function Contact() {
         <h2 className="mt-6 text-4xl sm:text-5xl md:text-5xl font-extrabold leading-tight tracking-tight text-black dark:text-white">
           Contact <br />
           <span className="bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
-            TIE DAO
+            TIES DAO
           </span>
         </h2>
 
