@@ -48,7 +48,7 @@ export default function Hero() {
 
         {/* Subtext */}
         <p className="mt-6 text-base sm:text-lg text-gray-700 dark:text-gray-300 max-w-2xl mx-auto">
-          TIE DAO connects builders, founders, and contributors through trust,
+          TIES DAO connects builders, founders, and contributors through trust,
           reputation, and real collaboration — not hype.
         </p>
 
