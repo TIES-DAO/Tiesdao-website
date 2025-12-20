@@ -1,0 +1,65 @@
+# =========================
+# GENERAL
+# =========================
+.DS_Store
+Thumbs.db
+*.log
+logs/
+*.pid
+*.seed
+*.pid.lock
+
+# =========================
+# ENV FILES (IMPORTANT)
+# =========================
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+
+# =========================
+# NODE / NPM / YARN
+# =========================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# =========================
+# BUILD OUTPUTS
+# =========================
+dist/
+build/
+out/
+
+# =========================
+# REACT / VITE / NEXT
+# =========================
+.vite/
+.cache/
+.next/
+coverage/
+
+# =========================
+# SUPABASE / SECRETS
+# =========================
+supabase/.temp/
+supabase/.env
+
+# =========================
+# IDE / EDITORS
+# =========================
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# =========================
+# OS FILES
+# =========================
+.DS_Store
+Thumbs.db
