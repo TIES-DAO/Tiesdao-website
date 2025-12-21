@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mail, MessageCircle } from "lucide-react";
+import { Mail, MessageCircle, User} from "lucide-react";
 
 export default function Contact() {
   const [email, setEmail] = useState("");
@@ -146,7 +146,89 @@ export default function Contact() {
               </motion.p>
             )}
           </AnimatePresence>
-        </motion.form>
+        </motion.form>{/* Dev Contact Section */}
+<motion.div
+  initial={{ opacity: 0, y: 30 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ delay: 0.9, duration: 0.8 }}
+  className="mt-16 text-left"
+>
+  <h3 className="text-2xl font-bold text-gray-900 dark:text-white text-center">
+    Contact the Devs
+  </h3>
+
+  <p className="mt-2 text-center text-gray-600 dark:text-gray-400">
+    Direct communication for integrations & technical support
+  </p>
+
+  <div className="mt-8 space-y-6">
+    {[
+      {
+        name: "Backend Developer",
+        email: "okeniyihakeem18@gmail.com",
+        progress: "90%",
+        color: "from-blue-500 to-cyan-400",
+      },
+      {
+        name: "Frontend Developer",
+        email: "Success99940@gmail.com",
+        progress: "85%",
+        color: "from-purple-500 to-pink-500",
+      },
+    ].map((dev, i) => (
+      <motion.div
+        key={dev.email}
+        initial={{ opacity: 0, x: i % 2 === 0 ? -30 : 30 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 1 + i * 0.2 }}
+        className="rounded-2xl p-5 bg-white dark:bg-black/60 backdrop-blur-xl border border-gray-200 dark:border-white/10 shadow-lg"
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            {/* Avatar */}
+            <div className="h-12 w-12 rounded-full bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-800 flex items-center justify-center">
+              <User className="text-gray-700 dark:text-gray-200" />
+            </div>
+
+            <div>
+              <p className="font-semibold text-gray-900 dark:text-white">
+                {dev.name}
+              </p>
+              <a
+                href={`mailto:${dev.email}`}
+                className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
+              >
+                {dev.email}
+              </a>
+            </div>
+          </div>
+
+          <Mail className="text-gray-400 dark:text-gray-500" />
+        </div>
+
+        {/* Progress Bar */}
+        <div className="mt-4">
+          <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mb-1">
+            <span>Response Rate</span>
+            <span>{dev.progress}</span>
+          </div>
+
+          <div className="h-2 w-full rounded-full bg-gray-200 dark:bg-gray-800 overflow-hidden">
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: dev.progress }}
+              transition={{ duration: 1.2, ease: "easeOut" }}
+              className={`h-full rounded-full bg-gradient-to-r ${dev.color}`}
+            />
+          </div>
+        </div>
+      </motion.div>
+    ))}
+  </div>
+</motion.div>
+
+
       </motion.div>
     </section>
   );

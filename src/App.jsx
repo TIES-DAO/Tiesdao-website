@@ -6,6 +6,7 @@ import Roadmap from './components/Roadmap'
 import Contact from './components/Contact'
 import Community from './components/Community'
 import Footer from './components/Footer'
+import Team from './components/Team'
 import { ThemeProvider } from './context/ThemeContext'
 
 export default function App() {
@@ -15,6 +16,7 @@ export default function App() {
       <Hero />
       <Features />
       <Roadmap />
+      <Team />  
       <Community />
       <Contact />
       <Footer />

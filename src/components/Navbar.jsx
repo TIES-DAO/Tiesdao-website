@@ -55,7 +55,7 @@ export default function Navbar() {
           {/* Actions */}
           <div className="flex items-center gap-4">
             <motion.a
-              href="#join"
+              href="https://x.com/ties_dao"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="hidden sm:inline-flex rounded-lg bg-blue-600 px-5 py-2 text-sm font-semibold text-white hover:bg-blue-500 transition shadow-md shadow-blue-600/40"
