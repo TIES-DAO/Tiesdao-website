@@ -1,69 +1,40 @@
 import express from "express";
-import nodemailer from "nodemailer";
+import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
+import contactRoutes from "../routes/contact.js";
+import authRoutes from "../routes/auth.js"; // 🔹 new
+import dailyStreakRoutes from "../routes/dailyStreak.js";
+import dashboardRoutes from "../routes/dashboard.js";
 
 dotenv.config();
 
 const app = express();
 
-app.use(cors());
+/* Middlewares */
+app.use(cors({ origin: "https://tiesdao.vercel.app/", credentials: true }));
 app.use(express.json());
 
-/**
- * ✅ Test route
- * URL after deploy:
- * https://your-project.vercel.app/
- */
+/* Test route */
 app.get("/", (req, res) => {
-  res.json({ message: "TIE DAO Contact API is working 🚀" });
+  res.json({ message: "TIE DAO API is running 🚀" });
 });
 
-/**
- * ✅ Contact form route
- * URL after deploy:
- * https://your-project.vercel.app/contact
- */
-app.post("/contact", async (req, res) => {
-  const { email, message } = req.body;
+/* Routes */
+app.use("/contact", contactRoutes);
+app.use("/api/auth", authRoutes); // 🔹 auth routes
 
-  if (!email || !message) {
-    return res
-      .status(400)
-      .json({ message: "Email and message are required." });
-  }
+app.use("/api/daily-streak", dailyStreakRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 
-  try {
-    const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 465,
-      secure: true,
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
 
-    await transporter.sendMail({
-      from: `"TIE DAO Contact Form" <${process.env.EMAIL_USER}>`,
-      to: process.env.RECEIVE_EMAIL,
-      subject: `New Contact Form Submission from ${email}`,
-      text: `From: ${email}\n\nMessage:\n${message}`,
-      html: `
-        <div style="font-family: Arial, sans-serif">
-          <h2>New Contact Message</h2>
-          <p><strong>Email:</strong> ${email}</p>
-          <p><strong>Message:</strong></p>
-          <p>${message}</p>
-        </div>
-      `,
-    });
+/* MongoDB */
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log("✅ MongoDB connected"))
+  .catch(err => console.error("❌ Mongo error:", err));
 
-    res.status(200).json({ message: "Email sent successfully ✅" });
-  } catch (error) {
-    console.error("Email send error:", error);
-    res.status(500).json({ message: "Failed to send email ❌" });
-  }
+/* Start server */
+app.listen(process.env.PORT, () => {
+  console.log(`🚀 Server running on port ${process.env.PORT}`);
 });
-
-export default app;

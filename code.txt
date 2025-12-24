@@ -1,0 +1,11 @@
+create table public.daily_streaks (
+  id uuid not null default gen_random_uuid (),
+  viewer_id text not null,
+  streak integer not null default 0,
+  last_checkin date null,
+  created_at timestamp with time zone null default now(),
+  constraint daily_streaks_pkey primary key (id),
+  constraint daily_streaks_viewer_id_key unique (viewer_id)
+) TABLESPACE pg_default;
+
+create index IF not exists daily_streaks_viewer_id_idx on public.daily_streaks using btree (viewer_id) TABLESPACE pg_default;
