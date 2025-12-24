@@ -10,8 +10,8 @@ import Team from "./components/Team";
 import Collaboration from "./components/Collaboration";
 import DailyStreak from "./components/DailyStreak";
 
-import Login from "./pages/login";
-import Register from "./pages/signup";
+import Login from "./Pages/login";
+import Register from "./Pages/signup";
 import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./routes/ProtectedRoute";
 
