@@ -12,7 +12,7 @@ dotenv.config();
 const app = express();
 
 /* Middlewares */
-app.use(cors({ origin: "https://tiesdao.vercel.app/", credentials: true }));
+app.use(cors({ origin: "https://tiesdao.vercel.app", credentials: true }));
 app.use(express.json());
 
 /* Test route */
