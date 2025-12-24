@@ -28,7 +28,7 @@ export default function Dashboard() {
 
   const fetchDashboard = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/dashboard", {
+      const res = await fetch("https://tiesdao-websitexx.onrender.com/api/dashboard", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       const data = await res.json();
@@ -46,7 +46,7 @@ export default function Dashboard() {
     if (!dashboardData || checkedInToday) return;
     try {
       setCheckInLoading(true);
-      const res = await fetch("https://tiesdaobackend.vercel.app/api/daily-streak/checkin", {
+      const res = await fetch("https://tiesdao-websitexx.onrender.com/api/daily-streak/checkin", {
         method: "POST",
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
