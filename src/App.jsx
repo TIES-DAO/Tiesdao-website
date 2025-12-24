@@ -12,7 +12,7 @@ import DailyStreak from "./components/DailyStreak";
 
 import Login from "./Pages/login";
 import Register from "./Pages/signup";
-import Dashboard from "./pages/Dashboard";
+import Dashboard from "./Pages/Dashboard";
 import ProtectedRoute from "./routes/ProtectedRoute";
 
 export default function App() {
