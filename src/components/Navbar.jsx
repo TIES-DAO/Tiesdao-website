@@ -12,7 +12,7 @@ export default function Navbar() {
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const navItems = ["Features", "Roadmap", "Community", "Contact"];
+  const navItems = ["Home", "Features", "Roadmap", "Community", "Contact"];
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -27,8 +27,8 @@ export default function Navbar() {
       transition={{ duration: 0.6, ease: "easeOut" }}
       className="fixed top-0 w-full z-50 backdrop-blur-xl"
     >
-      <div className="mx-auto max-w-7xl px-6">
-        <div className="mt-4 flex items-center justify-between rounded-2xl border border-white/10 bg-black/60 dark:bg-black/70 px-6 py-3 shadow-lg shadow-black/20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mt-4 flex items-center justify-between rounded-3xl border border-white/20 bg-gradient-to-r from-black/70 to-gray-900/70 dark:from-black/80 dark:to-gray-950/80 px-4 sm:px-6 py-3 shadow-xl shadow-black/40 backdrop-blur-md">
 
           {/* LOGO */}
           <motion.div
@@ -41,25 +41,42 @@ export default function Navbar() {
               alt="TIES DAO Logo"
               className="h-10 w-10 rounded-full border border-white/20 object-cover"
             />
-            <span className="font-bold text-lg text-white tracking-wide">
+            <span className="font-bold text-lg md:text-xl text-white tracking-wider bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
               TIES DAO
             </span>
           </motion.div>
 
           {/* DESKTOP NAV */}
-          <div className="hidden md:flex items-center gap-8 text-sm text-gray-300">
+          <div className="hidden lg:flex items-center gap-8 text-sm text-gray-300">
             {navItems.map((item, idx) => (
-              <motion.a
-                key={item}
-                href={`/#${item.toLowerCase()}`}
-                initial={{ y: -10, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.1 * idx }}
-                className="relative group font-medium transition-colors hover:text-white"
-              >
-                {item}
-                <span className="absolute -bottom-1 left-0 h-[2px] w-0 bg-blue-500 transition-all group-hover:w-full" />
-              </motion.a>
+              item === "Home" ? (
+                <motion.div
+                  key={item}
+                  initial={{ y: -10, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.1 * idx }}
+                >
+                  <Link
+                    to="/"
+                    className="relative group font-semibold transition-all hover:text-white px-2 py-1"
+                  >
+                    {item}
+                    <span className="absolute -bottom-1 left-0 h-[3px] w-0 bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-300 group-hover:w-full rounded-full" />
+                  </Link>
+                </motion.div>
+              ) : (
+                <motion.a
+                  key={item}
+                  href={`/#${item.toLowerCase()}`}
+                  initial={{ y: -10, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.1 * idx }}
+                  className="relative group font-semibold transition-all hover:text-white px-2 py-1"
+                >
+                  {item}
+                  <span className="absolute -bottom-1 left-0 h-[3px] w-0 bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-300 group-hover:w-full rounded-full" />
+                </motion.a>
+              )
             ))}
           </div>
 
@@ -78,27 +95,27 @@ export default function Navbar() {
             {!user ? (
               <Link to="/login">
                 <motion.button
-                  whileHover={{ scale: 1.05, boxShadow: "0 0 8px rgba(59,130,246,0.7)" }}
+                  whileHover={{ scale: 1.08, boxShadow: "0 0 20px rgba(59,130,246,0.8)" }}
                   whileTap={{ scale: 0.95 }}
-                  className="hidden md:flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2 text-sm font-semibold text-white hover:bg-blue-500 transition shadow-md shadow-blue-600/40"
+                  className="hidden lg:flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 px-6 py-2.5 text-sm font-bold text-white hover:from-blue-500 hover:to-blue-400 transition-all shadow-lg shadow-blue-600/50"
                 >
                   <LogIn size={16} /> Login
                 </motion.button>
               </Link>
             ) : (
-              <div className="hidden md:flex items-center gap-2">
+              <div className="hidden lg:flex items-center gap-3">
                 {/* Username */}
-                <span className="flex items-center gap-1 rounded-full bg-gray-800/60 dark:bg-gray-700/50 px-3 py-1 text-sm text-white font-medium relative group hover:shadow-[0_0_10px_rgba(16,185,129,0.7)] transition-all">
-                  <User size={14} />
+                <span className="flex items-center gap-2 rounded-full bg-gradient-to-r from-gray-800/70 to-gray-700/70 dark:from-gray-800 dark:to-gray-900 px-4 py-2 text-sm text-white font-semibold hover:shadow-[0_0_15px_rgba(59,130,246,0.5)] transition-all">
+                  <User size={16} className="text-blue-400" />
                   {user.username || "Anonymous"}
                 </span>
 
                 {/* Dashboard */}
                 <Link to="/dashboard">
                   <motion.button
-                    whileHover={{ scale: 1.05, boxShadow: "0 0 12px rgba(16,185,129,0.5)" }}
+                    whileHover={{ scale: 1.08, boxShadow: "0 0 20px rgba(34,197,94,0.6)" }}
                     whileTap={{ scale: 0.95 }}
-                    className="flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-500 transition shadow-md shadow-green-600/40"
+                    className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 px-5 py-2.5 text-sm font-bold text-white hover:from-green-500 hover:to-emerald-500 transition-all shadow-lg shadow-green-600/50"
                   >
                     <LayoutDashboard size={16} /> Dashboard
                   </motion.button>
@@ -107,9 +124,9 @@ export default function Navbar() {
                 {/* Logout */}
                 <motion.button
                   onClick={handleLogout}
-                  whileHover={{ scale: 1.05, boxShadow: "0 0 12px rgba(239,68,68,0.5)" }}
+                  whileHover={{ scale: 1.08, boxShadow: "0 0 20px rgba(239,68,68,0.6)" }}
                   whileTap={{ scale: 0.95 }}
-                  className="flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-500 transition shadow-md shadow-red-600/40"
+                  className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 px-5 py-2.5 text-sm font-bold text-white hover:from-red-500 hover:to-rose-500 transition-all shadow-lg shadow-red-600/50"
                 >
                   <LogOut size={16} /> Logout
                 </motion.button>
@@ -118,7 +135,7 @@ export default function Navbar() {
 
             {/* MOBILE MENU BUTTON */}
             <motion.button
-              className="md:hidden flex items-center justify-center p-2 text-gray-200 hover:text-white"
+              className="lg:hidden flex items-center justify-center p-2 rounded-lg hover:bg-white/10 text-gray-200 hover:text-white transition-all"
               onClick={() => setMobileOpen(!mobileOpen)}
             >
               {mobileOpen ? <X size={24} /> : <Menu size={24} />}
@@ -139,19 +156,25 @@ export default function Navbar() {
           >
             <div className="flex flex-col gap-4 px-6 py-4">
               {navItems.map((item) => (
-                <a key={item} href={`#${item.toLowerCase()}`} className="text-white font-medium py-2 hover:text-blue-400 transition">
-                  {item}
-                </a>
+                item === "Home" ? (
+                  <Link key={item} to="/" className="text-white font-semibold py-3 hover:text-blue-400 transition block border-l-4 border-transparent hover:border-blue-500 px-3">
+                    {item}
+                  </Link>
+                ) : (
+                  <a key={item} href={`#${item.toLowerCase()}`} className="text-white font-semibold py-3 hover:text-blue-400 transition block border-l-4 border-transparent hover:border-blue-500 px-3">
+                    {item}
+                  </a>
+                )
               ))}
 
               {user && (
                 <>
-                  <Link to="/dashboard" className="text-white font-medium py-2 hover:text-green-400 transition flex items-center gap-2">
+                  <Link to="/dashboard" className="text-white font-semibold py-3 px-3 hover:text-green-400 transition flex items-center gap-2 border-l-4 border-transparent hover:border-green-500">
                     <LayoutDashboard size={16} /> Dashboard
                   </Link>
                   <button
                     onClick={handleLogout}
-                    className="text-white font-medium py-2 hover:text-red-400 transition flex items-center gap-2"
+                    className="text-white font-semibold py-3 px-3 hover:text-red-400 transition flex items-center gap-2 border-l-4 border-transparent hover:border-red-500"
                   >
                     <LogOut size={16} /> Logout
                   </button>
@@ -160,7 +183,7 @@ export default function Navbar() {
 
               {!user && (
                 <Link to="/login">
-                  <button className="text-white font-medium py-2 hover:text-blue-400 transition flex items-center gap-2">
+                  <button className="text-white font-semibold py-3 px-3 hover:text-blue-400 transition flex items-center gap-2 border-l-4 border-transparent hover:border-blue-500">
                     <LogIn size={16} /> Login
                   </button>
                 </Link>

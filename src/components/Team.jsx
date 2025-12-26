@@ -25,11 +25,11 @@ export default function Team() {
   ];
 
   return (
-    <section id="team" className="relative py-24 px-6 text-center overflow-hidden">
+    <section id="team" className="relative py-28 px-6 text-center overflow-hidden">
       {/* Background glow */}
       <div className="absolute inset-0 -z-10">
-        <div className="absolute top-1/3 left-1/4 h-[300px] w-[300px] bg-blue-500/20 blur-[120px] rounded-full" />
-        <div className="absolute bottom-1/4 right-1/4 h-[300px] w-[300px] bg-purple-500/20 blur-[120px] rounded-full" />
+        <div className="absolute top-1/3 left-1/4 h-[400px] w-[400px] bg-blue-600/20 blur-[140px] rounded-full animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 h-[400px] w-[400px] bg-purple-600/20 blur-[140px] rounded-full animate-pulse" />
       </div>
 
       {/* Header */}
@@ -38,70 +38,88 @@ export default function Team() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8 }}
-        className="max-w-3xl mx-auto"
+        className="max-w-3xl mx-auto mb-16"
       >
-        <span className="inline-flex items-center gap-2 rounded-full border border-gray-300 dark:border-gray-700 bg-white/80 dark:bg-gray-900/40 px-4 py-1 text-xs font-medium text-gray-800 dark:text-gray-300 backdrop-blur">
-          <span className="h-2 w-2 rounded-full bg-blue-500 animate-pulse" />
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0 }}
+          whileInView={{ scale: 1, opacity: 1 }}
+          className="inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-4 py-2 text-xs font-bold text-blue-300 backdrop-blur"
+        >
+          <span className="h-2 w-2 rounded-full bg-blue-400 animate-pulse" />
           Team
-        </span>
+        </motion.div>
 
-        <h2 className="mt-6 text-4xl sm:text-5xl font-extrabold text-gray-900 dark:text-white">
+        <h2 className="mt-8 text-5xl sm:text-6xl font-black text-white leading-tight">
           Meet the <br />
-          <span className="bg-gradient-to-r from-blue-500 to-blue-700 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
             Minds Behind TIES DAO
           </span>
         </h2>
 
-        <p className="mt-4 text-gray-600 dark:text-gray-300 text-lg">
+        <p className="mt-6 text-gray-300 text-lg font-medium">
           Builders focused on trust, reputation, and real collaboration.
         </p>
       </motion.div>
 
       {/* Team cards */}
-      <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 gap-10 max-w-4xl mx-auto">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-5xl mx-auto">
         {team.map((member, i) => (
           <motion.div
             key={member.name}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 40, scale: 0.9 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
             viewport={{ once: true }}
-            transition={{ delay: i * 0.2 }}
-            whileHover={{ scale: 1.05 }}
-            className="relative rounded-3xl p-8 bg-white dark:bg-black/60 backdrop-blur-xl border border-gray-200 dark:border-white/10 shadow-xl"
+            transition={{ delay: i * 0.2, duration: 0.6 }}
+            whileHover={{ scale: 1.08, y: -10 }}
+            className="group relative rounded-3xl p-8 bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-xl border border-white/10 shadow-2xl hover:border-blue-500/30 hover:shadow-blue-600/20 transition-all"
           >
+            {/* Animated gradient background */}
+            <motion.div
+              className="absolute inset-0 rounded-3xl bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 opacity-0 group-hover:opacity-10 transition-opacity"
+              animate={{ rotate: 360 }}
+              transition={{ repeat: Infinity, duration: 20, ease: "linear" }}
+            />
+
             {/* Avatar */}
-            <div className="relative mx-auto mb-6 w-28 h-28">
+            <div className="relative mx-auto mb-8 w-32 h-32 z-10">
               {/* Gradient ring */}
-              <div
-                className={`absolute inset-0 rounded-full bg-gradient-to-br ${member.gradient} blur-md opacity-70`}
+              <motion.div
+                whileHover={{ rotate: 360 }}
+                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                className={`absolute inset-0 rounded-full bg-gradient-to-br ${member.gradient} blur-lg opacity-80`}
               />
 
-              <div className="relative w-full h-full rounded-full p-1 bg-white dark:bg-black">
+              <motion.div
+                whileHover={{ scale: 1.1 }}
+                className="relative w-full h-full rounded-full p-1.5 bg-gray-900 border-2 border-white/20 group-hover:border-blue-400/50 transition-colors"
+              >
                 <img
                   src={member.image}
                   alt={member.name}
                   className="w-full h-full rounded-full object-cover"
                 />
-              </div>
+              </motion.div>
             </div>
 
-            <p className="text-xs uppercase tracking-widest text-gray-500 dark:text-gray-400">
+            <p className="text-xs uppercase tracking-widest font-bold text-transparent bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text">
               {member.role}
             </p>
 
-            <h3 className="mt-2 text-2xl font-bold text-gray-900 dark:text-white">
+            <h3 className="mt-3 text-3xl font-black text-white">
               {member.name}
             </h3>
 
-            <a
+            <motion.a
               href={member.link}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-4 inline-flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition font-medium"
+              whileHover={{ scale: 1.1, x: 5 }}
+              whileTap={{ scale: 0.95 }}
+              className="mt-6 inline-flex items-center gap-2 text-blue-300 hover:text-blue-200 transition font-bold group/link relative z-10"
             >
-              <FaXTwitter className="text-lg" />
-              {member.handle}
-            </a>
+              <FaXTwitter className="text-xl group-hover/link:rotate-12 transition-transform" />
+              <span>{member.handle}</span>
+            </motion.a>
           </motion.div>
         ))}
       </div>

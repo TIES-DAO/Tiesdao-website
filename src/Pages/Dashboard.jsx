@@ -64,80 +64,81 @@ export default function Dashboard() {
   };
 
   return (
-    <section className="min-h-screen px-4 py-12 bg-transparent"> {/* transparent to follow navbar theme */}
+    <section className="min-h-screen px-4 py-12 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-950 dark:to-gray-900">
       {/* Header */}
-      <div className="max-w-5xl mx-auto mb-12 mt-20 text-center"> {/* mt-20 to push below navbar */}
+      <div className="max-w-6xl mx-auto mb-12 mt-24 text-center">
         <motion.h1
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 dark:text-white tracking-wide"
+          className="text-4xl sm:text-5xl md:text-6xl font-black text-gray-900 dark:text-white tracking-tight"
         >
           Dashboard
         </motion.h1>
-        <p className="mt-2 text-gray-600 dark:text-gray-300">
-          Welcome back, <span className="text-blue-500">{user.username}</span>
+        <p className="mt-3 text-lg text-gray-600 dark:text-gray-300">
+          Welcome back, <span className="text-transparent bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text font-bold">{user.username}</span>
         </p>
       </div>
 
       {/* Dashboard Grid */}
-      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
 
         {/* DAILY STREAK */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="rounded-2xl bg-white dark:bg-gray-800 p-6 shadow-md hover:shadow-lg transition flex flex-col items-center"
+          className="rounded-3xl bg-white dark:bg-gray-800/80 p-8 shadow-xl hover:shadow-2xl transition-all border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-sm flex flex-col items-center"
         >
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-orange-400 to-red-500 shadow-md">
-            <Flame className="text-white" size={28} />
+          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-orange-400 to-red-600 shadow-lg shadow-orange-500/40">
+            <Flame className="text-white" size={36} />
           </div>
 
-          <h3 className="mt-4 text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
-            {dashboardData?.streak || 0}-Day Streak
+          <h3 className="mt-6 text-4xl sm:text-5xl font-black text-gray-900 dark:text-white">
+            {dashboardData?.streak || 0}<span className="text-2xl text-gray-500 dark:text-gray-400">-Day</span>
           </h3>
+          <p className="mt-2 text-lg font-semibold text-gray-600 dark:text-gray-300">Streak</p>
 
-          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400 text-center">
+          <p className="mt-4 text-sm text-gray-500 dark:text-gray-400 text-center">
             {checkedInToday ? (
-              <span className="inline-flex items-center gap-1 text-green-500">
-                <Lock size={14} /> Locked for today
+              <span className="inline-flex items-center gap-2 text-green-500 font-semibold">
+                <CheckCircle2 size={16} /> Locked for today
               </span>
             ) : (
               "Check in to keep your momentum"
             )}
           </p>
 
-          <div className="mt-4 w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
+          <div className="mt-6 w-full bg-gray-200/50 dark:bg-gray-700/50 rounded-full h-4 overflow-hidden shadow-inner">
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${progress}%` }}
-              transition={{ duration: 0.6, ease: "easeOut" }}
-              className="h-full rounded-full bg-gradient-to-r from-orange-400 to-red-500"
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="h-full rounded-full bg-gradient-to-r from-orange-400 via-red-500 to-rose-600 shadow-lg shadow-orange-500/50"
             />
           </div>
-          <p className="mt-1 text-xs text-gray-400 dark:text-gray-300">
+          <p className="mt-2 text-xs font-semibold text-gray-500 dark:text-gray-400">
             Cycle: {dashboardData?.streak % 10}/10
           </p>
 
           <motion.button
-            whileTap={{ scale: 0.96 }}
+            whileTap={{ scale: 0.95 }}
             onClick={handleCheckIn}
             disabled={checkedInToday || checkInLoading}
-            className={`mt-6 w-full flex items-center justify-center gap-2 rounded-xl py-3 font-semibold transition
+            className={`mt-8 w-full flex items-center justify-center gap-2 rounded-2xl py-4 font-bold text-lg transition-all
               ${
                 checkedInToday
                   ? "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 cursor-not-allowed"
-                  : "bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white shadow-lg shadow-blue-600/30"
+                  : "bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white shadow-lg shadow-blue-600/40 hover:shadow-xl"
               }`}
           >
             {checkedInToday ? (
-              <><CheckCircle2 size={16} /> Checked In</>
+              <><CheckCircle2 size={20} /> Checked In</>
             ) : (
-              <><Flame size={16} /> Check In Today</>
+              <><Flame size={20} /> Check In Today</>
             )}
           </motion.button>
 
           {dashboardData?.last_checkin && (
-            <p className="mt-2 text-xs text-gray-400 dark:text-gray-300">
+            <p className="mt-3 text-xs text-gray-400 dark:text-gray-500">
               Last check-in: {dashboardData.last_checkin}
             </p>
           )}

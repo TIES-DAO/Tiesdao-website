@@ -39,9 +39,9 @@ export default function Hero() {
         </motion.div>
 
         {/* Headline */}
-        <h1 className="mt-6 text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight tracking-tight text-black dark:text-white">
+        <h1 className="mt-8 text-5xl sm:text-6xl md:text-7xl font-black leading-tight tracking-tight text-black dark:text-white">
           Where Web3 Collaboration <br />
-          <span className="bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent animate-pulse">
             Becomes Human
           </span>
         </h1>

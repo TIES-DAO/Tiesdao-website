@@ -64,26 +64,26 @@ export default function Features() {
         </p>
 
         {/* Feature cards */}
-        <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
           {features.map((feature, index) => (
             <motion.div
               key={feature.title}
-              initial={{ opacity: 0, y: 20, scale: 0.95 }}
+              initial={{ opacity: 0, y: 30, scale: 0.9 }}
               whileInView={{ opacity: 1, y: 0, scale: 1 }}
               viewport={{ once: true }}
-              transition={{ delay: 0.2 + index * 0.15, duration: 0.6, type: "spring", stiffness: 90 }}
-              className="p-6 rounded-2xl shadow-lg hover:shadow-xl hover:scale-105 transition-transform duration-300 cursor-pointer bg-gray-100/20 dark:bg-gray-800/40 flex flex-col items-center text-center"
+              transition={{ delay: 0.2 + index * 0.15, duration: 0.7, type: "spring", stiffness: 100 }}
+              className="p-8 rounded-3xl shadow-xl hover:shadow-2xl hover:scale-110 hover:-translate-y-2 transition-all duration-300 cursor-pointer bg-gradient-to-br from-gray-100/30 to-gray-200/10 dark:from-gray-800/60 dark:to-gray-900/40 backdrop-blur-md border border-white/20 dark:border-white/10 flex flex-col items-center text-center group"
             >
               {/* Icon */}
               <motion.div
-                whileHover={{ scale: 1.2, rotate: 10 }}
-                className="mb-4"
+                whileHover={{ scale: 1.3, rotate: 12 }}
+                className="mb-6 p-3 rounded-full bg-gradient-to-br from-blue-500/20 to-purple-500/20 group-hover:shadow-lg group-hover:shadow-blue-500/50 transition-all"
               >
                 {feature.icon}
               </motion.div>
 
-              <h3 className="text-2xl font-semibold mb-2 text-black dark:text-white">{feature.title}</h3>
-              <p className="text-gray-800 dark:text-gray-300">{feature.description}</p>
+              <h3 className="text-2xl font-bold mb-3 text-black dark:text-white group-hover:text-blue-500 transition-colors">{feature.title}</h3>
+              <p className="text-gray-700 dark:text-gray-300 leading-relaxed">{feature.description}</p>
             </motion.div>
           ))}
         </div>
