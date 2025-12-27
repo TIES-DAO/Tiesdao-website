@@ -197,18 +197,21 @@ export default function Dashboard() {
   );
 }
 
+
 // -------------------------
 // LEADERBOARD CARD
 function LeaderboardCard({ data, currentUser }) {
   const sorted = [...data].sort((a, b) => b.streak - a.streak);
   const top = sorted.slice(0, 20);
-  const userInTop = top.find(u => u.username === currentUser.username);
-
-  const userRank = sorted.findIndex(u => u.username === currentUser.username) + 1;
+  
   const userData = sorted.find(u => u.username === currentUser.username);
+  const userRank = userData ? sorted.findIndex(u => u.username === currentUser.username) + 1 : null;
+  
+  const userInTop = top.find(u => u.username === currentUser.username);
 
   return (
     <>
+      {/* TOP 20 LEADERBOARD */}
       <motion.div className="rounded-2xl bg-white dark:bg-gray-800 p-6 shadow-md">
         <h3 className="font-bold text-xl mb-4 flex items-center gap-2">
           <Trophy className="text-yellow-500" /> Top Streak Leaders
@@ -237,7 +240,7 @@ function LeaderboardCard({ data, currentUser }) {
         )}
       </motion.div>
 
-      {/* CURRENT USER CARD IF NOT IN TOP */}
+      {/* CURRENT USER CARD IF NOT IN TOP 20 */}
       {!userInTop && userData && (
         <motion.div className="rounded-2xl bg-white dark:bg-gray-800 p-6 shadow-md mt-4">
           <h3 className="font-bold text-xl mb-2 flex items-center gap-2">
