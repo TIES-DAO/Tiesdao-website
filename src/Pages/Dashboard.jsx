@@ -3,11 +3,10 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
-  Users,
+  Flame,
   Trophy,
   Gift,
   Activity,
-  Flame,
   CheckCircle2,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
@@ -22,8 +21,8 @@ export default function Dashboard() {
   if (!user) return <Navigate to="/login" replace />;
 
   const today = new Date().toISOString().split("T")[0];
-  const checkedInToday = dashboardData?.last_checkin === today;
   const streak = dashboardData?.streak || 0;
+  const checkedInToday = dashboardData?.last_checkin === today;
 
   // -------------------------
   // INFINITE STREAK MILESTONE
@@ -53,7 +52,6 @@ export default function Dashboard() {
         }
       );
       const data = await res.json();
-      console.log("DASHBOARD API RESPONSE:", data); // 👈 DEBUG
       setDashboardData(data);
     } catch (err) {
       console.error("Dashboard fetch error:", err);
@@ -96,26 +94,18 @@ export default function Dashboard() {
 
   // -------------------------
   // LEADERBOARD DATA (SAFE)
-  const leaderboardData =
-    dashboardData?.top_streak_users ||
-    dashboardData?.leaderboard ||
-    dashboardData?.users ||
-    [];
+  const leaderboard = dashboardData?.top_streak_users || [];
 
   return (
     <section className="min-h-screen px-4 py-12 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-950 dark:to-gray-900">
       {/* HEADER */}
-      <div className="max-w-6xl mx-auto mb-12 mt-24 text-center">
-        <motion.h1
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-5xl font-black text-gray-900 dark:text-white"
-        >
+      <div className="max-w-6xl mx-auto mt-24 mb-12 text-center">
+        <h1 className="text-5xl font-black text-gray-900 dark:text-white">
           Dashboard
-        </motion.h1>
+        </h1>
         <p className="mt-3 text-lg text-gray-600 dark:text-gray-300">
           Welcome back{" "}
-          <span className="font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
+          <span className="font-bold text-transparent bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text">
             {user.username}
           </span>
         </p>
@@ -164,8 +154,7 @@ export default function Dashboard() {
             Next milestone: {streak}/{milestone} days
           </p>
 
-          <motion.button
-            whileTap={{ scale: 0.95 }}
+          <button
             onClick={handleCheckIn}
             disabled={checkedInToday || checkInLoading}
             className={`mt-8 w-full py-4 rounded-2xl font-bold text-lg flex items-center justify-center gap-2
@@ -177,20 +166,18 @@ export default function Dashboard() {
           >
             {checkedInToday ? (
               <>
-                <CheckCircle2 size={20} />
-                Checked In
+                <CheckCircle2 size={20} /> Checked In
               </>
             ) : (
               <>
-                <Flame size={20} />
-                Check In Today
+                <Flame size={20} /> Check In Today
               </>
             )}
-          </motion.button>
+          </button>
         </motion.div>
 
         {/* LEADERBOARD */}
-        <LeaderboardCard title="Top Streak Leaders" data={leaderboardData} />
+        <LeaderboardCard data={leaderboard} />
 
         {/* REWARDS */}
         <RewardsCard />
@@ -215,32 +202,27 @@ export default function Dashboard() {
 
 // -------------------------
 // LEADERBOARD CARD
-function LeaderboardCard({ title, data }) {
-  if (!Array.isArray(data)) {
-    console.error("Leaderboard data invalid:", data);
-    return null;
-  }
-
+function LeaderboardCard({ data }) {
   const sorted = [...data].sort((a, b) => b.streak - a.streak);
 
   return (
     <motion.div className="rounded-2xl bg-white dark:bg-gray-800 p-6 shadow-md">
-      <h3 className="font-bold text-xl mb-4">{title}</h3>
+      <h3 className="font-bold text-xl mb-4 flex items-center gap-2">
+        <Trophy className="text-yellow-500" /> Top Streak Leaders
+      </h3>
 
       {sorted.length ? (
         <ul className="space-y-2 max-h-64 overflow-y-auto">
-          {sorted.map((user, idx) => (
+          {sorted.map((u, i) => (
             <li
-              key={`${user.username}-${idx}`}
+              key={i}
               className="flex justify-between items-center bg-gray-50 dark:bg-gray-700 rounded-lg px-4 py-2"
             >
-              <span className="flex items-center gap-2 font-semibold">
-                <Trophy size={16} className="text-yellow-500" />
-                #{idx + 1} {user.username}
+              <span className="font-semibold">
+                #{i + 1} {u.username}
               </span>
               <span className="flex items-center gap-1 font-black text-orange-500">
-                <Flame size={16} />
-                {user.streak}
+                <Flame size={16} /> {u.streak}
               </span>
             </li>
           ))}

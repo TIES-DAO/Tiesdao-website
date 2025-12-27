@@ -2,7 +2,6 @@ import express from "express";
 import { authMiddleware } from "../middleware/authMiddleware.js";
 import User from "../models/User.js";
 import DailyStreak from "../models/DailyStreak.js";
-import Collaboration from "../models/Collaboration.js";
 import Reward from "../models/Reward.js";
 
 const router = express.Router();
@@ -12,20 +11,50 @@ router.get("/", authMiddleware, async (req, res) => {
   try {
     const userId = req.user.id;
 
-    const user = await User.findById(userId).select("-password");
-    const streak = await DailyStreak.findOne({ user_id: userId });
-    const topCollaborations = await Collaboration.find().sort({ points: -1 }).limit(5);
+    // -------------------------
+    // CURRENT USER
+    const user = await User.findById(userId).select("email username");
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // -------------------------
+    // CURRENT USER STREAK
+    const userStreak = await DailyStreak.findOne({ user_id: userId });
+
+    // -------------------------
+    // 🔥 LEADERBOARD (HIGHEST → LOWEST STREAK)
+    const leaderboard = await DailyStreak.find()
+      .sort({ streak: -1 }) // highest first
+      .limit(20)
+      .populate("user_id", "username");
+
+    const topStreakUsers = leaderboard.map((entry) => ({
+      username: entry.user_id?.username || "Unknown",
+      streak: entry.streak,
+    }));
+
+    // -------------------------
+    // REWARDS (OPTIONAL)
     const rewards = await Reward.find({ available: true });
 
+    // -------------------------
+    // RESPONSE
     res.json({
-      user: { email: user.email, username: user.username },
-      streak: streak?.streak || 0,
-      last_checkin: streak?.last_checkin || null,
-      collaborations: topCollaborations.map(c => ({ username: c.user_id, points: c.points })),
-      rewards: rewards.map(r => ({ title: r.title, description: r.description })),
+      user: {
+        email: user.email,
+        username: user.username,
+      },
+      streak: userStreak?.streak || 0,
+      last_checkin: userStreak?.last_checkin || null,
+      top_streak_users: topStreakUsers, // ✅ ONLY LEADERBOARD
+      rewards: rewards.map((r) => ({
+        title: r.title,
+        description: r.description,
+      })),
     });
   } catch (err) {
-    console.error(err);
+    console.error("Dashboard error:", err);
     res.status(500).json({ message: "Failed to fetch dashboard" });
   }
 });
