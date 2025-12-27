@@ -26,22 +26,22 @@ export default function Dashboard() {
   const streak = dashboardData?.streak || 0;
 
   // -------------------------
-  // INFINITE STREAK MILESTONES
-  const getNextMilestone = (value) => {
-    if (value < 7) return 7;
-    if (value < 14) return 14;
-    if (value < 30) return 30;
-    if (value < 60) return 60;
-    if (value < 100) return 100;
-    if (value < 365) return 365;
-    return Math.ceil(value / 100) * 100;
+  // INFINITE STREAK MILESTONE
+  const getNextMilestone = (v) => {
+    if (v < 7) return 7;
+    if (v < 14) return 14;
+    if (v < 30) return 30;
+    if (v < 60) return 60;
+    if (v < 100) return 100;
+    if (v < 365) return 365;
+    return Math.ceil(v / 100) * 100;
   };
 
   const milestone = getNextMilestone(streak);
   const progress = Math.min((streak / milestone) * 100, 100);
 
   // -------------------------
-  // FETCH DASHBOARD DATA
+  // FETCH DASHBOARD
   const fetchDashboard = async () => {
     try {
       const res = await fetch(
@@ -53,6 +53,7 @@ export default function Dashboard() {
         }
       );
       const data = await res.json();
+      console.log("DASHBOARD API RESPONSE:", data); // 👈 DEBUG
       setDashboardData(data);
     } catch (err) {
       console.error("Dashboard fetch error:", err);
@@ -93,6 +94,14 @@ export default function Dashboard() {
     }
   };
 
+  // -------------------------
+  // LEADERBOARD DATA (SAFE)
+  const leaderboardData =
+    dashboardData?.top_streak_users ||
+    dashboardData?.leaderboard ||
+    dashboardData?.users ||
+    [];
+
   return (
     <section className="min-h-screen px-4 py-12 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-950 dark:to-gray-900">
       {/* HEADER */}
@@ -105,8 +114,8 @@ export default function Dashboard() {
           Dashboard
         </motion.h1>
         <p className="mt-3 text-lg text-gray-600 dark:text-gray-300">
-          Welcome back,{" "}
-          <span className="font-bold text-transparent bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text">
+          Welcome back{" "}
+          <span className="font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
             {user.username}
           </span>
         </p>
@@ -181,10 +190,7 @@ export default function Dashboard() {
         </motion.div>
 
         {/* LEADERBOARD */}
-        <LeaderboardCard
-          title="Top Streak Leaders"
-          data={dashboardData?.top_streak_users || []}
-        />
+        <LeaderboardCard title="Top Streak Leaders" data={leaderboardData} />
 
         {/* REWARDS */}
         <RewardsCard />
@@ -210,17 +216,22 @@ export default function Dashboard() {
 // -------------------------
 // LEADERBOARD CARD
 function LeaderboardCard({ title, data }) {
-  const sortedData = [...data].sort((a, b) => b.streak - a.streak);
+  if (!Array.isArray(data)) {
+    console.error("Leaderboard data invalid:", data);
+    return null;
+  }
+
+  const sorted = [...data].sort((a, b) => b.streak - a.streak);
 
   return (
     <motion.div className="rounded-2xl bg-white dark:bg-gray-800 p-6 shadow-md">
       <h3 className="font-bold text-xl mb-4">{title}</h3>
 
-      {sortedData.length ? (
+      {sorted.length ? (
         <ul className="space-y-2 max-h-64 overflow-y-auto">
-          {sortedData.map((user, idx) => (
+          {sorted.map((user, idx) => (
             <li
-              key={user.username}
+              key={`${user.username}-${idx}`}
               className="flex justify-between items-center bg-gray-50 dark:bg-gray-700 rounded-lg px-4 py-2"
             >
               <span className="flex items-center gap-2 font-semibold">
