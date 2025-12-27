@@ -258,7 +258,7 @@ function LeaderboardCard({ data, currentUser }) {
 
 // -------------------------
 // REWARDS CARD
-function RewardsCard({ visible = true }) {
+function RewardsCard({ visible = false }) {
   const [showForm, setShowForm] = useState(false);
   const [usdt, setUsdt] = useState("");
   const [bnb, setBnb] = useState("");
