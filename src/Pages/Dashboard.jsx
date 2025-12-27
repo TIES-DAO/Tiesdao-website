@@ -52,6 +52,7 @@ export default function Dashboard() {
         }
       );
       const data = await res.json();
+      console.log("DASHBOARD API RESPONSE:", data);
       setDashboardData(data);
     } catch (err) {
       console.error("Dashboard fetch error:", err);
@@ -93,7 +94,7 @@ export default function Dashboard() {
   };
 
   // -------------------------
-  // LEADERBOARD DATA (SAFE)
+  // LEADERBOARD DATA
   const leaderboard = dashboardData?.top_streak_users || [];
 
   return (
@@ -165,19 +166,15 @@ export default function Dashboard() {
               }`}
           >
             {checkedInToday ? (
-              <>
-                <CheckCircle2 size={20} /> Checked In
-              </>
+              <><CheckCircle2 size={20} /> Checked In</>
             ) : (
-              <>
-                <Flame size={20} /> Check In Today
-              </>
+              <><Flame size={20} /> Check In Today</>
             )}
           </button>
         </motion.div>
 
         {/* LEADERBOARD */}
-        <LeaderboardCard data={leaderboard} />
+        <LeaderboardCard data={leaderboard} currentUser={user} />
 
         {/* REWARDS */}
         <RewardsCard />
@@ -202,35 +199,59 @@ export default function Dashboard() {
 
 // -------------------------
 // LEADERBOARD CARD
-function LeaderboardCard({ data }) {
+function LeaderboardCard({ data, currentUser }) {
   const sorted = [...data].sort((a, b) => b.streak - a.streak);
+  const top = sorted.slice(0, 20);
+  const userInTop = top.find(u => u.username === currentUser.username);
+
+  const userRank = sorted.findIndex(u => u.username === currentUser.username) + 1;
+  const userData = sorted.find(u => u.username === currentUser.username);
 
   return (
-    <motion.div className="rounded-2xl bg-white dark:bg-gray-800 p-6 shadow-md">
-      <h3 className="font-bold text-xl mb-4 flex items-center gap-2">
-        <Trophy className="text-yellow-500" /> Top Streak Leaders
-      </h3>
+    <>
+      <motion.div className="rounded-2xl bg-white dark:bg-gray-800 p-6 shadow-md">
+        <h3 className="font-bold text-xl mb-4 flex items-center gap-2">
+          <Trophy className="text-yellow-500" /> Top Streak Leaders
+        </h3>
 
-      {sorted.length ? (
-        <ul className="space-y-2 max-h-64 overflow-y-auto">
-          {sorted.map((u, i) => (
-            <li
-              key={i}
-              className="flex justify-between items-center bg-gray-50 dark:bg-gray-700 rounded-lg px-4 py-2"
-            >
-              <span className="font-semibold">
-                #{i + 1} {u.username}
-              </span>
-              <span className="flex items-center gap-1 font-black text-orange-500">
-                <Flame size={16} /> {u.streak}
-              </span>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p className="text-gray-400">No streak data yet</p>
+        {top.length ? (
+          <ul className="space-y-2 max-h-64 overflow-y-auto">
+            {top.map((u, i) => (
+              <li
+                key={i}
+                className={`flex justify-between items-center rounded-lg px-4 py-2 ${
+                  u.username === currentUser.username
+                    ? "bg-blue-100 dark:bg-blue-700"
+                    : "bg-gray-50 dark:bg-gray-700"
+                }`}
+              >
+                <span className="font-semibold">#{i + 1} {u.username}</span>
+                <span className="flex items-center gap-1 font-black text-orange-500">
+                  <Flame size={16} /> {u.streak}
+                </span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-gray-400">No streak data yet</p>
+        )}
+      </motion.div>
+
+      {/* CURRENT USER CARD IF NOT IN TOP */}
+      {!userInTop && userData && (
+        <motion.div className="rounded-2xl bg-white dark:bg-gray-800 p-6 shadow-md mt-4">
+          <h3 className="font-bold text-xl mb-2 flex items-center gap-2">
+            <Flame className="text-orange-500" /> Your Position
+          </h3>
+          <div className="flex justify-between items-center bg-blue-100 dark:bg-blue-700 rounded-lg px-4 py-2">
+            <span className="font-semibold">#{userRank} {userData.username}</span>
+            <span className="flex items-center gap-1 font-black text-orange-500">
+              <Flame size={16} /> {userData.streak}
+            </span>
+          </div>
+        </motion.div>
       )}
-    </motion.div>
+    </>
   );
 }
 

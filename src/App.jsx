@@ -26,29 +26,29 @@ export default function App() {
       {!hideNavbar && <Navbar />}
 
       <Routes>
-        {/* AUTH ROUTES (public) */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-
-        {/* ALL OTHER ROUTES PROTECTED */}
+        {/* PUBLIC HOME */}
         <Route
           path="/"
           element={
-            <ProtectedRoute>
-              <>
-                <Hero />
-                <Features />
-                <DailyStreak />
-                <Roadmap />
-                <Team />
-                <Collaboration />
-                <Community />
-                <Contact />
-                <Footer />
-              </>
-            </ProtectedRoute>
+            <>
+              <Hero />
+              <Features />
+              <DailyStreak />
+              <Roadmap />
+              <Team />
+              <Collaboration />
+              <Community />
+              <Contact />
+              <Footer />
+            </>
           }
         />
+
+        {/* AUTH */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+
+        {/* PROTECTED DASHBOARD */}
         <Route
           path="/dashboard"
           element={
@@ -61,6 +61,3 @@ export default function App() {
     </>
   );
 }
-
-
-
