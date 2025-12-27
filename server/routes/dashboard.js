@@ -6,26 +6,22 @@ import Reward from "../models/Reward.js";
 
 const router = express.Router();
 
+// -------------------------
 // GET /api/dashboard
 router.get("/", authMiddleware, async (req, res) => {
   try {
     const userId = req.user.id;
 
-    // -------------------------
     // CURRENT USER
     const user = await User.findById(userId).select("email username");
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
+    if (!user) return res.status(404).json({ message: "User not found" });
 
-    // -------------------------
     // CURRENT USER STREAK
     const userStreak = await DailyStreak.findOne({ user_id: userId });
 
-    // -------------------------
-    // 🔥 LEADERBOARD (HIGHEST → LOWEST STREAK)
+    // 🔥 LEADERBOARD (Highest → Lowest streak)
     const leaderboard = await DailyStreak.find()
-      .sort({ streak: -1 }) // highest first
+      .sort({ streak: -1 })
       .limit(20)
       .populate("user_id", "username");
 
@@ -34,11 +30,9 @@ router.get("/", authMiddleware, async (req, res) => {
       streak: entry.streak,
     }));
 
-    // -------------------------
-    // REWARDS (OPTIONAL)
+    // AVAILABLE REWARDS
     const rewards = await Reward.find({ available: true });
 
-    // -------------------------
     // RESPONSE
     res.json({
       user: {
@@ -47,15 +41,46 @@ router.get("/", authMiddleware, async (req, res) => {
       },
       streak: userStreak?.streak || 0,
       last_checkin: userStreak?.last_checkin || null,
-      top_streak_users: topStreakUsers, // ✅ ONLY LEADERBOARD
+      top_streak_users: topStreakUsers,
       rewards: rewards.map((r) => ({
+        id: r._id,
         title: r.title,
         description: r.description,
+        available: r.available,
       })),
     });
   } catch (err) {
     console.error("Dashboard error:", err);
     res.status(500).json({ message: "Failed to fetch dashboard" });
+  }
+});
+
+// -------------------------
+// POST /api/rewards/claim
+router.post("/rewards/claim", authMiddleware, async (req, res) => {
+  const { rewardId, usdtWallet, bnbWallet } = req.body;
+
+  if (!usdtWallet || !bnbWallet) {
+    return res.status(400).json({ error: "USDT and BNB wallets are required" });
+  }
+
+  try {
+    const reward = await Reward.findById(rewardId);
+    if (!reward) return res.status(404).json({ error: "Reward not found" });
+    if (reward.user_id) return res.status(400).json({ error: "Reward already claimed" });
+
+    // Assign reward to user
+    reward.user_id = req.user.id;
+    reward.available = false; // mark as claimed
+    reward.usdtWallet = usdtWallet;
+    reward.bnbWallet = bnbWallet;
+
+    await reward.save();
+
+    res.json({ message: "Reward claimed successfully!", reward });
+  } catch (err) {
+    console.error("Reward claim error:", err);
+    res.status(500).json({ error: err.message });
   }
 });
 

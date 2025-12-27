@@ -52,7 +52,6 @@ export default function Dashboard() {
         }
       );
       const data = await res.json();
-      console.log("DASHBOARD API RESPONSE:", data);
       setDashboardData(data);
     } catch (err) {
       console.error("Dashboard fetch error:", err);
@@ -197,7 +196,6 @@ export default function Dashboard() {
   );
 }
 
-
 // -------------------------
 // LEADERBOARD CARD
 function LeaderboardCard({ data, currentUser }) {
@@ -260,15 +258,100 @@ function LeaderboardCard({ data, currentUser }) {
 
 // -------------------------
 // REWARDS CARD
-function RewardsCard() {
+function RewardsCard({ visible = true }) {
+  const [showForm, setShowForm] = useState(false);
+  const [usdt, setUsdt] = useState("");
+  const [bnb, setBnb] = useState("");
+  const [validated, setValidated] = useState(false);
+
+  // Visibility toggle via prop
+  if (!visible) return null;
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!usdt || !bnb) {
+      alert("Please fill in both USDT and BNB wallets.");
+      return;
+    }
+
+    try {
+      const res = await fetch("https://tiesdao-websitexx.onrender.com/api/rewards/claim", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ rewardId: "REPLACE_WITH_REWARD_ID", usdtWallet: usdt, bnbWallet: bnb }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setValidated(true);
+        alert("Wallets submitted and reward claimed!");
+      } else {
+        alert(data.error || "Failed to claim reward");
+      }
+    } catch (err) {
+      console.error("Reward claim error:", err);
+      alert("An error occurred while claiming reward");
+    }
+  };
+
   return (
-    <motion.div className="rounded-2xl bg-white dark:bg-gray-800 p-6 shadow-md text-center">
-      <Gift className="mx-auto mb-4 text-pink-500" size={32} />
-      <h3 className="font-bold text-xl">Rewards</h3>
-      <p className="text-gray-500 mt-2">Coming Soon</p>
-      <button className="mt-4 w-full py-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 cursor-not-allowed">
-        Locked
-      </button>
+    <motion.div className="rounded-2xl bg-white dark:bg-gray-800 p-6 shadow-md text-center cursor-pointer">
+      {!showForm ? (
+        <>
+          <Gift className="mx-auto mb-4 text-pink-500" size={32} />
+          <h3 className="font-bold text-xl">Rewards</h3>
+          <p className="text-gray-500 mt-2">Click to submit your wallets</p>
+          <button
+            onClick={() => setShowForm(true)}
+            className="mt-4 w-full py-2 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold"
+          >
+            {validated ? (
+              <>
+                <CheckCircle2 size={16} /> Submitted
+              </>
+            ) : (
+              "Claim Reward"
+            )}
+          </button>
+        </>
+      ) : (
+        <form onSubmit={handleSubmit} className="mt-4 space-y-4">
+          <h3 className="font-bold text-lg">Submit Your Wallets</h3>
+          <input
+            type="text"
+            placeholder="USDT Wallet"
+            value={usdt}
+            onChange={(e) => setUsdt(e.target.value)}
+            className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
+          />
+          <input
+            type="text"
+            placeholder="BNB Wallet"
+            value={bnb}
+            onChange={(e) => setBnb(e.target.value)}
+            className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
+          />
+          <div className="flex gap-2 justify-center">
+            <button
+              type="submit"
+              className="w-full py-2 rounded-lg bg-green-500 text-white font-semibold"
+              disabled={validated}
+            >
+              Validate
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowForm(false)}
+              className="w-full py-2 rounded-lg bg-red-500 text-white font-semibold"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      )}
     </motion.div>
   );
 }
