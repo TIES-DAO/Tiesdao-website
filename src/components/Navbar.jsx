@@ -161,7 +161,7 @@ export default function Navbar() {
                     {item}
                   </Link>
                 ) : (
-                  <a key={item} href={`#${item.toLowerCase()}`} className="text-white font-semibold py-3 hover:text-blue-400 transition block border-l-4 border-transparent hover:border-blue-500 px-3">
+                  <a key={item} href={`/#${item.toLowerCase()}`} className="text-white font-semibold py-3 hover:text-blue-400 transition block border-l-4 border-transparent hover:border-blue-500 px-3">
                     {item}
                   </a>
                 )
