@@ -44,7 +44,7 @@ export default function Dashboard() {
   const fetchDashboard = async () => {
     try {
       const res = await fetch(
-        "https://tiesdao-websitexx.onrender.com/api/dashboard",
+        "https://tiesdao-websiteert.onrender.com/api/dashboard",
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -70,7 +70,7 @@ export default function Dashboard() {
     try {
       setCheckInLoading(true);
       const res = await fetch(
-        "https://tiesdao-websitexx.onrender.com/api/daily-streak/checkin",
+        "https://tiesdao-websiteert.onrender.com/api/daily-streak/checkin",
         {
           method: "POST",
           headers: {
@@ -275,7 +275,7 @@ function RewardsCard({ visible = false }) {
     }
 
     try {
-      const res = await fetch("https://tiesdao-websitexx.onrender.com/api/rewards/claim", {
+      const res = await fetch("https://tiesdao-websiteert.onrender.com/api/rewards/claim", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
