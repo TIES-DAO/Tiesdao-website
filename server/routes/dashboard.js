@@ -1,5 +1,5 @@
 import express from "express";
-import { authMiddleware } from "../middleware/authMiddleware.js";
+import authMiddleware from "../middleware/authMiddleware.js";
 import User from "../models/User.js";
 import DailyStreak from "../models/DailyStreak.js";
 import Reward from "../models/Reward.js";

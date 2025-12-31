@@ -1,6 +1,15 @@
-import { Sun, Moon, LogIn, LayoutDashboard, LogOut, User, Menu, X } from "lucide-react";
+import {
+  Sun,
+  Moon,
+  LogIn,
+  LayoutDashboard,
+  LogOut,
+  User,
+  Menu,
+  X,
+} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
 import { useAuth } from "../context/AuthContext";
 import { useState } from "react";
@@ -10,6 +19,7 @@ export default function Navbar() {
   const { dark, toggleTheme } = useTheme();
   const { user, setUser } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const navItems = ["Home", "Features", "Roadmap", "Community", "Contact"];
@@ -22,170 +32,163 @@ export default function Navbar() {
 
   return (
     <motion.nav
-      initial={{ y: -60, opacity: 0 }}
+      initial={{ y: -50, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-      className="fixed top-0 w-full z-50 backdrop-blur-xl"
+      className="fixed top-0 w-full z-50"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="mt-4 flex items-center justify-between rounded-3xl border border-white/20 bg-gradient-to-r from-black/70 to-gray-900/70 dark:from-black/80 dark:to-gray-950/80 px-4 sm:px-6 py-3 shadow-xl shadow-black/40 backdrop-blur-md">
+        <div className="mt-4 flex items-center justify-between rounded-3xl border border-white/10 bg-white/5 dark:bg-black/40 backdrop-blur-xl px-5 py-3 shadow-xl">
 
           {/* LOGO */}
-          <motion.div
-            whileHover={{ scale: 1.1, rotate: [0, 5, -5, 0] }}
-            transition={{ type: "spring", stiffness: 150 }}
-            className="flex items-center gap-3 cursor-pointer"
-          >
-            <img
+          <Link to="/" className="flex items-center gap-3">
+            <motion.img
+              whileHover={{ rotate: 8, scale: 1.05 }}
               src={LogoImg}
-              alt="TIES DAO Logo"
+              alt="TIES DAO"
               className="h-10 w-10 rounded-full border border-white/20 object-cover"
             />
-            <span className="font-bold text-lg md:text-xl text-white tracking-wider bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+            <span className="font-extrabold text-lg tracking-wide bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
               TIES DAO
             </span>
-          </motion.div>
+          </Link>
 
           {/* DESKTOP NAV */}
-          <div className="hidden lg:flex items-center gap-8 text-sm text-gray-300">
-            {navItems.map((item, idx) => (
-              item === "Home" ? (
-                <motion.div
+          <div className="hidden lg:flex items-center gap-8 text-sm">
+            {navItems.map((item) => {
+              const isHome = item === "Home";
+              return isHome ? (
+                <Link
                   key={item}
-                  initial={{ y: -10, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.1 * idx }}
-                >
-                  <Link
-                    to="/"
-                    className="relative group font-semibold transition-all hover:text-white px-2 py-1"
-                  >
-                    {item}
-                    <span className="absolute -bottom-1 left-0 h-[3px] w-0 bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-300 group-hover:w-full rounded-full" />
-                  </Link>
-                </motion.div>
-              ) : (
-                <motion.a
-                  key={item}
-                  href={`/#${item.toLowerCase()}`}
-                  initial={{ y: -10, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.1 * idx }}
-                  className="relative group font-semibold transition-all hover:text-white px-2 py-1"
+                  to="/"
+                  className="relative font-semibold text-gray-300 hover:text-white transition"
                 >
                   {item}
-                  <span className="absolute -bottom-1 left-0 h-[3px] w-0 bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-300 group-hover:w-full rounded-full" />
-                </motion.a>
-              )
-            ))}
+                  <span className="absolute -bottom-1 left-0 h-[3px] w-0 bg-gradient-to-r from-blue-500 to-purple-500 group-hover:w-full transition-all" />
+                </Link>
+              ) : (
+                <a
+                  key={item}
+                  href={`/#${item.toLowerCase()}`}
+                  className="font-semibold text-gray-300 hover:text-white transition"
+                >
+                  {item}
+                </a>
+              );
+            })}
           </div>
 
-          {/* ACTIONS & MOBILE MENU */}
-          <div className="flex items-center gap-3 md:gap-4">
-            {/* THEME TOGGLE */}
+          {/* ACTIONS */}
+          <div className="flex items-center gap-3">
+            {/* THEME */}
             <motion.button
-              whileHover={{ rotate: 20 }}
-              whileTap={{ scale: 0.9, rotate: 0 }}
+              whileTap={{ scale: 0.9 }}
               onClick={toggleTheme}
-              className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 hover:bg-white/10 transition"
+              className="h-10 w-10 rounded-xl border border-white/10 bg-white/5 flex items-center justify-center hover:bg-white/10 transition"
             >
-              {dark ? <Sun size={18} className="text-yellow-400" /> : <Moon size={18} className="text-gray-200" />}
+              {dark ? (
+                <Sun size={18} className="text-yellow-400" />
+              ) : (
+                <Moon size={18} className="text-gray-200" />
+              )}
             </motion.button>
 
+            {/* AUTH */}
             {!user ? (
-              <Link to="/login">
+              <Link to="/login" className="hidden lg:block">
                 <motion.button
-                  whileHover={{ scale: 1.08, boxShadow: "0 0 20px rgba(59,130,246,0.8)" }}
-                  whileTap={{ scale: 0.95 }}
-                  className="hidden lg:flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 px-6 py-2.5 text-sm font-bold text-white hover:from-blue-500 hover:to-blue-400 transition-all shadow-lg shadow-blue-600/50"
+                  whileHover={{ scale: 1.05 }}
+                  className="rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 px-6 py-2.5 text-sm font-bold text-white shadow-lg"
                 >
-                  <LogIn size={16} /> Login
+                  <LogIn size={16} className="inline mr-2" />
+                  Login
                 </motion.button>
               </Link>
             ) : (
               <div className="hidden lg:flex items-center gap-3">
-                {/* Username */}
-                <span className="flex items-center gap-2 rounded-full bg-gradient-to-r from-gray-800/70 to-gray-700/70 dark:from-gray-800 dark:to-gray-900 px-4 py-2 text-sm text-white font-semibold hover:shadow-[0_0_15px_rgba(59,130,246,0.5)] transition-all">
-                  <User size={16} className="text-blue-400" />
+                <span className="flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 text-sm font-semibold text-white border border-white/10">
+                  <User size={15} className="text-blue-400" />
                   {user.username || "Anonymous"}
                 </span>
 
-                {/* Dashboard */}
                 <Link to="/dashboard">
                   <motion.button
-                    whileHover={{ scale: 1.08, boxShadow: "0 0 20px rgba(34,197,94,0.6)" }}
-                    whileTap={{ scale: 0.95 }}
-                    className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 px-5 py-2.5 text-sm font-bold text-white hover:from-green-500 hover:to-emerald-500 transition-all shadow-lg shadow-green-600/50"
+                    whileHover={{ scale: 1.05 }}
+                    className="rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 px-5 py-2.5 text-sm font-bold text-white shadow-lg"
                   >
-                    <LayoutDashboard size={16} /> Dashboard
+                    <LayoutDashboard size={16} className="inline mr-2" />
+                    Dashboard
                   </motion.button>
                 </Link>
 
-                {/* Logout */}
                 <motion.button
                   onClick={handleLogout}
-                  whileHover={{ scale: 1.08, boxShadow: "0 0 20px rgba(239,68,68,0.6)" }}
-                  whileTap={{ scale: 0.95 }}
-                  className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 px-5 py-2.5 text-sm font-bold text-white hover:from-red-500 hover:to-rose-500 transition-all shadow-lg shadow-red-600/50"
+                  whileHover={{ scale: 1.05 }}
+                  className="rounded-xl bg-gradient-to-r from-red-600 to-rose-600 px-5 py-2.5 text-sm font-bold text-white shadow-lg"
                 >
-                  <LogOut size={16} /> Logout
+                  <LogOut size={16} className="inline mr-2" />
+                  Logout
                 </motion.button>
               </div>
             )}
 
-            {/* MOBILE MENU BUTTON */}
-            <motion.button
-              className="lg:hidden flex items-center justify-center p-2 rounded-lg hover:bg-white/10 text-gray-200 hover:text-white transition-all"
+            {/* MOBILE TOGGLE */}
+            <button
               onClick={() => setMobileOpen(!mobileOpen)}
+              className="lg:hidden h-10 w-10 rounded-xl border border-white/10 bg-white/5 flex items-center justify-center text-white"
             >
-              {mobileOpen ? <X size={24} /> : <Menu size={24} />}
-            </motion.button>
+              {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+            </button>
           </div>
         </div>
       </div>
 
-      {/* MOBILE NAV */}
+      {/* MOBILE MENU */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="md:hidden bg-black/80 backdrop-blur-xl border-t border-white/10"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            className="lg:hidden mt-2 mx-4 rounded-3xl bg-black/80 backdrop-blur-xl border border-white/10 p-6"
           >
-            <div className="flex flex-col gap-4 px-6 py-4">
-              {navItems.map((item) => (
+            <div className="flex flex-col gap-4">
+              {navItems.map((item) =>
                 item === "Home" ? (
-                  <Link key={item} to="/" className="text-white font-semibold py-3 hover:text-blue-400 transition block border-l-4 border-transparent hover:border-blue-500 px-3">
+                  <Link
+                    key={item}
+                    to="/"
+                    onClick={() => setMobileOpen(false)}
+                    className="text-white font-semibold"
+                  >
                     {item}
                   </Link>
                 ) : (
-                  <a key={item} href={`/#${item.toLowerCase()}`} className="text-white font-semibold py-3 hover:text-blue-400 transition block border-l-4 border-transparent hover:border-blue-500 px-3">
+                  <a
+                    key={item}
+                    href={`/#${item.toLowerCase()}`}
+                    onClick={() => setMobileOpen(false)}
+                    className="text-white font-semibold"
+                  >
                     {item}
                   </a>
                 )
-              ))}
+              )}
 
-              {user && (
+              {user ? (
                 <>
-                  <Link to="/dashboard" className="text-white font-semibold py-3 px-3 hover:text-green-400 transition flex items-center gap-2 border-l-4 border-transparent hover:border-green-500">
-                    <LayoutDashboard size={16} /> Dashboard
+                  <Link to="/dashboard" className="text-green-400 font-semibold">
+                    Dashboard
                   </Link>
                   <button
                     onClick={handleLogout}
-                    className="text-white font-semibold py-3 px-3 hover:text-red-400 transition flex items-center gap-2 border-l-4 border-transparent hover:border-red-500"
+                    className="text-red-400 font-semibold text-left"
                   >
-                    <LogOut size={16} /> Logout
+                    Logout
                   </button>
                 </>
-              )}
-
-              {!user && (
-                <Link to="/login">
-                  <button className="text-white font-semibold py-3 px-3 hover:text-blue-400 transition flex items-center gap-2 border-l-4 border-transparent hover:border-blue-500">
-                    <LogIn size={16} /> Login
-                  </button>
+              ) : (
+                <Link to="/login" className="text-blue-400 font-semibold">
+                  Login
                 </Link>
               )}
             </div>

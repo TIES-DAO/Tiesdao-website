@@ -9,10 +9,15 @@ import Footer from "./components/Footer";
 import Team from "./components/Team";
 import Collaboration from "./components/Collaboration";
 import DailyStreak from "./components/DailyStreak";
+import Quiz from "./components/Quiz";
+import QuizLeaderboard from "./components/QuizLeaderboard";
+import Referral from "./components/Referral";
+import ReferralLeaderboard from "./components/ReferralLeaderboard";
 
 import Login from "./Pages/login";
 import Register from "./Pages/signup";
 import Dashboard from "./Pages/Dashboard";
+import SuperDashboard from "./Pages/SuperDashboard";
 import ProtectedRoute from "./routes/ProtectedRoute";
 
 export default function App() {
@@ -57,6 +62,47 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+
+        {/* QUIZ ROUTES */}
+        <Route
+          path="/quiz"
+          element={
+            <ProtectedRoute>
+              <Quiz />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/quiz-leaderboard"
+          element={
+            <ProtectedRoute>
+              <QuizLeaderboard />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* REFERRAL ROUTES */}
+        <Route
+          path="/referral"
+          element={
+            <ProtectedRoute>
+              <Referral />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/referral-leaderboard"
+          element={
+            <ProtectedRoute>
+              <ReferralLeaderboard />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* SUPER ADMIN DASHBOARD */}
+        <Route path="/admin" element={<SuperDashboard />} />
       </Routes>
     </>
   );

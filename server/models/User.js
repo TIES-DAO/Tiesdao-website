@@ -7,6 +7,11 @@ const userSchema = new mongoose.Schema(
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     role: { type: String, default: "user" },           // your role field
+    referralCode: { type: String, unique: true, sparse: true }, // unique referral code
+    referralPoints: { type: Number, default: 0 },      // points from referrals
+    quizPoints: { type: Number, default: 0 },          // points from quizzes
+    totalPoints: { type: Number, default: 0 },         // total points across all activities
+    quizzesCompleted: { type: Number, default: 0 },    // count of completed quizzes
   },
   { timestamps: true } // adds createdAt and updatedAt
 );
