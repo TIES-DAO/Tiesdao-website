@@ -22,7 +22,7 @@ export default function Referral() {
 
   const fetchReferralInfo = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/referral/info", {
+      const res = await fetch("https://tiesdao-websitexr.vercel.app/api/referral/info", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -39,7 +39,7 @@ export default function Referral() {
   const generateReferralCode = async () => {
     try {
       const res = await fetch(
-        "http://localhost:5000/api/referral/generate",
+        "https://tiesdao-websitexr.vercel.app/api/referral/generate",
         {
           method: "POST",
           headers: {

@@ -13,7 +13,7 @@ export default function ReferralLeaderboard() {
   const fetchLeaderboard = async () => {
     try {
       const res = await fetch(
-        "http://localhost:5000/api/referral/leaderboard/referral",
+        "https://tiesdao-websitexr.vercel.app/api/referral/leaderboard/referral",
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,

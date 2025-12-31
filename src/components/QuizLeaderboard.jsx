@@ -20,7 +20,7 @@ export default function QuizLeaderboard() {
   const fetchLeaderboard = async () => {
     try {
       const res = await fetch(
-        "http://localhost:5000/api/quiz/leaderboard/quiz",
+        "https://tiesdao-websitexr.vercel.app/api/quiz/leaderboard/quiz",
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,

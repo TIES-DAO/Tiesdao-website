@@ -27,7 +27,7 @@ export default function Quiz() {
 
   const fetchQuizzes = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/quiz", {
+      const res = await fetch("https://tiesdao-websitexr.vercel.app/api/quiz", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },

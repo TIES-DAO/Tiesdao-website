@@ -12,7 +12,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 
-const API_BASE = "http://localhost:5000/api/admin";
+const API_BASE = "https://tiesdao-websitexr.vercel.app/api/admin";
 
 export default function SuperDashboard() {
   const [authenticated, setAuthenticated] = useState(false);
