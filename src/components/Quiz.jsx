@@ -10,6 +10,7 @@ import {
   Target,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import API_BASE from "../config/api";
 
 export default function Quiz() {
   const { user } = useAuth();
@@ -27,7 +28,7 @@ export default function Quiz() {
 
   const fetchQuizzes = async () => {
     try {
-      const res = await fetch("https://tiesdao-websitexr.vercel.app/api/quiz", {
+      const res = await fetch(`${API_BASE}/api/quiz`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },

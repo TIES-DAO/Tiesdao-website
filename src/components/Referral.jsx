@@ -10,6 +10,7 @@ import {
   Sparkles,
   Link2,
 } from "lucide-react";
+import API_BASE from "../config/api";
 
 export default function Referral() {
   const [referralData, setReferralData] = useState(null);
@@ -22,7 +23,7 @@ export default function Referral() {
 
   const fetchReferralInfo = async () => {
     try {
-      const res = await fetch("https://tiesdao-websitexr.vercel.app/api/referral/info", {
+      const res = await fetch(`${API_BASE}/api/referral/info`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -39,7 +40,7 @@ export default function Referral() {
   const generateReferralCode = async () => {
     try {
       const res = await fetch(
-        "https://tiesdao-websitexr.vercel.app/api/referral/generate",
+        `${API_BASE}/api/referral/generate`,
         {
           method: "POST",
           headers: {

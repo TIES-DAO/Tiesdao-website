@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Trophy, Users, Loader2, Sparkles } from "lucide-react";
+import API_BASE from "../config/api";
 
 export default function ReferralLeaderboard() {
   const [leaderboard, setLeaderboard] = useState([]);
@@ -13,7 +14,7 @@ export default function ReferralLeaderboard() {
   const fetchLeaderboard = async () => {
     try {
       const res = await fetch(
-        "https://tiesdao-websitexr.vercel.app/api/referral/leaderboard/referral",
+        `${API_BASE}/api/referral/leaderboard/referral`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,

@@ -11,8 +11,9 @@ import {
   Lock,
   TrendingUp,
 } from "lucide-react";
+import API_BASE from "../config/api";
 
-const API_BASE = "https://tiesdao-websitexr.vercel.app/api/admin";
+const ADMIN_BASE = `${API_BASE}/api/admin`;
 
 export default function SuperDashboard() {
   const [authenticated, setAuthenticated] = useState(false);
@@ -49,7 +50,7 @@ export default function SuperDashboard() {
     setError("");
 
     try {
-      const res = await fetch(`${API_BASE}/verify-password`, {
+      const res = await fetch(`${ADMIN_BASE}/verify-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ password }),
@@ -72,7 +73,7 @@ export default function SuperDashboard() {
   ======================= */
   const fetchStats = async () => {
     try {
-      const res = await fetch(`${API_BASE}/stats`, {
+      const res = await fetch(`${ADMIN_BASE}/stats`, {
         headers: { Authorization: `Bearer ${adminToken}` },
       });
       const data = await res.json();
@@ -88,7 +89,7 @@ export default function SuperDashboard() {
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/users`, {
+      const res = await fetch(`${ADMIN_BASE}/users`, {
         headers: { Authorization: `Bearer ${adminToken}` },
       });
       setUsers(await res.json());
@@ -100,7 +101,7 @@ export default function SuperDashboard() {
 
   const handleViewUser = async (id) => {
     try {
-      const res = await fetch(`${API_BASE}/users/${id}`, {
+      const res = await fetch(`${ADMIN_BASE}/users/${id}`, {
         headers: { Authorization: `Bearer ${adminToken}` },
       });
       setUserDetails(await res.json());
@@ -113,7 +114,7 @@ export default function SuperDashboard() {
   const handleDeleteUser = async (id) => {
     if (!confirm("Delete this user?")) return;
 
-    await fetch(`${API_BASE}/users/${id}`, {
+    await fetch(`${ADMIN_BASE}/users/${id}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${adminToken}` },
     });
@@ -127,7 +128,7 @@ export default function SuperDashboard() {
   const fetchQuizzes = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/quizzes`, {
+      const res = await fetch(`${ADMIN_BASE}/quizzes`, {
         headers: { Authorization: `Bearer ${adminToken}` },
       });
       setQuizzes(await res.json());
@@ -140,7 +141,7 @@ export default function SuperDashboard() {
   const handleDeleteQuiz = async (id) => {
     if (!confirm("Delete this quiz?")) return;
 
-    await fetch(`${API_BASE}/quizzes/${id}`, {
+    await fetch(`${ADMIN_BASE}/quizzes/${id}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${adminToken}` },
     });

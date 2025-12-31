@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Eye, EyeOff, Loader2, User, Mail, Lock } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import API_BASE from "../config/api";
 
 export default function Register() {
   const [username, setUsername] = useState("");
@@ -21,7 +22,7 @@ export default function Register() {
     setLoading(true);
 
     try {
-      const response = await fetch("https://tiesdao-websitexr.vercel.app/api/auth/register", {
+      const response = await fetch(`${API_BASE}/api/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, email, password, referralCode: referralCode || undefined }),

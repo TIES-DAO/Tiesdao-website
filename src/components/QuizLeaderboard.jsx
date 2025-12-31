@@ -8,6 +8,7 @@ import {
   Loader2,
   Star,
 } from "lucide-react";
+import API_BASE from "../config/api";
 
 export default function QuizLeaderboard() {
   const [leaderboard, setLeaderboard] = useState([]);
@@ -20,7 +21,7 @@ export default function QuizLeaderboard() {
   const fetchLeaderboard = async () => {
     try {
       const res = await fetch(
-        "https://tiesdao-websitexr.vercel.app/api/quiz/leaderboard/quiz",
+        `${API_BASE}/api/quiz/leaderboard/quiz`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,

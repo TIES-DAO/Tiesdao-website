@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mail, MessageCircle, User} from "lucide-react";
+import API_BASE from "../config/api";
 
 export default function Contact() {
   const [email, setEmail] = useState("");
@@ -12,7 +13,7 @@ export default function Contact() {
     setStatus("Sending...");
 
     try {
-      const res = await fetch("https://tiesdao-websitexr.vercel.app/contact", {
+      const res = await fetch(`${API_BASE}/contact`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, message }),
