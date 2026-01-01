@@ -52,8 +52,6 @@ const mongoConnect = async (retries = 3) => {
       console.log("MONGO_URI:", process.env.MONGO_URI?.substring(0, 50) + "...");
       
       await mongoose.connect(process.env.MONGO_URI, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
         connectTimeoutMS: 15000,
         serverSelectionTimeoutMS: 15000,
         maxPoolSize: 10,
