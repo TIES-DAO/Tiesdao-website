@@ -39,81 +39,88 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// ✅ MongoDB Connection with retry logic
-const mongoConnect = async (retries = 3) => {
-  for (let i = 0; i < retries; i++) {
-    if (mongoose.connection.readyState === 1) {
-      console.log("✅ MongoDB already connected");
-      return true;
-    }
+/* Middleware to ensure MongoDB connection on each request */
+app.use(async (req, res, next) => {
+  try {
+    await ensureMongoConnection();
+    next();
+  } catch (err) {
+    console.error("Connection middleware error:", err);
+    next();
+  }
+});
 
+// ✅ MongoDB Connection with lazy initialization (serverless-friendly)
+let mongoConnected = false;
+
+const mongoConnect = async (retries = 3) => {
+  // Skip if already connected
+  if (mongoose.connection.readyState === 1 || mongoConnected) {
+    return true;
+  }
+
+  for (let i = 0; i < retries; i++) {
     try {
-      console.log(`Attempting MongoDB connection (attempt ${i + 1}/${retries})...`);
-      console.log("MONGO_URI:", process.env.MONGO_URI?.substring(0, 50) + "...");
+      console.log(`[${new Date().toISOString()}] MongoDB connection attempt ${i + 1}/${retries}...`);
       
       await mongoose.connect(process.env.MONGO_URI, {
-        connectTimeoutMS: 15000,
-        serverSelectionTimeoutMS: 15000,
-        maxPoolSize: 10,
-        minPoolSize: 2,
-      });
-      console.log("✅ MongoDB connected successfully");
-      return true;
-    } catch (err) {
-      console.error(`❌ MongoDB connection attempt ${i + 1} failed:`, {
-        message: err.message,
-        code: err.code,
-        name: err.name
+        connectTimeoutMS: 10000,
+        serverSelectionTimeoutMS: 10000,
+        maxPoolSize: 5,
+        minPoolSize: 1,
+        retryWrites: true,
       });
       
+      mongoConnected = true;
+      console.log(`[${new Date().toISOString()}] ✅ MongoDB connected successfully`);
+      return true;
+    } catch (err) {
+      console.error(`[${new Date().toISOString()}] ❌ Connection attempt ${i + 1} failed:`, err.message);
+      
       if (i < retries - 1) {
-        const waitTime = 3000 * (i + 1);
-        console.log(`Retrying in ${waitTime}ms...`);
+        const waitTime = 2000 * (i + 1);
         await new Promise(resolve => setTimeout(resolve, waitTime));
       }
     }
   }
-  console.warn("⚠️ MongoDB connection failed after all retries");
+  
+  console.warn(`[${new Date().toISOString()}] ⚠️ MongoDB connection failed after all retries`);
   return false;
 };
 
-// Initialize MongoDB connection immediately with better error handling
-(async () => {
-  try {
+// For serverless: connect on first request, not at startup
+let connectionAttempted = false;
+
+const ensureMongoConnection = async () => {
+  if (!connectionAttempted) {
+    connectionAttempted = true;
     await mongoConnect();
-  } catch (err) {
-    console.error("Fatal error during MongoDB initialization:", err);
+  } else if (mongoose.connection.readyState !== 1) {
+    // If previously attempted but disconnected, try to reconnect
+    await mongoConnect(1);
   }
-})();
+};
 
 // Add connection event listeners
 mongoose.connection.on("connected", () => {
-  console.log("✅ Mongoose connected to MongoDB");
+  mongoConnected = true;
+  console.log(`[${new Date().toISOString()}] ✅ Mongoose connected to MongoDB`);
 });
 
 mongoose.connection.on("error", (err) => {
-  console.error("❌ Mongoose connection error:", err.message);
+  mongoConnected = false;
+  console.error(`[${new Date().toISOString()}] ❌ Mongoose error:`, err.message);
 });
 
 mongoose.connection.on("disconnected", () => {
-  console.warn("⚠️ Mongoose disconnected from MongoDB");
+  mongoConnected = false;
+  console.warn(`[${new Date().toISOString()}] ⚠️ Mongoose disconnected`);
 });
 
 mongoose.connection.on("reconnected", () => {
-  console.log("✅ Mongoose reconnected to MongoDB");
+  mongoConnected = true;
+  console.log(`[${new Date().toISOString()}] ✅ Mongoose reconnected`);
 });
-
-// Auto-reconnection logic - try to reconnect every 30 seconds if disconnected
-setInterval(async () => {
-  if (mongoose.connection.readyState !== 1) {
-    console.log("⏰ Attempting auto-reconnect...");
-    try {
-      await mongoConnect(1);
-    } catch (err) {
-      console.error("Auto-reconnect failed:", err.message);
-    }
-  }
-}, 30000);
 
 /* Test route */
 app.get("/", (req, res) => {
@@ -165,17 +172,30 @@ app.get("/api/mongo-status", (req, res) => {
 /* Manual MongoDB reconnection endpoint */
 app.post("/api/mongo-reconnect", async (req, res) => {
   try {
-    console.log("Manual reconnection attempt triggered");
+    console.log(`[${new Date().toISOString()}] Manual reconnection triggered`);
     
     if (mongoose.connection.readyState === 1) {
-      return res.json({ message: "Already connected", connected: true });
+      return res.json({ 
+        message: "Already connected", 
+        connected: true,
+        readyState: 1
+      });
     }
 
+    // Force disconnect and reconnect
+    if (mongoose.connection.readyState !== 0) {
+      await mongoose.disconnect();
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    }
+
+    connectionAttempted = false;
     const result = await mongoConnect(3);
+    
     res.json({ 
       message: result ? "Connected successfully" : "Connection failed",
       connected: result,
-      readyState: mongoose.connection.readyState
+      readyState: mongoose.connection.readyState,
+      timestamp: new Date().toISOString()
     });
   } catch (err) {
     console.error("Reconnection error:", err);
