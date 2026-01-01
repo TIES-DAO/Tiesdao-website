@@ -5,7 +5,7 @@ import bcrypt from "bcryptjs";
 // 🔹 Register
 export const register = async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    const { username, email, password, referralCode } = req.body;
 
     if (!email || !password) {
       return res.status(400).json({ message: "Email and password are required" });
@@ -19,6 +19,22 @@ export const register = async (req, res) => {
 
     // Create new user
     const user = await User.create({ username, email, password });
+
+    // Apply referral code if provided
+    if (referralCode && referralCode.trim()) {
+      const referrer = await User.findOne({ referralCode });
+      if (referrer) {
+        // Award points to referrer (100 points per referral)
+        referrer.referralPoints += 100;
+        referrer.totalPoints = referrer.quizPoints + referrer.referralPoints;
+        await referrer.save();
+
+        // Give new user a bonus (50 points)
+        user.referralPoints += 50;
+        user.totalPoints = user.quizPoints + user.referralPoints;
+        await user.save();
+      }
+    }
 
     // Create JWT
     const token = jwt.sign(

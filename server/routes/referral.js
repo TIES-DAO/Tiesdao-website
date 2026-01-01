@@ -32,12 +32,16 @@ router.get("/info", authMiddleware, async (req, res) => {
       "username email referralCode referralPoints"
     );
 
-    const referrals = await User.find({ referralCode: user.referralCode });
+    // Count users who were referred using this code (exclude the owner)
+    const referralCount = await User.countDocuments({ 
+      referralCode: user.referralCode,
+      _id: { $ne: req.user.id } 
+    });
 
     res.json({
       referralCode: user.referralCode,
       referralPoints: user.referralPoints,
-      referralCount: referrals.length - 1, // exclude the code owner
+      referralCount: referralCount,
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -47,7 +51,7 @@ router.get("/info", authMiddleware, async (req, res) => {
 // ✅ GET REFERRAL LEADERBOARD
 router.get("/leaderboard/referral", async (req, res) => {
   try {
-    const leaderboard = await User.find()
+    const leaderboard = await User.find({ referralCode: { $exists: true, $ne: null } })
       .select("username email referralPoints referralCode")
       .sort({ referralPoints: -1 })
       .limit(100);
