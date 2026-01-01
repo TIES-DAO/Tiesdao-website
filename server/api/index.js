@@ -49,27 +49,44 @@ const mongoConnect = async (retries = 3) => {
 
     try {
       console.log(`Attempting MongoDB connection (attempt ${i + 1}/${retries})...`);
+      console.log("MONGO_URI:", process.env.MONGO_URI?.substring(0, 50) + "...");
+      
       await mongoose.connect(process.env.MONGO_URI, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
-        connectTimeoutMS: 10000,
-        serverSelectionTimeoutMS: 10000,
+        connectTimeoutMS: 15000,
+        serverSelectionTimeoutMS: 15000,
+        maxPoolSize: 10,
+        minPoolSize: 2,
       });
       console.log("✅ MongoDB connected successfully");
       return true;
     } catch (err) {
-      console.error(`❌ MongoDB connection attempt ${i + 1} failed:`, err.message);
+      console.error(`❌ MongoDB connection attempt ${i + 1} failed:`, {
+        message: err.message,
+        code: err.code,
+        name: err.name
+      });
+      
       if (i < retries - 1) {
-        await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2s before retry
+        const waitTime = 3000 * (i + 1);
+        console.log(`Retrying in ${waitTime}ms...`);
+        await new Promise(resolve => setTimeout(resolve, waitTime));
       }
     }
   }
-  console.warn("⚠️ MongoDB connection failed after retries");
+  console.warn("⚠️ MongoDB connection failed after all retries");
   return false;
 };
 
-// Initialize MongoDB connection immediately
-mongoConnect();
+// Initialize MongoDB connection immediately with better error handling
+(async () => {
+  try {
+    await mongoConnect();
+  } catch (err) {
+    console.error("Fatal error during MongoDB initialization:", err);
+  }
+})();
 
 // Add connection event listeners
 mongoose.connection.on("connected", () => {
@@ -87,6 +104,18 @@ mongoose.connection.on("disconnected", () => {
 mongoose.connection.on("reconnected", () => {
   console.log("✅ Mongoose reconnected to MongoDB");
 });
+
+// Auto-reconnection logic - try to reconnect every 30 seconds if disconnected
+setInterval(async () => {
+  if (mongoose.connection.readyState !== 1) {
+    console.log("⏰ Attempting auto-reconnect...");
+    try {
+      await mongoConnect(1);
+    } catch (err) {
+      console.error("Auto-reconnect failed:", err.message);
+    }
+  }
+}, 30000);
 
 /* Test route */
 app.get("/", (req, res) => {
@@ -133,6 +162,70 @@ app.get("/api/mongo-status", (req, res) => {
       mongoUriPrefix: process.env.MONGO_URI?.substring(0, 20) + "..."
     }
   });
+});
+
+/* Manual MongoDB reconnection endpoint */
+app.post("/api/mongo-reconnect", async (req, res) => {
+  try {
+    console.log("Manual reconnection attempt triggered");
+    
+    if (mongoose.connection.readyState === 1) {
+      return res.json({ message: "Already connected", connected: true });
+    }
+
+    const result = await mongoConnect(3);
+    res.json({ 
+      message: result ? "Connected successfully" : "Connection failed",
+      connected: result,
+      readyState: mongoose.connection.readyState
+    });
+  } catch (err) {
+    console.error("Reconnection error:", err);
+    res.status(500).json({ 
+      error: err.message,
+      readyState: mongoose.connection.readyState
+    });
+  }
+});
+
+/* MongoDB URI validation endpoint */
+app.get("/api/mongo-validate", (req, res) => {
+  const uri = process.env.MONGO_URI;
+  
+  if (!uri) {
+    return res.status(400).json({ error: "MONGO_URI not set" });
+  }
+
+  try {
+    // Parse basic URI structure
+    const uriMatch = uri.match(/^mongodb\+srv:\/\/([^:]+):([^@]+)@([^/?]+)\/?(.*)$/);
+    
+    if (!uriMatch) {
+      return res.json({
+        valid: false,
+        error: "Invalid MongoDB URI format",
+        expected: "mongodb+srv://username:password@cluster.mongodb.net/database"
+      });
+    }
+
+    const [, username, password, cluster, dbParams] = uriMatch;
+    
+    res.json({
+      valid: true,
+      parsed: {
+        username: username ? "****" : "missing",
+        password: password ? "****" : "missing",
+        cluster: cluster,
+        hasDatabase: !!dbParams
+      },
+      tip: "Ensure MongoDB Atlas allows connections from your IP (0.0.0.0/0 or Vercel IPs)"
+    });
+  } catch (err) {
+    res.status(400).json({ 
+      error: "Failed to parse URI",
+      message: err.message
+    });
+  }
 });
 
 /* Routes */
