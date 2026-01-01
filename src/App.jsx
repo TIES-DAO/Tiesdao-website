@@ -1,4 +1,6 @@
 import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import Features from "./components/Features";
@@ -7,8 +9,9 @@ import Contact from "./components/Contact";
 import Community from "./components/Community";
 import Footer from "./components/Footer";
 import Team from "./components/Team";
-import Collaboration from "./components/Collaboration";
+// import Collaboration from "./components/Collaboration"; // ❌ optional – keep commented if removed
 import DailyStreak from "./components/DailyStreak";
+
 import Quiz from "./components/Quiz";
 import QuizLeaderboard from "./components/QuizLeaderboard";
 import Referral from "./components/Referral";
@@ -20,18 +23,21 @@ import Dashboard from "./Pages/Dashboard";
 import SuperDashboard from "./Pages/SuperDashboard";
 import ProtectedRoute from "./routes/ProtectedRoute";
 
+export default function App() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Redirect /?ref=CODE to /register?ref=CODE for referral flow
+  // 🔁 Redirect /?ref=CODE → /register?ref=CODE
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const ref = params.get("ref");
+
     if (location.pathname === "/" && ref) {
       navigate(`/register?ref=${ref}`, { replace: true });
     }
   }, [location, navigate]);
 
+  // Hide navbar on auth pages
   const hideNavbarRoutes = ["/login", "/register"];
   const hideNavbar = hideNavbarRoutes.includes(location.pathname);
 
@@ -50,7 +56,7 @@ import ProtectedRoute from "./routes/ProtectedRoute";
               <DailyStreak />
               <Roadmap />
               <Team />
-              <Collaboration />
+              {/* <Collaboration /> */} {/* removed safely */}
               <Community />
               <Contact />
               <Footer />
@@ -62,7 +68,7 @@ import ProtectedRoute from "./routes/ProtectedRoute";
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        {/* PROTECTED DASHBOARD */}
+        {/* USER DASHBOARD */}
         <Route
           path="/dashboard"
           element={
@@ -72,7 +78,7 @@ import ProtectedRoute from "./routes/ProtectedRoute";
           }
         />
 
-        {/* QUIZ ROUTES */}
+        {/* QUIZ */}
         <Route
           path="/quiz"
           element={
@@ -81,7 +87,6 @@ import ProtectedRoute from "./routes/ProtectedRoute";
             </ProtectedRoute>
           }
         />
-
         <Route
           path="/quiz-leaderboard"
           element={
@@ -91,7 +96,7 @@ import ProtectedRoute from "./routes/ProtectedRoute";
           }
         />
 
-        {/* REFERRAL ROUTES */}
+        {/* REFERRALS */}
         <Route
           path="/referral"
           element={
@@ -100,7 +105,6 @@ import ProtectedRoute from "./routes/ProtectedRoute";
             </ProtectedRoute>
           }
         />
-
         <Route
           path="/referral-leaderboard"
           element={
@@ -110,9 +114,8 @@ import ProtectedRoute from "./routes/ProtectedRoute";
           }
         />
 
-        {/* SUPER ADMIN DASHBOARD */}
+        {/* ADMIN */}
         <Route path="/admin" element={<SuperDashboard />} />
-
       </Routes>
     </>
   );
