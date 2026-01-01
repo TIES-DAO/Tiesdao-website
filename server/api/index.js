@@ -12,6 +12,28 @@ import adminRoutes from "../routes/admin.js";
 
 dotenv.config();
 
+// ✅ MongoDB Connection - establish before starting server
+const mongoConnect = async () => {
+  if (mongoose.connection.readyState === 1) {
+    console.log("✅ MongoDB already connected");
+    return;
+  }
+
+  try {
+    await mongoose.connect(process.env.MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    console.log("✅ MongoDB connected successfully");
+  } catch (err) {
+    console.error("❌ MongoDB connection error:", err.message);
+    // Don't throw - allow server to start but with warnings
+  }
+};
+
+// Connect to MongoDB
+mongoConnect();
+
 const app = express();
 
 /* Middlewares */
@@ -35,7 +57,13 @@ app.use(express.json());
 
 /* Test route */
 app.get("/", (req, res) => {
-  res.json({ message: "TIE DAO API is running 🚀" });
+  const mongoStatus = mongoose.connection.readyState === 1 ? "✅ Connected" : "⚠️ Connecting";
+  res.json({ message: "TIE DAO API is running 🚀", mongo: mongoStatus });
+});
+
+/* Health check */
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "ok", mongodb: mongoose.connection.readyState === 1 });
 });
 
 /* Routes */
@@ -47,12 +75,14 @@ app.use("/api/quiz", quizRoutes);
 app.use("/api/referral", referralRoutes);
 app.use("/api/admin", adminRoutes);
 
-
-/* MongoDB */
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ MongoDB connected"))
-  .catch(err => console.error("❌ Mongo error:", err));
+/* Global error handler */
+app.use((err, req, res, next) => {
+  console.error("Global error:", err);
+  res.status(err.status || 500).json({ 
+    message: err.message || "Server error",
+    error: process.env.NODE_ENV === "development" ? err : undefined
+  });
+});
 
 /* Start server (for local development) */
 const PORT = process.env.PORT || 5000;

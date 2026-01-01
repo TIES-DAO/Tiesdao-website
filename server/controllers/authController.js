@@ -24,16 +24,26 @@ export const register = async (req, res) => {
     if (referralCode && referralCode.trim()) {
       const referrer = await User.findOne({ referralCode });
       if (referrer) {
-        // Award points to referrer (100 points per referral)
-        referrer.referralPoints += 100;
-        referrer.totalPoints = referrer.quizPoints + referrer.referralPoints;
-        await referrer.save();
+        try {
+          // Award points to referrer (100 points per referral)
+          referrer.referralPoints += 100;
+          referrer.totalPoints = referrer.quizPoints + referrer.referralPoints;
+          await referrer.save();
 
-        // Give new user a bonus (50 points)
-        user.referralPoints += 50;
-        user.totalPoints = user.quizPoints + user.referralPoints;
-        await user.save();
+          // Give new user a bonus (50 points)
+          user.referralPoints += 50;
+          user.totalPoints = user.quizPoints + user.referralPoints;
+          await user.save();
+        } catch (refErr) {
+          console.error("Error applying referral:", refErr);
+          // Continue without referral bonus on error
+        }
       }
+    }
+
+    if (!process.env.JWT_SECRET) {
+      console.error("JWT_SECRET not set");
+      return res.status(500).json({ message: "Server configuration error" });
     }
 
     // Create JWT
@@ -50,7 +60,7 @@ export const register = async (req, res) => {
     });
   } catch (err) {
     console.error("Register error:", err);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error", error: process.env.NODE_ENV === "development" ? err.message : undefined });
   }
 };
 
@@ -66,8 +76,20 @@ export const login = async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ message: "Invalid credentials" });
 
-    const isMatch = await user.comparePassword(password);
+    let isMatch;
+    try {
+      isMatch = await user.comparePassword(password);
+    } catch (compareErr) {
+      console.error("Password comparison error:", compareErr);
+      return res.status(500).json({ message: "Server error during authentication" });
+    }
+
     if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
+
+    if (!process.env.JWT_SECRET) {
+      console.error("JWT_SECRET not set");
+      return res.status(500).json({ message: "Server configuration error" });
+    }
 
     const token = jwt.sign(
       { id: user._id, email: user.email, username: user.username },
@@ -82,6 +104,6 @@ export const login = async (req, res) => {
     });
   } catch (err) {
     console.error("Login error:", err);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error", error: process.env.NODE_ENV === "development" ? err.message : undefined });
   }
 };
