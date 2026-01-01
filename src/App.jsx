@@ -112,6 +112,7 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 
         {/* SUPER ADMIN DASHBOARD */}
         <Route path="/admin" element={<SuperDashboard />} />
+
       </Routes>
     </>
   );
