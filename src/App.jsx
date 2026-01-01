@@ -1,4 +1,4 @@
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import Features from "./components/Features";
@@ -20,8 +20,17 @@ import Dashboard from "./Pages/Dashboard";
 import SuperDashboard from "./Pages/SuperDashboard";
 import ProtectedRoute from "./routes/ProtectedRoute";
 
-export default function App() {
   const location = useLocation();
+  const navigate = useNavigate();
+
+  // Redirect /?ref=CODE to /register?ref=CODE for referral flow
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const ref = params.get("ref");
+    if (location.pathname === "/" && ref) {
+      navigate(`/register?ref=${ref}`, { replace: true });
+    }
+  }, [location, navigate]);
 
   const hideNavbarRoutes = ["/login", "/register"];
   const hideNavbar = hideNavbarRoutes.includes(location.pathname);
