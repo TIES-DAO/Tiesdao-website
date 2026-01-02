@@ -408,9 +408,9 @@ export default function AdminDashboard() {
     location.href = "/admin-login";
   };
 
-  const filteredUsers = users.filter(u =>
-    u.email.toLowerCase().includes(search.toLowerCase()) ||
-    (u.username && u.username.toLowerCase().includes(search.toLowerCase()))
+  const filteredUsers = (users && Array.isArray(users) ? users : []).filter(u =>
+    u && u.email && u.email.toLowerCase().includes(search.toLowerCase()) ||
+    (u && u.username && u.username.toLowerCase().includes(search.toLowerCase()))
   );
 
   const tabs = [
@@ -657,6 +657,20 @@ export default function AdminDashboard() {
                 </motion.div>
               ))}
             </div>
+            
+            {filteredUsers.length === 0 && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 rounded-2xl p-12 border border-cyan-400/30 backdrop-blur-lg text-center"
+              >
+                <Users size={48} className="mx-auto text-cyan-400 mb-4 opacity-50" />
+                <h3 className="text-xl font-bold text-gray-300 mb-2">No Users Found</h3>
+                <p className="text-gray-400">
+                  {search ? "No users match your search. Try a different search term." : "No users have been created yet."}
+                </p>
+              </motion.div>
+            )}
           </motion.div>
         )}
 
@@ -848,6 +862,18 @@ export default function AdminDashboard() {
                   </div>
                 </motion.div>
               ))}
+              
+              {quizzes.length === 0 && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-2xl p-12 border border-pink-400/30 backdrop-blur-lg text-center"
+                >
+                  <BookOpen size={48} className="mx-auto text-pink-400 mb-4 opacity-50" />
+                  <h3 className="text-xl font-bold text-gray-300 mb-2">No Quizzes Created</h3>
+                  <p className="text-gray-400 mb-6">Click "Create Quiz" above to get started</p>
+                </motion.div>
+              )}
             </div>
           </motion.div>
         )}
@@ -860,38 +886,52 @@ export default function AdminDashboard() {
             animate={{ opacity: 1 }}
             className="space-y-6"
           >
-            <div className="grid md:grid-cols-2 gap-6">
-              {quizAnalytics.map((qa, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: i * 0.1 }}
-                  className="bg-gradient-to-br from-white/5 to-white/10 rounded-2xl p-6 border border-white/10 backdrop-blur-lg"
-                >
-                  <h3 className="font-bold text-lg mb-4">{qa.title}</h3>
-                  <div className="space-y-2 mb-4">
-                    <div className="flex justify-between text-sm">
-                      <span>Attempts: {qa.totalAttempts}</span>
-                      <span className="text-cyan-400">Avg Score: {qa.avgScore}</span>
-                    </div>
-                  </div>
-                  <div className="space-y-2 max-h-64 overflow-y-auto">
-                    {(qa.questionStats || []).map((qs, j) => (
-                      <div key={j} className="bg-white/5 p-2 rounded">
-                        <p className="text-xs font-semibold mb-1">Q{j + 1}: {qs.correctPercentage}% correct</p>
-                        <div className="w-full bg-white/10 rounded-full h-1.5">
-                          <div
-                            className="h-full bg-gradient-to-r from-cyan-400 to-blue-400 rounded-full"
-                            style={{ width: `${qs.correctPercentage}%` }}
-                          />
-                        </div>
+            {quizAnalytics && quizAnalytics.length > 0 ? (
+              <div className="grid md:grid-cols-2 gap-6">
+                {quizAnalytics.map((qa, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: i * 0.1 }}
+                    className="bg-gradient-to-br from-white/5 to-white/10 rounded-2xl p-6 border border-white/10 backdrop-blur-lg"
+                  >
+                    <h3 className="font-bold text-lg mb-4">{qa.title}</h3>
+                    <div className="space-y-2 mb-4">
+                      <div className="flex justify-between text-sm">
+                        <span>Attempts: {qa.totalAttempts}</span>
+                        <span className="text-cyan-400">Avg Score: {qa.avgScore}%</span>
                       </div>
-                    ))}
-                  </div>
-                </motion.div>
-              ))}
-            </div>
+                    </div>
+                    <div className="space-y-2 max-h-64 overflow-y-auto">
+                      {(qa.questionStats || []).map((qs, j) => (
+                        <div key={j} className="bg-white/5 p-2 rounded">
+                          <p className="text-xs font-semibold mb-1">Q{j + 1}: {qs.correctPercentage}% correct</p>
+                          <div className="w-full bg-white/10 rounded-full h-1.5">
+                            <div
+                              className="h-full bg-gradient-to-r from-cyan-400 to-blue-400 rounded-full"
+                              style={{ width: `${qs.correctPercentage}%` }}
+                            />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 rounded-2xl p-12 border border-cyan-400/30 backdrop-blur-lg text-center"
+              >
+                <BookOpen size={48} className="mx-auto text-cyan-400 mb-4 opacity-50" />
+                <h3 className="text-xl font-bold text-gray-300 mb-2">No Analytics Data Yet</h3>
+                <p className="text-gray-400">
+                  Analytics will appear once users complete quizzes. Create quizzes and have users take them to see data here.
+                </p>
+              </motion.div>
+            )}
           </motion.div>
         )}
 

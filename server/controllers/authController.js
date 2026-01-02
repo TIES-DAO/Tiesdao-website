@@ -1,6 +1,7 @@
 import User from "../models/User.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
+import nodemailer from "nodemailer";
 
 // 🔹 Register
 export const register = async (req, res) => {
@@ -131,14 +132,75 @@ export const forgotPassword = async (req, res) => {
     user.resetPasswordExpiry = resetTokenExpiry;
     await user.save();
 
-    // In production, you would send an email here
-    // For now, we'll return the code (in production, NEVER send via API response)
-    console.log(`[DEV] Reset code for ${email}: ${resetCode}`);
+    // Send email with reset code
+    try {
+      const transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 465,
+        secure: true,
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASS,
+        },
+      });
+
+      await transporter.sendMail({
+        from: `"TIE DAO" <${process.env.EMAIL_USER}>`,
+        to: email,
+        subject: "🔐 Password Reset Code - TIE DAO",
+        html: `
+          <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 20px; border-radius: 10px;">
+            <div style="background: white; border-radius: 8px; padding: 40px; text-align: center;">
+              <h1 style="color: #333; margin: 0 0 20px; font-size: 28px;">🔐 Password Reset</h1>
+              
+              <p style="color: #666; font-size: 16px; margin: 20px 0;">
+                We received a request to reset your password. Use the code below to create a new password:
+              </p>
+              
+              <div style="background: #f5f5f5; border: 2px dashed #667eea; padding: 20px; margin: 30px 0; border-radius: 8px;">
+                <p style="color: #999; font-size: 12px; margin: 0 0 10px; text-transform: uppercase; letter-spacing: 2px;">Your Reset Code</p>
+                <h2 style="color: #667eea; font-size: 48px; letter-spacing: 8px; margin: 0; font-family: 'Courier New', monospace; font-weight: bold;">
+                  ${resetCode}
+                </h2>
+              </div>
+              
+              <p style="color: #999; font-size: 14px; margin: 20px 0;">
+                ⏱️ This code will expire in <strong>1 hour</strong>
+              </p>
+              
+              <p style="color: #666; font-size: 14px; margin: 20px 0;">
+                Enter this code on the password reset page to create a new password.
+              </p>
+              
+              <div style="margin: 30px 0; padding: 20px; background: #f9f9f9; border-left: 4px solid #667eea; border-radius: 4px;">
+                <p style="color: #666; font-size: 13px; margin: 0;">
+                  <strong>⚠️ Security Tip:</strong> Never share this code with anyone. TIE DAO staff will never ask for your reset code.
+                </p>
+              </div>
+              
+              <p style="color: #999; font-size: 12px; margin: 30px 0 0; padding-top: 20px; border-top: 1px solid #eee;">
+                If you didn't request a password reset, you can safely ignore this email.
+              </p>
+              
+              <p style="color: #999; font-size: 11px; margin: 10px 0 0;">
+                © 2026 TIE DAO. All rights reserved.
+              </p>
+            </div>
+          </div>
+        `,
+        text: `Password Reset Code for TIE DAO\n\nYour reset code is: ${resetCode}\n\nThis code will expire in 1 hour.\n\nIf you didn't request this, you can safely ignore this email.`,
+      });
+
+      console.log(`✅ Reset code email sent to ${email}`);
+    } catch (emailErr) {
+      console.error("❌ Email send error:", emailErr);
+      // Still allow reset code generation even if email fails
+      // Log the code to console as fallback
+      console.log(`[FALLBACK] Reset code for ${email}: ${resetCode}`);
+    }
 
     res.status(200).json({
-      message: "Reset code sent to your email (check console in development)",
-      // In production: message: "If email exists, a reset link has been sent"
-      resetCode: process.env.NODE_ENV === "development" ? resetCode : undefined, // Only in dev
+      message: "Reset code sent to your email! Check your inbox.",
     });
   } catch (err) {
     console.error("Forgot password error:", err);

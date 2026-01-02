@@ -42,7 +42,7 @@ export default function ForgotPassword() {
           isOpen: true,
           type: "success",
           title: "Success",
-          message: "Reset code sent! Check console (dev mode) or your email.",
+          message: "Reset code sent to your email! Check your inbox.",
         });
         setTimeout(() => {
           setStep("code");
@@ -234,11 +234,11 @@ export default function ForgotPassword() {
               onSubmit={handleVerifyCode}
               className="space-y-4"
             >
-              <div className="bg-blue-500/10 border border-blue-400/50 rounded-lg p-4 flex gap-3">
-                <AlertCircle size={20} className="text-blue-400 flex-shrink-0 mt-0.5" />
-                <div className="text-sm text-blue-300">
-                  <p className="font-semibold mb-1">Check Console (Dev Mode)</p>
-                  <p>Your reset code has been logged to the browser console. Copy it below.</p>
+              <div className="bg-green-500/10 border border-green-400/50 rounded-lg p-4 flex gap-3">
+                <Mail size={20} className="text-green-400 flex-shrink-0 mt-0.5" />
+                <div className="text-sm text-green-300">
+                  <p className="font-semibold mb-1">📧 Check Your Email</p>
+                  <p>We've sent a 6-digit reset code to your email. Enter it below.</p>
                 </div>
               </div>
 
