@@ -8,9 +8,11 @@ import {
   Loader2,
   Sparkles,
   Target,
+  X,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import API_BASE from "../config/api";
+import ConfirmModal from "./ConfirmModal";
 
 export default function Quiz() {
   const { user } = useAuth();
@@ -21,6 +23,16 @@ export default function Quiz() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState(null);
+  const [quizDetails, setQuizDetails] = useState(null);
+  const [loadingQuiz, setLoadingQuiz] = useState(false);
+  const [confirm, setConfirm] = useState({
+    isOpen: false,
+    action: null,
+    data: null,
+    title: "",
+    message: "",
+    type: "warning"
+  });
 
   useEffect(() => {
     fetchQuizzes();
@@ -48,15 +60,54 @@ export default function Quiz() {
     }
   };
 
-  const handleStartQuiz = (quiz) => {
-    if (!quiz || !quiz.questions || quiz.questions.length === 0) {
-      alert("Quiz has no questions");
-      return;
+  const handleStartQuiz = async (quiz) => {
+    setLoadingQuiz(true);
+    try {
+      // Fetch full quiz details with questions
+      const res = await fetch(`${API_BASE}/api/quiz/${quiz._id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      
+      if (!res.ok) {
+        throw new Error("Failed to load quiz");
+      }
+      
+      const fullQuiz = await res.json();
+      
+      if (!fullQuiz || !fullQuiz.questions || fullQuiz.questions.length === 0) {
+        setConfirm({
+          isOpen: true,
+          action: "error",
+          type: "warning",
+          title: "No Questions",
+          message: "This quiz has no questions. Please ask the admin to add questions to this quiz.",
+          data: null,
+        });
+        setTimeout(() => setConfirm({ isOpen: false }), 3000);
+        return;
+      }
+      
+      setSelectedQuiz(fullQuiz);
+      setQuizDetails(fullQuiz);
+      setCurrentQuestion(0);
+      setAnswers(Array(fullQuiz.questions.length).fill(null));
+      setResult(null);
+    } catch (err) {
+      console.error("Error loading quiz:", err);
+      setConfirm({
+        isOpen: true,
+        action: "error",
+        type: "warning",
+        title: "Error",
+        message: "Failed to load quiz. Please try again.",
+        data: null,
+      });
+      setTimeout(() => setConfirm({ isOpen: false }), 3000);
+    } finally {
+      setLoadingQuiz(false);
     }
-    setSelectedQuiz(quiz);
-    setCurrentQuestion(0);
-    setAnswers(Array(quiz.questions.length).fill(null));
-    setResult(null);
   };
 
   const handleAnswerSelect = (idx) => {
@@ -66,7 +117,18 @@ export default function Quiz() {
   };
 
   const handleSubmitQuiz = async () => {
-    if (answers.some((a) => a === null)) return alert("Answer all questions");
+    if (answers.some((a) => a === null)) {
+      setConfirm({
+        isOpen: true,
+        action: "error",
+        type: "warning",
+        title: "Incomplete",
+        message: "Please answer all questions before submitting.",
+        data: null,
+      });
+      setTimeout(() => setConfirm({ isOpen: false }), 2500);
+      return;
+    }
 
     try {
       setSubmitting(true);
@@ -85,6 +147,17 @@ export default function Quiz() {
       setResult(data);
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleConfirm = async () => {
+    if (confirm.action === "exitQuiz") {
+      setSelectedQuiz(null);
+      setQuizDetails(null);
+      setCurrentQuestion(0);
+      setAnswers([]);
+      setResult(null);
+      setConfirm({ isOpen: false, action: null, data: null });
     }
   };
 
@@ -119,8 +192,14 @@ export default function Quiz() {
 
           <button
             onClick={() => {
-              setSelectedQuiz(null);
-              setResult(null);
+              setConfirm({
+                isOpen: true,
+                action: "exitQuiz",
+                type: "warning",
+                title: "Exit Quiz?",
+                message: "Your progress will be lost. Are you sure you want to exit?",
+                data: null,
+              });
             }}
             className="mt-8 w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 font-bold text-white transition"
           >
@@ -264,14 +343,34 @@ export default function Quiz() {
 
               <button
                 onClick={() => handleStartQuiz(quiz)}
-                className="w-full py-3 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:opacity-90 font-bold text-white flex items-center justify-center gap-2"
+                disabled={loadingQuiz}
+                className="w-full py-3 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:opacity-90 font-bold text-white flex items-center justify-center gap-2 disabled:opacity-50"
               >
-                Start Quiz <ArrowRight size={16} />
+                {loadingQuiz ? (
+                  <>
+                    <Loader2 className="animate-spin" size={16} />
+                    Loading...
+                  </>
+                ) : (
+                  <>
+                    Start Quiz <ArrowRight size={16} />
+                  </>
+                )}
               </button>
             </motion.div>
           ))}
         </div>
       </div>
+
+      {/* CONFIRM MODAL */}
+      <ConfirmModal
+        isOpen={confirm.isOpen}
+        title={confirm.title}
+        message={confirm.message}
+        type={confirm.type}
+        onConfirm={handleConfirm}
+        onCancel={() => setConfirm({ isOpen: false, action: null, data: null })}
+      />
     </section>
   );
 }

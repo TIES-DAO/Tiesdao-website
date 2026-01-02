@@ -41,6 +41,7 @@ import {
   Cell,
 } from "recharts";
 import API_BASE from "../config/api";
+import ConfirmModal from "../components/ConfirmModal";
 
 const ADMIN = `${API_BASE}/api/admin`;
 
@@ -73,6 +74,7 @@ export default function AdminDashboard() {
     correctAnswer: 0,
   });
   const [questionIdCounter, setQuestionIdCounter] = useState(0);
+  const [confirm, setConfirm] = useState({ isOpen: false, action: null, data: null });
 
   useEffect(() => {
     if (!token) {
@@ -105,6 +107,21 @@ export default function AdminDashboard() {
     return { Authorization: `Bearer ${token}` };
   };
 
+  const handleConfirm = async () => {
+    if (!confirm.action) {
+      setConfirm({ ...confirm, isOpen: false });
+      return;
+    }
+
+    if (confirm.action === "deleteUser") {
+      await handleDeleteUser(confirm.data);
+    } else if (confirm.action === "deleteQuiz") {
+      await handleDeleteQuiz(confirm.data);
+    } else if (confirm.action === "resetPoints") {
+      await handleResetPoints(confirm.data);
+    }
+  };
+
   const duplicateQuiz = async (quizId) => {
     try {
       const res = await fetch(`${ADMIN}/quizzes/${quizId}/duplicate`, {
@@ -112,11 +129,29 @@ export default function AdminDashboard() {
         headers: auth(),
       });
       if (res.ok) {
-        alert("Quiz duplicated!");
-        loadAllData();
+        setConfirm({
+          isOpen: true,
+          action: "success",
+          type: "success",
+          title: "Success",
+          message: "Quiz duplicated successfully!",
+          data: null,
+        });
+        setTimeout(() => {
+          setConfirm({ isOpen: false });
+          loadAllData();
+        }, 1500);
       }
     } catch (err) {
-      alert("Error duplicating quiz");
+      setConfirm({
+        isOpen: true,
+        action: "error",
+        type: "warning",
+        title: "Error",
+        message: "Error duplicating quiz",
+        data: null,
+      });
+      setTimeout(() => setConfirm({ isOpen: false }), 2000);
     }
   };
 
@@ -127,59 +162,147 @@ export default function AdminDashboard() {
         headers: { ...auth(), "Content-Type": "application/json" },
         body: JSON.stringify({ suspended }),
       });
-      loadAllData();
-    } catch (err) {
-      alert("Error updating user");
-    }
-  };
-
-  const resetPoints = async (userId) => {
-    if (!confirm("Reset all points for this user?")) return;
-    try {
-      await fetch(`${ADMIN}/users/${userId}/reset-points`, {
-        method: "PATCH",
-        headers: auth(),
+      setConfirm({
+        isOpen: true,
+        action: "success",
+        type: "success",
+        title: "Success",
+        message: `User ${suspended ? "suspended" : "restored"}!`,
+        data: null,
       });
-      loadAllData();
+      setTimeout(() => {
+        setConfirm({ isOpen: false });
+        loadAllData();
+      }, 1500);
     } catch (err) {
-      alert("Error resetting points");
+      setConfirm({
+        isOpen: true,
+        action: "error",
+        type: "warning",
+        title: "Error",
+        message: "Error updating user",
+        data: null,
+      });
+      setTimeout(() => setConfirm({ isOpen: false }), 2000);
     }
   };
 
   const deleteUser = async (id) => {
-    if (!confirm("Delete user permanently?")) return;
+    setConfirm({
+      isOpen: true,
+      action: "deleteUser",
+      data: id,
+      title: "Delete User",
+      message: "This action cannot be undone. All user data will be permanently deleted.",
+      type: "delete",
+    });
+  };
+
+  const handleDeleteUser = async (id) => {
     try {
       await fetch(`${ADMIN}/users/${id}`, {
         method: "DELETE",
         headers: auth(),
       });
       setUsers(users.filter(u => u._id !== id));
+      setConfirm({ ...confirm, isOpen: false });
     } catch (err) {
+      setConfirm({ ...confirm, isOpen: false });
       alert("Error deleting user");
     }
   };
 
   const deleteQuiz = async (id) => {
-    if (!confirm("Delete quiz permanently?")) return;
+    setConfirm({
+      isOpen: true,
+      action: "deleteQuiz",
+      data: id,
+      title: "Delete Quiz",
+      message: "This will delete the quiz and all associated attempts.",
+      type: "delete",
+    });
+  };
+
+  const handleDeleteQuiz = async (id) => {
     try {
       await fetch(`${ADMIN}/quizzes/${id}`, {
         method: "DELETE",
         headers: auth(),
       });
       setQuizzes(quizzes.filter(q => q._id !== id));
+      setConfirm({ ...confirm, isOpen: false });
     } catch (err) {
+      setConfirm({ ...confirm, isOpen: false });
       alert("Error deleting quiz");
+    }
+  };
+
+  const resetPoints = async (userId) => {
+    setConfirm({
+      isOpen: true,
+      action: "resetPoints",
+      data: userId,
+      title: "Reset Points",
+      message: "All quiz and referral points will be set to zero. This cannot be undone.",
+      type: "warning",
+    });
+  };
+
+  const handleResetPoints = async (userId) => {
+    try {
+      await fetch(`${ADMIN}/users/${userId}/reset-points`, {
+        method: "PATCH",
+        headers: auth(),
+      });
+      setConfirm({
+        isOpen: true,
+        action: "success",
+        type: "success",
+        title: "Success",
+        message: "Points reset successfully!",
+        data: null,
+      });
+      setTimeout(() => {
+        setConfirm({ isOpen: false });
+        loadAllData();
+      }, 1500);
+    } catch (err) {
+      setConfirm({
+        isOpen: true,
+        action: "error",
+        type: "warning",
+        title: "Error",
+        message: "Error resetting points",
+        data: null,
+      });
+      setTimeout(() => setConfirm({ isOpen: false }), 2000);
     }
   };
 
   const createQuiz = async (e) => {
     e.preventDefault();
     if (!quizForm.title || !quizForm.category) {
-      alert("Fill in all required fields");
+      setConfirm({
+        isOpen: true,
+        action: "error",
+        type: "warning",
+        title: "Validation Error",
+        message: "Fill in all required fields",
+        data: null,
+      });
+      setTimeout(() => setConfirm({ isOpen: false }), 2000);
       return;
     }
     if (questions.length === 0) {
-      alert("Add at least one question");
+      setConfirm({
+        isOpen: true,
+        action: "error",
+        type: "warning",
+        title: "Validation Error",
+        message: "Add at least one question",
+        data: null,
+      });
+      setTimeout(() => setConfirm({ isOpen: false }), 2000);
       return;
     }
     try {
@@ -195,14 +318,32 @@ export default function AdminDashboard() {
         body: JSON.stringify({ ...quizForm, questions: formattedQuestions }),
       });
       if (res.ok) {
-        alert("Quiz created!");
-        setShowCreateForm(false);
-        setQuizForm({ title: "", description: "", category: "", difficulty: "medium", points: 10 });
-        setQuestions([]);
-        loadAllData();
+        setConfirm({
+          isOpen: true,
+          action: "success",
+          type: "success",
+          title: "Success",
+          message: "Quiz created successfully!",
+          data: null,
+        });
+        setTimeout(() => {
+          setConfirm({ isOpen: false });
+          setShowCreateForm(false);
+          setQuizForm({ title: "", description: "", category: "", difficulty: "medium", points: 10 });
+          setQuestions([]);
+          loadAllData();
+        }, 1500);
       }
     } catch (err) {
-      alert(`Error: ${err.message}`);
+      setConfirm({
+        isOpen: true,
+        action: "error",
+        type: "warning",
+        title: "Error",
+        message: `Error: ${err.message}`,
+        data: null,
+      });
+      setTimeout(() => setConfirm({ isOpen: false }), 2000);
     }
   };
 
@@ -241,7 +382,7 @@ export default function AdminDashboard() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950 p-6 text-white">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950 px-4 sm:px-6 py-6 text-white">
       {/* GLOWING BACKGROUND */}
       <div className="fixed inset-0 -z-10">
         <div className="absolute top-20 left-20 w-96 h-96 bg-blue-600/20 rounded-full blur-[120px] animate-pulse" />
@@ -282,14 +423,15 @@ export default function AdminDashboard() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setTab(t.id)}
-              className={`px-6 py-3 rounded-xl font-bold whitespace-nowrap backdrop-blur-lg border transition flex items-center gap-2 ${
+              className={`px-3 sm:px-6 py-2 sm:py-3 rounded-xl font-bold whitespace-nowrap backdrop-blur-lg border transition flex items-center gap-1 sm:gap-2 text-sm sm:text-base ${
                 tab === t.id
                   ? "bg-gradient-to-r from-blue-600 to-cyan-600 border-blue-400 shadow-lg shadow-blue-500/50"
                   : "bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20"
               }`}
             >
-              <IconComponent size={18} />
-              {t.label}
+              <IconComponent size={16} className="sm:hidden" />
+              <IconComponent size={18} className="hidden sm:block" />
+              <span className="hidden sm:inline">{t.label}</span>
             </motion.button>
           );
         })}
@@ -306,7 +448,7 @@ export default function AdminDashboard() {
             className="space-y-6"
           >
             {/* STAT CARDS */}
-            <div className="grid md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
               {[
                 { label: "Total Users", value: stats.totalUsers, icon: Users, color: "from-blue-600 to-cyan-600" },
                 { label: "Total Quizzes", value: stats.totalQuizzes, icon: BookOpen, color: "from-purple-600 to-pink-600" },
@@ -320,14 +462,14 @@ export default function AdminDashboard() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.1 }}
-                    className={`bg-gradient-to-br ${stat.color} p-6 rounded-2xl border border-white/10 backdrop-blur-lg hover:border-white/30 transition group`}
+                    className={`bg-gradient-to-br ${stat.color} p-4 sm:p-6 rounded-2xl border border-white/10 backdrop-blur-lg hover:border-white/30 transition group`}
                   >
                     <div className="flex justify-between items-start">
                       <div>
-                        <p className="text-white/70 text-sm font-semibold">{stat.label}</p>
-                        <p className="text-4xl font-black mt-2">{stat.value || 0}</p>
+                        <p className="text-white/70 text-xs sm:text-sm font-semibold">{stat.label}</p>
+                        <p className="text-2xl sm:text-4xl font-black mt-2">{stat.value || 0}</p>
                       </div>
-                      <IconComp size={32} className="text-white/60 group-hover:scale-110 transition" />
+                      <IconComp size={24} className="sm:size-8 text-white/60 group-hover:scale-110 transition" />
                     </div>
                   </motion.div>
                 );
@@ -335,7 +477,7 @@ export default function AdminDashboard() {
             </div>
 
             {/* CHARTS */}
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -381,14 +523,14 @@ export default function AdminDashboard() {
             animate={{ opacity: 1 }}
             className="space-y-6"
           >
-            <div className="flex gap-3">
+            <div className="flex gap-2 sm:gap-3 flex-col sm:flex-row">
               <div className="flex-1 relative">
-                <Search className="absolute left-3 top-3 text-gray-400" size={20} />
+                <Search className="absolute left-3 top-3 text-gray-400 size-5 sm:size-5" />
                 <input
                   placeholder="Search by email or username..."
                   value={search}
                   onChange={e => setSearch(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-500/30 backdrop-blur-lg"
+                  className="w-full pl-10 pr-4 py-2 sm:py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 text-sm sm:text-base focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-500/30 backdrop-blur-lg"
                 />
               </div>
             </div>
@@ -400,25 +542,25 @@ export default function AdminDashboard() {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.05 }}
-                  className={`bg-gradient-to-r from-white/5 to-white/10 p-5 rounded-xl border border-white/10 hover:border-cyan-400/50 transition group backdrop-blur-lg ${
+                  className={`bg-gradient-to-r from-white/5 to-white/10 p-4 sm:p-5 rounded-xl border border-white/10 hover:border-cyan-400/50 transition group backdrop-blur-lg ${
                     u.suspended ? "opacity-60 border-red-400/50" : ""
                   }`}
                 >
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <div className="flex gap-2 items-center">
-                        <h4 className="font-bold text-lg">{u.username || "Anonymous"}</h4>
+                  <div className="flex flex-col sm:flex-row justify-between items-start gap-3">
+                    <div className="flex-1 w-full">
+                      <div className="flex gap-2 items-center flex-wrap">
+                        <h4 className="font-bold text-base sm:text-lg">{u.username || "Anonymous"}</h4>
                         {u.suspended && <span className="text-xs bg-red-500/30 text-red-300 px-2 py-1 rounded">SUSPENDED</span>}
                       </div>
-                      <p className="text-gray-400 text-sm">{u.email}</p>
-                      <div className="flex gap-4 mt-2 text-sm">
+                      <p className="text-gray-400 text-xs sm:text-sm break-all">{u.email}</p>
+                      <div className="flex gap-2 sm:gap-4 mt-2 text-xs sm:text-sm flex-wrap">
                         <span className="text-cyan-400">Quiz: {u.quizPoints} pts</span>
                         <span className="text-green-400">Referral: {u.referralPoints} pts</span>
                         <span className="text-yellow-400 font-bold">Total: {u.totalPoints} pts</span>
                       </div>
                     </div>
 
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 sm:gap-3 mt-3 sm:mt-0 flex-wrap sm:flex-nowrap">
                       <motion.button
                         whileHover={{ scale: 1.1 }}
                         onClick={() => {
@@ -428,7 +570,7 @@ export default function AdminDashboard() {
                         className="p-2 bg-blue-600/30 hover:bg-blue-600/50 border border-blue-400/50 rounded-lg transition"
                         title="View details"
                       >
-                        <BarChart3 size={18} />
+                        <BarChart3 size={16} className="sm:size-[18px]" />
                       </motion.button>
 
                       <motion.button
@@ -441,7 +583,7 @@ export default function AdminDashboard() {
                         }`}
                         title={u.suspended ? "Unsuspend" : "Suspend"}
                       >
-                        {u.suspended ? <Unlock size={18} /> : <Lock size={18} />}
+                        {u.suspended ? <Unlock size={16} className="sm:size-[18px]" /> : <Lock size={16} className="sm:size-[18px]" />}
                       </motion.button>
 
                       <motion.button
@@ -450,7 +592,7 @@ export default function AdminDashboard() {
                         className="p-2 bg-purple-600/30 hover:bg-purple-600/50 border border-purple-400/50 rounded-lg transition"
                         title="Reset points"
                       >
-                        <RotateCcw size={18} />
+                        <RotateCcw size={16} className="sm:size-[18px]" />
                       </motion.button>
 
                       <motion.button
@@ -459,7 +601,7 @@ export default function AdminDashboard() {
                         className="p-2 bg-red-600/30 hover:bg-red-600/50 border border-red-400/50 rounded-lg transition"
                         title="Delete user"
                       >
-                        <Trash2 size={18} />
+                        <Trash2 size={16} className="sm:size-[18px]" />
                       </motion.button>
                     </div>
                   </div>
@@ -750,7 +892,15 @@ export default function AdminDashboard() {
                     onClick={async () => {
                       const res = await fetch(`${ADMIN}/verify/referrals`, { headers: auth() });
                       const data = await res.json();
-                      alert(`Found ${data.issues} referral issues out of ${data.totalUsers} users`);
+                      setConfirm({
+                        isOpen: true,
+                        action: "info",
+                        type: "success",
+                        title: "Referral Check Complete",
+                        message: `Found ${data.issues} referral issues out of ${data.totalUsers} users`,
+                        data: null,
+                      });
+                      setTimeout(() => setConfirm({ isOpen: false }), 3000);
                     }}
                   >
                     Run Check
@@ -761,6 +911,16 @@ export default function AdminDashboard() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* CONFIRM MODAL */}
+      <ConfirmModal
+        isOpen={confirm.isOpen}
+        title={confirm.title}
+        message={confirm.message}
+        type={confirm.type}
+        onConfirm={handleConfirm}
+        onCancel={() => setConfirm({ isOpen: false, action: null, data: null })}
+      />
     </div>
   );
 }
