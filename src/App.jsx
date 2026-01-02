@@ -21,7 +21,7 @@ import Register from "./Pages/signup";
 import Dashboard from "./Pages/Dashboard";
 
 /* 🔐 ADMIN */
-import SuperDashboard from "./Pages/SuperDashboard";
+import AdminDashboard from "./Pages/AdminDashboard";
 import AdminLogin from "./Pages/AdminLogin";
 import AdminRoute from "./routes/AdminRoute";
 
@@ -124,7 +124,7 @@ export default function App() {
           path="/admin"
           element={
             <AdminRoute>
-              <SuperDashboard />
+              <AdminDashboard />
             </AdminRoute>
           }
         />

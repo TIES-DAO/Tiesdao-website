@@ -32,16 +32,18 @@ router.get("/info", authMiddleware, async (req, res) => {
       "username email referralCode referralPoints"
     );
 
-    // Count users who were referred using this code (exclude the owner)
+    // Count users who were referred using this code
     const referralCount = await User.countDocuments({ 
-      referralCode: user.referralCode,
-      _id: { $ne: req.user.id } 
+      referredBy: user.referralCode,
     });
+
+    // If actual count is 0 but user has points, calculate based on points
+    const calculatedCount = referralCount || Math.floor((user.referralPoints || 0) / 100);
 
     res.json({
       referralCode: user.referralCode,
       referralPoints: user.referralPoints,
-      referralCount: referralCount,
+      referralCount: calculatedCount,
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -62,9 +64,14 @@ router.get("/leaderboard/referral", async (req, res) => {
         const referralsCount = await User.countDocuments({
           referredBy: user.referralCode,
         });
+        
+        // If actual referral count is 0 but user has referral points,
+        // calculate based on points (100 points = 1 referral)
+        const calculatedCount = referralsCount || Math.floor((user.referralPoints || 0) / 100);
+        
         return {
           ...user.toObject(),
-          referralsCount,
+          referralsCount: calculatedCount,
         };
       })
     );

@@ -186,4 +186,206 @@ router.get("/stats", verifyAdminPassword, async (req, res) => {
   }
 });
 
+// ✅ GET QUIZ ANALYTICS
+router.get("/analytics/quizzes", verifyAdminPassword, async (req, res) => {
+  try {
+    const quizzes = await Quiz.find();
+    const analytics = await Promise.all(
+      quizzes.map(async (quiz) => {
+        const attempts = await QuizAttempt.find({ quizId: quiz._id });
+        const avgScore = attempts.length > 0
+          ? (attempts.reduce((sum, a) => sum + a.score, 0) / attempts.length).toFixed(2)
+          : 0;
+        const totalAttempts = attempts.length;
+        const questionStats = quiz.questions.map((q, idx) => {
+          const correctCount = attempts.filter(a => a.answers[idx]?.isCorrect).length;
+          return {
+            questionId: idx,
+            question: q.question,
+            correctCount,
+            correctPercentage: attempts.length > 0 ? ((correctCount / attempts.length) * 100).toFixed(2) : 0,
+          };
+        });
+        return {
+          _id: quiz._id,
+          title: quiz.title,
+          category: quiz.category,
+          totalAttempts,
+          avgScore,
+          questionStats,
+        };
+      })
+    );
+    res.json(analytics);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ✅ GET USER ANALYTICS (detailed user info with referral chain)
+router.get("/analytics/users/:userId", verifyAdminPassword, async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    const quizAttempts = await QuizAttempt.find({ userId: req.params.userId })
+      .populate("quizId", "title category points");
+    
+    // Get referral chain
+    const referredUsers = await User.find({ referredBy: user.referralCode });
+    const referrer = user.referredBy ? await User.findOne({ referralCode: user.referredBy }) : null;
+
+    res.json({
+      user,
+      quizAttempts,
+      referralStats: {
+        referredCount: referredUsers.length,
+        referredBy: referrer ? referrer.username : null,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ✅ DUPLICATE QUIZ
+router.post("/quizzes/:quizId/duplicate", verifyAdminPassword, async (req, res) => {
+  try {
+    const originalQuiz = await Quiz.findById(req.params.quizId);
+    if (!originalQuiz) return res.status(404).json({ error: "Quiz not found" });
+
+    const newQuiz = new Quiz({
+      title: `${originalQuiz.title} (Copy)`,
+      description: originalQuiz.description,
+      category: originalQuiz.category,
+      points: originalQuiz.points,
+      difficulty: originalQuiz.difficulty,
+      questions: originalQuiz.questions,
+      createdBy: null,
+    });
+
+    await newQuiz.save();
+    res.status(201).json(newQuiz);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ✅ BAN/SUSPEND USER
+router.patch("/users/:userId/suspend", verifyAdminPassword, async (req, res) => {
+  try {
+    const { suspended } = req.body;
+    const user = await User.findByIdAndUpdate(
+      req.params.userId,
+      { suspended },
+      { new: true }
+    );
+    if (!user) return res.status(404).json({ error: "User not found" });
+    res.json({ message: `User ${suspended ? "suspended" : "unsuspended"}`, user });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ✅ RESET USER POINTS
+router.patch("/users/:userId/reset-points", verifyAdminPassword, async (req, res) => {
+  try {
+    const user = await User.findByIdAndUpdate(
+      req.params.userId,
+      { quizPoints: 0, referralPoints: 0, totalPoints: 0 },
+      { new: true }
+    );
+    if (!user) return res.status(404).json({ error: "User not found" });
+    res.json({ message: "Points reset", user });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ✅ ADJUST USER POINTS
+router.patch("/users/:userId/adjust-points", verifyAdminPassword, async (req, res) => {
+  try {
+    const { amount, type } = req.body; // type: 'quiz' or 'referral'
+    const user = await User.findById(req.params.userId);
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    if (type === "quiz") {
+      user.quizPoints += amount;
+    } else if (type === "referral") {
+      user.referralPoints += amount;
+    }
+    user.totalPoints = user.quizPoints + user.referralPoints;
+    await user.save();
+
+    res.json({ message: `${amount > 0 ? "Added" : "Deducted"} ${Math.abs(amount)} points`, user });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ✅ VERIFY REFERRAL INTEGRITY
+router.get("/verify/referrals", verifyAdminPassword, async (req, res) => {
+  try {
+    const users = await User.find();
+    const issues = [];
+
+    for (const user of users) {
+      if (user.referredBy) {
+        const referrer = await User.findOne({ referralCode: user.referredBy });
+        if (!referrer) {
+          issues.push({
+            userId: user._id,
+            username: user.username,
+            issue: "Referrer not found",
+            referralCode: user.referredBy,
+          });
+        }
+      }
+    }
+
+    res.json({ totalUsers: users.length, issues: issues.length, issues });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ✅ EXPORT USERS TO JSON
+router.get("/export/users", verifyAdminPassword, async (req, res) => {
+  try {
+    const users = await User.find().select("-password");
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ✅ EXPORT QUIZ ATTEMPTS TO JSON
+router.get("/export/attempts", verifyAdminPassword, async (req, res) => {
+  try {
+    const attempts = await QuizAttempt.find()
+      .populate("userId", "username email")
+      .populate("quizId", "title category");
+    res.json(attempts);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ✅ GET AUDIT LOG (Admin Actions)
+router.get("/audit-log", verifyAdminPassword, async (req, res) => {
+  try {
+    // This would normally be stored in a separate collection
+    // For now, return recent changes based on updatedAt timestamps
+    const recentUsers = await User.find().sort({ updatedAt: -1 }).limit(50);
+    const recentQuizzes = await Quiz.find().sort({ updatedAt: -1 }).limit(50);
+    
+    res.json({
+      recentUsers,
+      recentQuizzes,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 export default router;

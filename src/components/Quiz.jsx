@@ -33,16 +33,26 @@ export default function Quiz() {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
+      if (!res.ok) throw new Error(`Error: ${res.status}`);
       const data = await res.json();
-      setQuizzes(data);
+      // Ensure each quiz has questions array
+      const validQuizzes = Array.isArray(data) 
+        ? data.map(q => ({ ...q, questions: q.questions || [] }))
+        : [];
+      setQuizzes(validQuizzes);
     } catch (err) {
-      console.error(err);
+      console.error("Quiz fetch error:", err);
+      setQuizzes([]);
     } finally {
       setLoading(false);
     }
   };
 
   const handleStartQuiz = (quiz) => {
+    if (!quiz || !quiz.questions || quiz.questions.length === 0) {
+      alert("Quiz has no questions");
+      return;
+    }
     setSelectedQuiz(quiz);
     setCurrentQuestion(0);
     setAnswers(Array(quiz.questions.length).fill(null));
@@ -61,7 +71,7 @@ export default function Quiz() {
     try {
       setSubmitting(true);
       const res = await fetch(
-        `http://localhost:5000/api/quiz/${selectedQuiz._id}/submit`,
+        `${API_BASE}/api/quiz/${selectedQuiz._id}/submit`,
         {
           method: "POST",
           headers: {

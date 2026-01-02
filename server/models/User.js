@@ -13,6 +13,7 @@ const userSchema = new mongoose.Schema(
     quizPoints: { type: Number, default: 0 },          // points from quizzes
     totalPoints: { type: Number, default: 0 },         // total points across all activities
     quizzesCompleted: { type: Number, default: 0 },    // count of completed quizzes
+    suspended: { type: Boolean, default: false },      // admin can suspend users
   },
   { timestamps: true } // adds createdAt and updatedAt
 );
