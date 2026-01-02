@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema(
     password: { type: String, required: true },
     role: { type: String, default: "user" },           // your role field
     referralCode: { type: String, unique: true, sparse: true }, // unique referral code
+    referredBy: { type: String, default: null },       // referral code of who referred this user
     referralPoints: { type: Number, default: 0 },      // points from referrals
     quizPoints: { type: Number, default: 0 },          // points from quizzes
     totalPoints: { type: Number, default: 0 },         // total points across all activities

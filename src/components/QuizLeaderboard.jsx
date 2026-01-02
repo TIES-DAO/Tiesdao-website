@@ -28,10 +28,12 @@ export default function QuizLeaderboard() {
           },
         }
       );
+      if (!res.ok) throw new Error(`Error: ${res.status}`);
       const data = await res.json();
-      setLeaderboard(data);
+      setLeaderboard(Array.isArray(data) ? data : []);
     } catch (err) {
-      console.error(err);
+      console.error("Leaderboard error:", err);
+      setLeaderboard([]);
     } finally {
       setLoading(false);
     }
@@ -70,7 +72,7 @@ export default function QuizLeaderboard() {
         </motion.div>
 
         {/* PODIUM (TOP 3) */}
-        {leaderboard.length >= 3 && (
+        {leaderboard && Array.isArray(leaderboard) && leaderboard.length >= 3 && (
           <div className="grid md:grid-cols-3 gap-6 mb-12">
             {[1, 0, 2].map((pos, i) => {
               const user = leaderboard[pos];
@@ -167,7 +169,7 @@ export default function QuizLeaderboard() {
         </div>
 
         {/* EMPTY STATE */}
-        {leaderboard.length === 0 && (
+        {(!leaderboard || !Array.isArray(leaderboard) || leaderboard.length === 0) && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

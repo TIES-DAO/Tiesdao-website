@@ -92,8 +92,9 @@ router.post("/apply/:referralCode", authMiddleware, async (req, res) => {
     referrer.totalPoints = referrer.quizPoints + referrer.referralPoints;
     await referrer.save();
 
-    // Optionally give the new user a bonus (50 points)
+    // Save referral code on new user so we can track who referred them
     const newUser = await User.findById(userId);
+    newUser.referredBy = referralCode;
     newUser.referralPoints += 50;
     newUser.totalPoints = newUser.quizPoints + newUser.referralPoints;
     await newUser.save();
