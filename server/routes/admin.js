@@ -6,7 +6,7 @@ import QuizAttempt from "../models/QuizAttempt.js";
 const router = express.Router();
 
 // ✅ ADMIN PASSWORD (HARDCODED - Change this!)
-const ADMIN_PASSWORD = "TIE_DAO_ADMIN_2025";
+const ADMIN_PASSWORD = "DAO_2025";
 
 // ✅ VERIFY ADMIN PASSWORD
 router.post("/verify-password", async (req, res) => {
