@@ -54,6 +54,8 @@ export default function AdminDashboard() {
   const [quizAnalytics, setQuizAnalytics] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [userDetails, setUserDetails] = useState(null);
+  const [userAnalytics, setUserAnalytics] = useState(null);
+  const [showUserAnalyticsModal, setShowUserAnalyticsModal] = useState(false);
   const [search, setSearch] = useState("");
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [showUserModal, setShowUserModal] = useState(false);
@@ -87,19 +89,34 @@ export default function AdminDashboard() {
     loadAllData();
   }, []);
 
-  const loadAllData = () => {
+  const loadAllData = async () => {
     const headers = auth();
-    Promise.all([
-      fetch(`${ADMIN}/stats`, { headers }).then(r => r.json()),
-      fetch(`${ADMIN}/users`, { headers }).then(r => r.json()),
-      fetch(`${ADMIN}/quizzes`, { headers }).then(r => r.json()),
-      fetch(`${ADMIN}/analytics/quizzes`, { headers }).then(r => r.json()),
-    ]).then(([statsData, usersData, quizzesData, analyticsData]) => {
+    try {
+      const statsRes = await fetch(`${ADMIN}/stats`, { headers });
+      const statsData = await statsRes.json();
       setStats(statsData);
+
+      const usersRes = await fetch(`${ADMIN}/users`, { headers });
+      const usersData = await usersRes.json();
       setUsers(usersData || []);
+
+      const quizzesRes = await fetch(`${ADMIN}/quizzes`, { headers });
+      const quizzesData = await quizzesRes.json();
       setQuizzes(quizzesData || []);
-      setQuizAnalytics(analyticsData || []);
-    }).catch(e => console.error("Load error:", e));
+
+      const analyticsRes = await fetch(`${ADMIN}/analytics/quizzes`, { headers });
+      const analyticsData = await analyticsRes.json();
+      console.log("Analytics Data:", analyticsData);
+      if (analyticsRes.ok) {
+        setQuizAnalytics(analyticsData || []);
+      } else {
+        console.error("Analytics error:", analyticsData);
+        setQuizAnalytics([]);
+      }
+    } catch (e) {
+      console.error("Load error:", e);
+      setQuizAnalytics([]);
+    }
   };
 
   const auth = () => {
@@ -347,6 +364,29 @@ export default function AdminDashboard() {
     }
   };
 
+  const loadUserAnalytics = async (userId, username) => {
+    try {
+      const res = await fetch(`${ADMIN}/analytics/users/${userId}`, { 
+        headers: auth() 
+      });
+      const data = await res.json();
+      console.log("User Analytics:", data);
+      setUserAnalytics({ ...data, username });
+      setShowUserAnalyticsModal(true);
+    } catch (err) {
+      console.error("Error loading user analytics:", err);
+      setConfirm({
+        isOpen: true,
+        action: "error",
+        type: "warning",
+        title: "Error",
+        message: "Failed to load user analytics",
+        data: null,
+      });
+      setTimeout(() => setConfirm({ isOpen: false }), 2000);
+    }
+  };
+
   const exportData = async (type) => {
     try {
       const res = await fetch(`${ADMIN}/export/${type}`, { headers: auth() });
@@ -571,6 +611,15 @@ export default function AdminDashboard() {
                         title="View details"
                       >
                         <BarChart3 size={16} className="sm:size-[18px]" />
+                      </motion.button>
+
+                      <motion.button
+                        whileHover={{ scale: 1.1 }}
+                        onClick={() => loadUserAnalytics(u._id, u.username)}
+                        className="p-2 bg-cyan-600/30 hover:bg-cyan-600/50 border border-cyan-400/50 rounded-lg transition"
+                        title="View analytics"
+                      >
+                        <TrendingUp size={16} className="sm:size-[18px]" />
                       </motion.button>
 
                       <motion.button
@@ -921,6 +970,95 @@ export default function AdminDashboard() {
         onConfirm={handleConfirm}
         onCancel={() => setConfirm({ isOpen: false, action: null, data: null })}
       />
+
+      {/* USER ANALYTICS MODAL */}
+      <AnimatePresence>
+        {showUserAnalyticsModal && userAnalytics && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setShowUserAnalyticsModal(false)}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 flex items-center justify-center p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={e => e.stopPropagation()}
+              className="bg-gradient-to-br from-white/10 to-white/5 rounded-2xl border border-white/20 p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto backdrop-blur-xl"
+            >
+              <div className="flex justify-between items-center mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-white">Analytics for {userAnalytics.username}</h2>
+                  <p className="text-gray-400 text-sm mt-1">{userAnalytics.user?.email}</p>
+                </div>
+                <button
+                  onClick={() => setShowUserAnalyticsModal(false)}
+                  className="p-2 hover:bg-white/10 rounded-lg transition"
+                >
+                  <X size={24} />
+                </button>
+              </div>
+
+              {/* User Stats */}
+              <div className="grid md:grid-cols-2 gap-4 mb-6">
+                <div className="bg-white/5 p-4 rounded-xl border border-white/10">
+                  <p className="text-gray-400 text-sm">Quiz Points</p>
+                  <p className="text-2xl font-bold text-cyan-400">{userAnalytics.user?.quizPoints || 0}</p>
+                </div>
+                <div className="bg-white/5 p-4 rounded-xl border border-white/10">
+                  <p className="text-gray-400 text-sm">Referral Points</p>
+                  <p className="text-2xl font-bold text-green-400">{userAnalytics.user?.referralPoints || 0}</p>
+                </div>
+                <div className="bg-white/5 p-4 rounded-xl border border-white/10">
+                  <p className="text-gray-400 text-sm">Quizzes Completed</p>
+                  <p className="text-2xl font-bold text-blue-400">{userAnalytics.quizAttempts?.length || 0}</p>
+                </div>
+                <div className="bg-white/5 p-4 rounded-xl border border-white/10">
+                  <p className="text-gray-400 text-sm">Referral Count</p>
+                  <p className="text-2xl font-bold text-yellow-400">{userAnalytics.referralStats?.referredCount || 0}</p>
+                </div>
+              </div>
+
+              {/* Quiz Attempts */}
+              <div className="space-y-4">
+                <h3 className="font-bold text-lg">Quiz Attempts</h3>
+                {userAnalytics.quizAttempts && userAnalytics.quizAttempts.length > 0 ? (
+                  <div className="space-y-3 max-h-96 overflow-y-auto">
+                    {userAnalytics.quizAttempts.map((attempt, i) => (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className="bg-white/5 p-4 rounded-xl border border-white/10"
+                      >
+                        <div className="flex justify-between items-start">
+                          <div className="flex-1">
+                            <p className="font-semibold">{attempt.quizId?.title || "Quiz"}</p>
+                            <p className="text-sm text-gray-400">{attempt.quizId?.category || "Category"}</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-lg font-bold text-cyan-400">{attempt.score}%</p>
+                            <p className="text-sm text-yellow-400">+{attempt.pointsEarned} pts</p>
+                          </div>
+                        </div>
+                        <div className="mt-2 flex gap-2 text-xs text-gray-400">
+                          <span>{attempt.totalQuestions} questions</span>
+                          <span>•</span>
+                          <span>{new Date(attempt.completedAt).toLocaleDateString()}</span>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-gray-400 text-center py-6">No quiz attempts yet</p>
+                )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

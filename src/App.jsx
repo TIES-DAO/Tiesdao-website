@@ -18,6 +18,7 @@ import ReferralLeaderboard from "./components/ReferralLeaderboard";
 
 import Login from "./Pages/login";
 import Register from "./Pages/signup";
+import ForgotPassword from "./Pages/ForgotPassword";
 import Dashboard from "./Pages/Dashboard";
 
 /* 🔐 ADMIN */
@@ -42,7 +43,7 @@ export default function App() {
   }, [location, navigate]);
 
   /* ❌ Hide navbar on auth pages and admin */
-  const hideNavbarRoutes = ["/login", "/register", "/admin-login", "/admin"];
+  const hideNavbarRoutes = ["/login", "/register", "/forgot-password", "/admin-login", "/admin"];
   const hideNavbar = hideNavbarRoutes.includes(location.pathname);
 
   return (
@@ -70,6 +71,7 @@ export default function App() {
         {/* ================= AUTH ================= */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
 
         {/* ================= USER DASHBOARD ================= */}
         <Route

@@ -158,12 +158,19 @@ export default function Login() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
-            className="mt-6 text-center text-gray-400 text-sm"
+            className="mt-6 text-center text-gray-400 text-sm space-y-3"
           >
-            Don’t have an account?{" "}
-            <Link to="/register" className="text-blue-400 font-bold hover:text-blue-300">
-              Create one
-            </Link>
+            <div>
+              Don't have an account?{" "}
+              <Link to="/register" className="text-blue-400 font-bold hover:text-blue-300">
+                Create one
+              </Link>
+            </div>
+            <div>
+              <Link to="/forgot-password" className="text-purple-400 font-bold hover:text-purple-300">
+                Forgot password?
+              </Link>
+            </div>
           </motion.div>
         </div>
       </motion.div>
