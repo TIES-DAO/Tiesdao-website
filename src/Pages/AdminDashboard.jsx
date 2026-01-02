@@ -21,6 +21,11 @@ import {
   Shield,
   ChevronDown,
   X,
+  PieChart as PieChartIcon,
+  TrendingDown,
+  Database,
+  Layers,
+  Gauge,
 } from "lucide-react";
 import {
   LineChart,
@@ -228,11 +233,11 @@ export default function AdminDashboard() {
   );
 
   const tabs = [
-    { id: "overview", label: "Overview", icon: "📊" },
-    { id: "users", label: "Users", icon: "👥" },
-    { id: "quizzes", label: "Quizzes", icon: "📚" },
-    { id: "analytics", label: "Analytics", icon: "📈" },
-    { id: "reports", label: "Reports", icon: "📄" },
+    { id: "overview", label: "Overview", icon: BarChart3 },
+    { id: "users", label: "Users", icon: Users },
+    { id: "quizzes", label: "Quizzes", icon: BookOpen },
+    { id: "analytics", label: "Analytics", icon: TrendingUp },
+    { id: "reports", label: "Reports", icon: FileText },
   ];
 
   return (
@@ -269,21 +274,25 @@ export default function AdminDashboard() {
 
       {/* NAV TABS */}
       <div className="mb-8 flex gap-2 overflow-x-auto pb-2">
-        {tabs.map(t => (
-          <motion.button
-            key={t.id}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setTab(t.id)}
-            className={`px-6 py-3 rounded-xl font-bold whitespace-nowrap backdrop-blur-lg border transition ${
-              tab === t.id
-                ? "bg-gradient-to-r from-blue-600 to-cyan-600 border-blue-400 shadow-lg shadow-blue-500/50"
-                : "bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20"
-            }`}
-          >
-            <span className="mr-2">{t.icon}</span>{t.label}
-          </motion.button>
-        ))}
+        {tabs.map(t => {
+          const IconComponent = t.icon;
+          return (
+            <motion.button
+              key={t.id}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setTab(t.id)}
+              className={`px-6 py-3 rounded-xl font-bold whitespace-nowrap backdrop-blur-lg border transition flex items-center gap-2 ${
+                tab === t.id
+                  ? "bg-gradient-to-r from-blue-600 to-cyan-600 border-blue-400 shadow-lg shadow-blue-500/50"
+                  : "bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20"
+              }`}
+            >
+              <IconComponent size={18} />
+              {t.label}
+            </motion.button>
+          );
+        })}
       </div>
 
       <AnimatePresence mode="wait">
@@ -299,27 +308,30 @@ export default function AdminDashboard() {
             {/* STAT CARDS */}
             <div className="grid md:grid-cols-4 gap-4">
               {[
-                { label: "Total Users", value: stats.totalUsers, icon: "👥", color: "from-blue-600 to-cyan-600" },
-                { label: "Total Quizzes", value: stats.totalQuizzes, icon: "📚", color: "from-purple-600 to-pink-600" },
-                { label: "Quiz Attempts", value: stats.totalAttempts, icon: "⚡", color: "from-orange-600 to-red-600" },
-                { label: "Active Users", value: Math.floor((stats.totalUsers || 0) * 0.8), icon: "🟢", color: "from-green-600 to-emerald-600" },
-              ].map((stat, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.1 }}
-                  className={`bg-gradient-to-br ${stat.color} p-6 rounded-2xl border border-white/10 backdrop-blur-lg hover:border-white/30 transition group`}
-                >
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <p className="text-white/70 text-sm font-semibold">{stat.label}</p>
-                      <p className="text-4xl font-black mt-2">{stat.value || 0}</p>
+                { label: "Total Users", value: stats.totalUsers, icon: Users, color: "from-blue-600 to-cyan-600" },
+                { label: "Total Quizzes", value: stats.totalQuizzes, icon: BookOpen, color: "from-purple-600 to-pink-600" },
+                { label: "Quiz Attempts", value: stats.totalAttempts, icon: Zap, color: "from-orange-600 to-red-600" },
+                { label: "Active Users", value: Math.floor((stats.totalUsers || 0) * 0.8), icon: Activity, color: "from-green-600 to-emerald-600" },
+              ].map((stat, i) => {
+                const IconComp = stat.icon;
+                return (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.1 }}
+                    className={`bg-gradient-to-br ${stat.color} p-6 rounded-2xl border border-white/10 backdrop-blur-lg hover:border-white/30 transition group`}
+                  >
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <p className="text-white/70 text-sm font-semibold">{stat.label}</p>
+                        <p className="text-4xl font-black mt-2">{stat.value || 0}</p>
+                      </div>
+                      <IconComp size={32} className="text-white/60 group-hover:scale-110 transition" />
                     </div>
-                    <span className="text-4xl group-hover:scale-110 transition">{stat.icon}</span>
-                  </div>
-                </motion.div>
-              ))}
+                  </motion.div>
+                );
+              })}
             </div>
 
             {/* CHARTS */}

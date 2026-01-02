@@ -41,8 +41,8 @@ export default function App() {
     }
   }, [location, navigate]);
 
-  /* ❌ Hide navbar on auth pages */
-  const hideNavbarRoutes = ["/login", "/register", "/admin-login"];
+  /* ❌ Hide navbar on auth pages and admin */
+  const hideNavbarRoutes = ["/login", "/register", "/admin-login", "/admin"];
   const hideNavbar = hideNavbarRoutes.includes(location.pathname);
 
   return (
