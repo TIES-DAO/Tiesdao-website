@@ -9,7 +9,6 @@ import Contact from "./components/Contact";
 import Community from "./components/Community";
 import Footer from "./components/Footer";
 import Team from "./components/Team";
-// import Collaboration from "./components/Collaboration"; // ❌ optional – keep commented if removed
 import DailyStreak from "./components/DailyStreak";
 
 import Quiz from "./components/Quiz";
@@ -20,14 +19,19 @@ import ReferralLeaderboard from "./components/ReferralLeaderboard";
 import Login from "./Pages/login";
 import Register from "./Pages/signup";
 import Dashboard from "./Pages/Dashboard";
+
+/* 🔐 ADMIN */
 import SuperDashboard from "./Pages/SuperDashboard";
+import AdminLogin from "./Pages/AdminLogin";
+import AdminRoute from "./routes/AdminRoute";
+
 import ProtectedRoute from "./routes/ProtectedRoute";
 
 export default function App() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // 🔁 Redirect /?ref=CODE → /register?ref=CODE
+  /* 🔁 Referral redirect */
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const ref = params.get("ref");
@@ -37,8 +41,8 @@ export default function App() {
     }
   }, [location, navigate]);
 
-  // Hide navbar on auth pages
-  const hideNavbarRoutes = ["/login", "/register"];
+  /* ❌ Hide navbar on auth pages */
+  const hideNavbarRoutes = ["/login", "/register", "/admin-login"];
   const hideNavbar = hideNavbarRoutes.includes(location.pathname);
 
   return (
@@ -46,7 +50,7 @@ export default function App() {
       {!hideNavbar && <Navbar />}
 
       <Routes>
-        {/* PUBLIC HOME */}
+        {/* ================= PUBLIC HOME ================= */}
         <Route
           path="/"
           element={
@@ -56,7 +60,6 @@ export default function App() {
               <DailyStreak />
               <Roadmap />
               <Team />
-              {/* <Collaboration /> */} {/* removed safely */}
               <Community />
               <Contact />
               <Footer />
@@ -64,11 +67,11 @@ export default function App() {
           }
         />
 
-        {/* AUTH */}
+        {/* ================= AUTH ================= */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        {/* USER DASHBOARD */}
+        {/* ================= USER DASHBOARD ================= */}
         <Route
           path="/dashboard"
           element={
@@ -78,7 +81,7 @@ export default function App() {
           }
         />
 
-        {/* QUIZ */}
+        {/* ================= QUIZ ================= */}
         <Route
           path="/quiz"
           element={
@@ -96,7 +99,7 @@ export default function App() {
           }
         />
 
-        {/* REFERRALS */}
+        {/* ================= REFERRALS ================= */}
         <Route
           path="/referral"
           element={
@@ -114,8 +117,17 @@ export default function App() {
           }
         />
 
-        {/* ADMIN */}
-        <Route path="/admin" element={<SuperDashboard />} />
+        {/* ================= ADMIN ================= */}
+        <Route path="/admin-login" element={<AdminLogin />} />
+
+        <Route
+          path="/admin"
+          element={
+            <AdminRoute>
+              <SuperDashboard />
+            </AdminRoute>
+          }
+        />
       </Routes>
     </>
   );

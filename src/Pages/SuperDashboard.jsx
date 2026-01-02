@@ -1,332 +1,433 @@
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
-  LogOut,
   Users,
   BookOpen,
-  BarChart3,
-  Trash2,
-  Plus,
-  Eye,
-  Lock,
   TrendingUp,
+  Search,
+  Trash2,
+  LogOut,
+  BarChart3,
+  Activity,
+  Plus,
 } from "lucide-react";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 import API_BASE from "../config/api";
 
-const ADMIN_BASE = `${API_BASE}/api/admin`;
+const ADMIN = `${API_BASE}/api/admin`;
 
 export default function SuperDashboard() {
-  const [authenticated, setAuthenticated] = useState(false);
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [adminToken, setAdminToken] = useState(
-    localStorage.getItem("adminToken")
-  );
+  const token = localStorage.getItem("adminToken");
 
-  const [activeTab, setActiveTab] = useState("stats");
-  const [stats, setStats] = useState(null);
+  const [tab, setTab] = useState("overview");
+  const [stats, setStats] = useState({});
   const [users, setUsers] = useState([]);
   const [quizzes, setQuizzes] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [userDetails, setUserDetails] = useState(null);
-  const [showAddQuiz, setShowAddQuiz] = useState(false);
+  const [search, setSearch] = useState("");
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [quizForm, setQuizForm] = useState({
+    title: "",
+    description: "",
+    category: "",
+    difficulty: "medium",
+    points: 10,
+  });
+  const [questions, setQuestions] = useState([]);
+  const [currentQuestion, setCurrentQuestion] = useState({
+    text: "",
+    options: ["", "", "", ""],
+    correctAnswer: 0,
+  });
+  const [questionIdCounter, setQuestionIdCounter] = useState(0);
 
-  /* =======================
-     AUTO LOGIN (TOKEN)
-  ======================= */
+  // Check if token exists on load
   useEffect(() => {
-    if (adminToken) {
-      setAuthenticated(true);
-      fetchStats();
+    if (!token) {
+      console.error("No admin token found");
+      localStorage.removeItem("adminToken");
+      window.location.href = "/admin-login";
     }
-  }, [adminToken]);
+  }, [token]);
 
-  /* =======================
-     LOGIN
-  ======================= */
-  const handleLogin = async (e) => {
+  useEffect(() => {
+    const headers = auth();
+    
+    fetch(`${ADMIN}/stats`, { headers })
+      .then((r) => {
+        if (!r.ok) throw new Error(`Stats: ${r.status}`);
+        return r.json();
+      })
+      .then(setStats)
+      .catch((e) => console.error("Stats error:", e));
+
+    fetch(`${ADMIN}/users`, { headers })
+      .then((r) => {
+        if (!r.ok) throw new Error(`Users: ${r.status}`);
+        return r.json();
+      })
+      .then(setUsers)
+      .catch((e) => console.error("Users error:", e));
+
+    fetch(`${ADMIN}/quizzes`, { headers })
+      .then((r) => {
+        if (!r.ok) throw new Error(`Quizzes: ${r.status}`);
+        return r.json();
+      })
+      .then(setQuizzes)
+      .catch((e) => console.error("Quizzes error:", e));
+  }, []);
+
+  const deleteUser = async (id) => {
+    if (!confirm("Delete user?")) return;
+    await fetch(`${ADMIN}/users/${id}`, {
+      method: "DELETE",
+      headers: auth(),
+    });
+    setUsers(users.filter((u) => u._id !== id));
+  };
+
+  const deleteQuiz = async (id) => {
+    if (!confirm("Delete quiz?")) return;
+    await fetch(`${ADMIN}/quizzes/${id}`, {
+      method: "DELETE",
+      headers: auth(),
+    });
+    setQuizzes(quizzes.filter((q) => q._id !== id));
+  };
+
+  const createQuiz = async (e) => {
     e.preventDefault();
-    setError("");
-
+    if (!quizForm.title || !quizForm.category) {
+      alert("Please fill in title and category");
+      return;
+    }
+    if (questions.length === 0) {
+      alert("Please add at least one question");
+      return;
+    }
     try {
-      const res = await fetch(`${ADMIN_BASE}/verify-password`, {
+      // Convert questions format: text -> question
+      const formattedQuestions = questions.map(q => ({
+        question: q.text,
+        options: q.options,
+        correctAnswer: q.correctAnswer,
+      }));
+      
+      const res = await fetch(`${ADMIN}/quizzes`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password }),
+        headers: { ...auth(), "Content-Type": "application/json" },
+        body: JSON.stringify({ ...quizForm, questions: formattedQuestions }),
       });
-
-      if (!res.ok) throw new Error("Invalid admin password");
-
-      const data = await res.json();
-      localStorage.setItem("adminToken", data.token);
-      setAdminToken(data.token);
-      setAuthenticated(true);
-      setPassword("");
+      if (!res.ok) {
+        const errData = await res.json();
+        throw new Error(errData.error || `Server error: ${res.status}`);
+      }
+      const newQuiz = await res.json();
+      setQuizzes([...quizzes, newQuiz]);
+      setQuizForm({ title: "", description: "", category: "", difficulty: "medium", points: 10 });
+      setQuestions([]);
+      setCurrentQuestion({ text: "", options: ["", "", "", ""], correctAnswer: 0 });
+      setShowCreateForm(false);
+      alert("Quiz created successfully!");
     } catch (err) {
-      setError(err.message);
+      console.error("Create quiz error:", err);
+      alert(`Error creating quiz: ${err.message}`);
     }
   };
 
-  /* =======================
-     FETCH STATS
-  ======================= */
-  const fetchStats = async () => {
-    try {
-      const res = await fetch(`${ADMIN_BASE}/stats`, {
-        headers: { Authorization: `Bearer ${adminToken}` },
-      });
-      const data = await res.json();
-      setStats(data);
-    } catch (err) {
-      console.error("Stats error:", err);
+  const addQuestion = () => {
+    if (!currentQuestion.text || currentQuestion.options.some(o => !o)) {
+      alert("Fill in question text and all options");
+      return;
     }
+    const questionWithId = { ...currentQuestion, id: questionIdCounter };
+    setQuestions([...questions, questionWithId]);
+    setQuestionIdCounter(questionIdCounter + 1);
+    setCurrentQuestion({ text: "", options: ["", "", "", ""], correctAnswer: 0 });
   };
 
-  /* =======================
-     USERS
-  ======================= */
-  const fetchUsers = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch(`${ADMIN_BASE}/users`, {
-        headers: { Authorization: `Bearer ${adminToken}` },
-      });
-      setUsers(await res.json());
-    } catch (err) {
-      console.error(err);
-    }
-    setLoading(false);
+  const removeQuestion = (id) => {
+    setQuestions(questions.filter((q) => q.id !== id));
   };
 
-  const handleViewUser = async (id) => {
-    try {
-      const res = await fetch(`${ADMIN_BASE}/users/${id}`, {
-        headers: { Authorization: `Bearer ${adminToken}` },
-      });
-      setUserDetails(await res.json());
-      setSelectedUser(id);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const handleDeleteUser = async (id) => {
-    if (!confirm("Delete this user?")) return;
-
-    await fetch(`${ADMIN_BASE}/users/${id}`, {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${adminToken}` },
-    });
-
-    setUsers((prev) => prev.filter((u) => u._id !== id));
-  };
-
-  /* =======================
-     QUIZZES
-  ======================= */
-  const fetchQuizzes = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch(`${ADMIN_BASE}/quizzes`, {
-        headers: { Authorization: `Bearer ${adminToken}` },
-      });
-      setQuizzes(await res.json());
-    } catch (err) {
-      console.error(err);
-    }
-    setLoading(false);
-  };
-
-  const handleDeleteQuiz = async (id) => {
-    if (!confirm("Delete this quiz?")) return;
-
-    await fetch(`${ADMIN_BASE}/quizzes/${id}`, {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${adminToken}` },
-    });
-
-    setQuizzes((prev) => prev.filter((q) => q._id !== id));
-  };
-
-  /* =======================
-     LOGOUT
-  ======================= */
-  const handleLogout = () => {
+  const logout = () => {
     localStorage.removeItem("adminToken");
-    setAuthenticated(false);
-    setAdminToken(null);
-    setStats(null);
-    setUsers([]);
-    setQuizzes([]);
+    location.href = "/admin-login";
   };
 
-  /* =======================
-     LOGIN SCREEN
-  ======================= */
-  if (!authenticated) {
-    return (
-      <section className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
-        <motion.form
-          onSubmit={handleLogin}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-xl w-full max-w-md"
-        >
-          <h1 className="text-3xl font-bold flex items-center gap-2 mb-6">
-            <Lock className="text-red-600" /> Admin Login
-          </h1>
+  const filteredUsers = users.filter(
+    (u) =>
+      u.email.toLowerCase().includes(search.toLowerCase()) ||
+      u.username.toLowerCase().includes(search.toLowerCase())
+  );
 
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Admin password"
-            className="w-full px-4 py-3 border rounded mb-4"
-          />
-
-          {error && <p className="text-red-600 mb-4">{error}</p>}
-
-          <button className="w-full bg-red-600 text-white py-3 rounded font-semibold">
-            Login
-          </button>
-        </motion.form>
-      </section>
-    );
-  }
-
-  /* =======================
-     DASHBOARD
-  ======================= */
   return (
-    <section className="min-h-screen p-6 bg-gray-100 dark:bg-gray-900">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-10">
-          <h1 className="text-4xl font-bold flex items-center gap-2">
-            <BarChart3 /> Admin Dashboard
-          </h1>
-          <button
-            onClick={handleLogout}
-            className="bg-red-600 text-white px-5 py-2 rounded flex items-center gap-2"
-          >
-            <LogOut /> Logout
-          </button>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-950 p-8 text-white">
+      {/* HEADER */}
+      <div className="flex justify-between mb-10 items-center">
+        <h1 className="text-4xl font-black flex gap-3">
+          <BarChart3 /> Admin Dashboard
+        </h1>
+      </div>
 
-        {/* Tabs */}
-        <div className="flex gap-3 mb-6">
-          {["stats", "users", "quizzes"].map((tab) => (
+      {/* TABS & LOGOUT */}
+      <div className="flex gap-4 mb-8 flex-wrap justify-between items-center">
+        <div className="flex gap-4 flex-wrap">
+          {["overview", "users", "quizzes"].map((t) => (
             <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`px-5 py-2 rounded font-semibold ${
-                activeTab === tab
-                  ? "bg-red-600 text-white"
-                  : "bg-white dark:bg-gray-800"
+              key={t}
+              onClick={() => setTab(t)}
+              className={`px-6 py-2 rounded-xl font-bold ${
+                tab === t
+                  ? "bg-red-600"
+                  : "bg-gray-800 hover:bg-gray-700"
               }`}
             >
-              {tab.toUpperCase()}
+              {t.toUpperCase()}
             </button>
           ))}
         </div>
+        <button onClick={logout} className="flex gap-2 items-center bg-red-600 hover:bg-red-700 px-6 py-2 rounded-xl font-bold text-white transition cursor-pointer whitespace-nowrap">
+          <LogOut size={20} /> Logout
+        </button>
+      </div>
 
-        {/* STATS */}
-        {activeTab === "stats" && stats && (
-          <div className="grid md:grid-cols-3 gap-6">
-            <StatCard title="Users" value={stats.totalUsers} icon={<Users />} />
-            <StatCard title="Quizzes" value={stats.totalQuizzes} icon={<BookOpen />} />
-            <StatCard
-              title="Attempts"
-              value={stats.totalAttempts}
-              icon={<TrendingUp />}
-            />
-          </div>
+      <AnimatePresence mode="wait">
+        {/* OVERVIEW */}
+        {tab === "overview" && (
+          <motion.div
+            key="overview"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="grid md:grid-cols-3 gap-6"
+          >
+            <Stat icon={<Users />} label="Users" value={stats.totalUsers} />
+            <Stat icon={<BookOpen />} label="Quizzes" value={stats.totalQuizzes} />
+            <Stat icon={<TrendingUp />} label="Attempts" value={stats.totalAttempts} />
+
+            <div className="md:col-span-3 bg-gray-800/70 rounded-2xl p-6">
+              <h2 className="mb-4 font-bold flex gap-2">
+                <Activity /> Growth
+              </h2>
+              {/* Optionally, you can add a chart here if your backend provides chart data */}
+              <ResponsiveContainer width="100%" height={250}>
+                <LineChart data={stats.chart || []}>
+                  <XAxis dataKey="date" />
+                  <Tooltip />
+                  <Line dataKey="value" stroke="#ef4444" strokeWidth={3} />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </motion.div>
         )}
 
         {/* USERS */}
-        {activeTab === "users" && (
-          <>
-            <button
-              onClick={fetchUsers}
-              className="mb-4 bg-blue-600 text-white px-4 py-2 rounded"
-            >
-              Refresh Users
-            </button>
+        {tab === "users" && (
+          <motion.div key="users" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+            <div className="flex items-center gap-3 mb-4">
+              <Search />
+              <input
+                placeholder="Search users..."
+                className="bg-gray-800 px-4 py-2 rounded-xl"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
 
-            {!selectedUser ? (
-              users.map((u) => (
-                <div
-                  key={u._id}
-                  className="bg-white dark:bg-gray-800 p-4 rounded mb-3 flex justify-between"
-                >
-                  <div>
-                    <p className="font-bold">{u.username}</p>
-                    <p className="text-sm">{u.email}</p>
-                  </div>
-                  <div className="flex gap-3">
-                    <button onClick={() => handleViewUser(u._id)}>
-                      <Eye />
-                    </button>
-                    <button onClick={() => handleDeleteUser(u._id)}>
-                      <Trash2 className="text-red-600" />
-                    </button>
-                  </div>
+            {filteredUsers.map((u) => (
+              <Row key={u._id}>
+                <div>
+                  <p className="font-bold">{u.username}</p>
+                  <p className="text-sm text-gray-400">{u.email}</p>
                 </div>
-              ))
-            ) : (
-              <button onClick={() => setSelectedUser(null)}>⬅ Back</button>
-            )}
-          </>
+                <Trash2
+                  className="text-red-500 cursor-pointer"
+                  onClick={() => deleteUser(u._id)}
+                />
+              </Row>
+            ))}
+          </motion.div>
         )}
 
         {/* QUIZZES */}
-        {activeTab === "quizzes" && (
-          <>
-            <div className="flex gap-3 mb-4">
-              <button
-                onClick={fetchQuizzes}
-                className="bg-blue-600 text-white px-4 py-2 rounded"
-              >
-                Refresh Quizzes
-              </button>
-              <button
-                onClick={() => setShowAddQuiz(!showAddQuiz)}
-                className="bg-green-600 text-white px-4 py-2 rounded flex gap-2"
-              >
-                <Plus /> Add Quiz
-              </button>
-            </div>
+        {tab === "quizzes" && (
+          <motion.div key="quizzes" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+            <button
+              onClick={() => setShowCreateForm(!showCreateForm)}
+              className="mb-6 flex gap-2 items-center bg-red-600 px-6 py-2 rounded-xl font-bold hover:bg-red-700"
+            >
+              <Plus size={20} /> Create Quiz
+            </button>
 
-            {quizzes.map((q) => (
-              <div
-                key={q._id}
-                className="bg-white dark:bg-gray-800 p-4 rounded mb-3 flex justify-between"
-              >
-                <p className="font-bold">{q.title}</p>
-                <button onClick={() => handleDeleteQuiz(q._id)}>
-                  <Trash2 className="text-red-600" />
-                </button>
+            {showCreateForm && (
+              <div className="bg-gray-800/70 rounded-2xl p-6 mb-6">
+                <h3 className="text-2xl font-bold mb-4">Create New Quiz</h3>
+                <form onSubmit={createQuiz} className="space-y-4">
+                  <input
+                    type="text"
+                    placeholder="Quiz Title"
+                    className="w-full bg-gray-700 px-4 py-2 rounded-xl text-white"
+                    value={quizForm.title}
+                    onChange={(e) => setQuizForm({ ...quizForm, title: e.target.value })}
+                  />
+                  <textarea
+                    placeholder="Description"
+                    className="w-full bg-gray-700 px-4 py-2 rounded-xl text-white"
+                    value={quizForm.description}
+                    onChange={(e) => setQuizForm({ ...quizForm, description: e.target.value })}
+                  />
+                  <input
+                    type="text"
+                    placeholder="Category"
+                    className="w-full bg-gray-700 px-4 py-2 rounded-xl text-white"
+                    value={quizForm.category}
+                    onChange={(e) => setQuizForm({ ...quizForm, category: e.target.value })}
+                  />
+                  <div className="grid grid-cols-2 gap-4">
+                    <select
+                      className="bg-gray-700 px-4 py-2 rounded-xl text-white"
+                      value={quizForm.difficulty}
+                      onChange={(e) => setQuizForm({ ...quizForm, difficulty: e.target.value })}
+                    >
+                      <option>easy</option>
+                      <option>medium</option>
+                      <option>hard</option>
+                    </select>
+                    <input
+                      type="number"
+                      placeholder="Points"
+                      className="bg-gray-700 px-4 py-2 rounded-xl text-white"
+                      value={quizForm.points}
+                      onChange={(e) => setQuizForm({ ...quizForm, points: parseInt(e.target.value) })}
+                    />
+                  </div>
+
+                  {/* Questions Section */}
+                  <div className="bg-gray-900/50 p-4 rounded-xl mt-6">
+                    <h4 className="text-lg font-bold mb-4">Questions ({questions.length})</h4>
+
+                    {/* Add Question Form */}
+                    <div className="bg-gray-800 p-4 rounded-xl mb-4 space-y-3">
+                      <input
+                        type="text"
+                        placeholder="Question text..."
+                        className="w-full bg-gray-700 px-4 py-2 rounded-xl text-white"
+                        value={currentQuestion.text}
+                        onChange={(e) => setCurrentQuestion({ ...currentQuestion, text: e.target.value })}
+                      />
+                      <div className="space-y-2">
+                        {currentQuestion.options.map((option, idx) => (
+                          <div key={idx} className="flex gap-2">
+                            <input
+                              type="text"
+                              placeholder={`Option ${idx + 1}`}
+                              className="flex-1 bg-gray-700 px-4 py-2 rounded-xl text-white"
+                              value={option}
+                              onChange={(e) => {
+                                const newOptions = [...currentQuestion.options];
+                                newOptions[idx] = e.target.value;
+                                setCurrentQuestion({ ...currentQuestion, options: newOptions });
+                              }}
+                            />
+                            <input
+                              type="radio"
+                              name="correct"
+                              checked={currentQuestion.correctAnswer === idx}
+                              onChange={() => setCurrentQuestion({ ...currentQuestion, correctAnswer: idx })}
+                              className="w-5"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={addQuestion}
+                        className="w-full bg-blue-600 px-4 py-2 rounded-xl font-bold hover:bg-blue-700"
+                      >
+                        Add Question
+                      </button>
+                    </div>
+
+                    {/* Display Added Questions */}
+                    {questions.map((q) => (
+                      <div key={q.id} className="bg-gray-700 p-3 rounded-xl mb-2 flex justify-between items-start">
+                        <div className="flex-1">
+                          <p className="font-bold text-sm">{questions.indexOf(q) + 1}. {q.text}</p>
+                          <p className="text-xs text-gray-300">Correct: {q.options[q.correctAnswer]}</p>
+                        </div>
+                        <Trash2
+                          className="text-red-500 cursor-pointer mt-1"
+                          onClick={() => removeQuestion(q.id)}
+                        />
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="flex gap-2">
+                    <button type="submit" className="bg-green-600 px-6 py-2 rounded-xl font-bold hover:bg-green-700">
+                      Create
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setShowCreateForm(false)}
+                      className="bg-gray-600 px-6 py-2 rounded-xl font-bold hover:bg-gray-700"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
               </div>
+            )}
+
+            {quizzes.map((quiz) => (
+              <Row key={quiz._id}>
+                <div>
+                  <p className="font-bold">{quiz.title}</p>
+                  <p className="text-sm text-gray-400">{quiz.category} • {quiz.difficulty} • {quiz.points} pts</p>
+                </div>
+                <Trash2
+                  className="text-red-500 cursor-pointer"
+                  onClick={() => deleteQuiz(quiz._id)}
+                />
+              </Row>
             ))}
-          </>
+          </motion.div>
         )}
-      </div>
-    </section>
+      </AnimatePresence>
+    </div>
   );
 }
 
-/* =======================
-   STAT CARD
-======================= */
-function StatCard({ title, value, icon }) {
+const auth = () => {
+  const token = localStorage.getItem("adminToken");
+  console.log("Token:", token ? "exists" : "missing");
+  return {
+    Authorization: `Bearer ${token}`,
+  };
+};
+
+function Stat({ icon, label, value }) {
   return (
-    <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow flex justify-between">
+    <div className="bg-gray-800/80 rounded-2xl p-6 flex justify-between items-center">
       <div>
-        <p className="text-sm">{title}</p>
-        <p className="text-4xl font-bold">{value || 0}</p>
+        <p className="text-gray-400">{label}</p>
+        <p className="text-4xl font-black">{value || 0}</p>
       </div>
-      <div className="opacity-50">{icon}</div>
+      {icon}
+    </div>
+  );
+}
+
+function Row({ children }) {
+  return (
+    <div className="bg-gray-800/60 rounded-xl p-4 mb-3 flex justify-between items-center">
+      {children}
     </div>
   );
 }

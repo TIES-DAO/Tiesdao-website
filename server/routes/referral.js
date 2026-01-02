@@ -51,10 +51,23 @@ router.get("/info", authMiddleware, async (req, res) => {
 // ✅ GET REFERRAL LEADERBOARD
 router.get("/leaderboard/referral", async (req, res) => {
   try {
-    const leaderboard = await User.find({ referralCode: { $exists: true, $ne: null } })
-      .select("username email referralPoints referralCode")
+    const users = await User.find({ referralCode: { $exists: true, $ne: null } })
+      .select("username email referralPoints referralCode _id")
       .sort({ referralPoints: -1 })
       .limit(100);
+
+    // Count referrals for each user
+    const leaderboard = await Promise.all(
+      users.map(async (user) => {
+        const referralsCount = await User.countDocuments({
+          referredBy: user.referralCode,
+        });
+        return {
+          ...user.toObject(),
+          referralsCount,
+        };
+      })
+    );
 
     res.json(leaderboard);
   } catch (err) {

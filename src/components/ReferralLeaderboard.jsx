@@ -73,10 +73,9 @@ export default function ReferralLeaderboard() {
               <thead>
                 <tr className="bg-gradient-to-r from-green-600 to-emerald-700 text-black">
                   <th className="px-6 py-4 text-left font-bold">Rank</th>
-                  <th className="px-6 py-4 text-left font-bold">User</th>
-                  <th className="px-6 py-4 text-left font-bold">Email</th>
+                  <th className="px-6 py-4 text-left font-bold">Username</th>
+                  <th className="px-6 py-4 text-right font-bold">Referrals</th>
                   <th className="px-6 py-4 text-right font-bold">Points</th>
-                  <th className="px-6 py-4 text-right font-bold">Code</th>
                 </tr>
               </thead>
 
@@ -109,9 +108,11 @@ export default function ReferralLeaderboard() {
                         {user.username || "Anonymous"}
                       </td>
 
-                      {/* EMAIL */}
-                      <td className="px-6 py-4 text-sm text-gray-400">
-                        {user.email}
+                      {/* REFERRAL COUNT */}
+                      <td className="px-6 py-4 text-right">
+                        <span className="inline-block bg-blue-500/20 border border-blue-500/30 text-blue-300 px-3 py-1 rounded-full font-bold">
+                          {user.referralsCount || 0}
+                        </span>
                       </td>
 
                       {/* POINTS */}
@@ -120,13 +121,6 @@ export default function ReferralLeaderboard() {
                           <Sparkles size={14} />
                           {Math.round(user.referralPoints)}
                         </span>
-                      </td>
-
-                      {/* CODE */}
-                      <td className="px-6 py-4 text-right">
-                        <code className="bg-black/40 border border-white/10 px-3 py-1 rounded-lg font-mono text-sm text-white">
-                          {user.referralCode || "N/A"}
-                        </code>
                       </td>
                     </motion.tr>
                   );

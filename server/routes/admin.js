@@ -97,12 +97,13 @@ router.post("/quizzes", verifyAdminPassword, async (req, res) => {
       points,
       questions,
       difficulty,
-      createdBy: "admin",
+      createdBy: null, // Explicitly set to null
     });
 
     await quiz.save();
     res.status(201).json(quiz);
   } catch (err) {
+    console.error("Quiz creation error:", err);
     res.status(500).json({ error: err.message });
   }
 });
@@ -156,11 +157,29 @@ router.get("/stats", verifyAdminPassword, async (req, res) => {
       .sort({ totalPoints: -1 })
       .limit(10);
 
+    // User growth chart: users registered per day for the last 14 days
+    const days = 14;
+    const today = new Date();
+    const chart = [];
+    for (let i = days - 1; i >= 0; i--) {
+      const day = new Date(today);
+      day.setHours(0, 0, 0, 0);
+      day.setDate(today.getDate() - i);
+      const nextDay = new Date(day);
+      nextDay.setDate(day.getDate() + 1);
+      // Count users created on this day
+      const value = await User.countDocuments({
+        createdAt: { $gte: day, $lt: nextDay },
+      });
+      chart.push({ date: day.toISOString().slice(0, 10), value });
+    }
+
     res.json({
       totalUsers,
       totalQuizzes,
       totalAttempts,
       topUsers,
+      chart,
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
