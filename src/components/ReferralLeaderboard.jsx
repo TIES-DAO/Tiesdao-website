@@ -43,7 +43,7 @@ export default function ReferralLeaderboard() {
   }
 
   return (
-    <section className="min-h-screen bg-gradient-to-br from-gray-950 to-black px-4 py-12">
+    <section className="min-h-screen bg-gradient-to-br from-gray-950 to-black px-4 py-12 pt-24">
       <div className="max-w-5xl mx-auto">
 
         {/* HEADER */}

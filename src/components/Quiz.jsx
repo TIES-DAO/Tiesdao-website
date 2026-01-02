@@ -138,7 +138,7 @@ export default function Quiz() {
       ((currentQuestion + 1) / selectedQuiz.questions.length) * 100;
 
     return (
-      <section className="min-h-screen bg-gradient-to-br from-gray-950 to-black px-4 py-12">
+      <section className="min-h-screen bg-gradient-to-br from-gray-950 to-black px-4 py-12 pt-24">
         <div className="max-w-4xl mx-auto">
           <motion.div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8">
             {/* HEADER */}
@@ -226,7 +226,7 @@ export default function Quiz() {
 
   /* ---------------- QUIZ LIST ---------------- */
   return (
-    <section className="min-h-screen bg-gradient-to-br from-gray-950 to-black px-4 py-12">
+    <section className="min-h-screen bg-gradient-to-br from-gray-950 to-black px-4 py-12 pt-24">
       <div className="max-w-6xl mx-auto">
         <div className="flex items-center gap-3 mb-12">
           <Sparkles className="text-blue-500" />
