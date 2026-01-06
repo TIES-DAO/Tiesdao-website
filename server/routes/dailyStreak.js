@@ -20,10 +20,9 @@ router.get("/", authMiddleware, async (req, res) => {
 router.post("/checkin", authMiddleware, async (req, res) => {
   try {
     const userId = req.user.id;
-    const today = new Date().toISOString().split("T")[0];
+    const today = req.body.date || new Date().toISOString().split("T")[0];
 
     let streak = await DailyStreak.findOne({ user_id: userId });
-    let newStreak = 1;
 
     if (!streak) {
       streak = await DailyStreak.create({
@@ -32,17 +31,11 @@ router.post("/checkin", authMiddleware, async (req, res) => {
         last_checkin: today,
       });
     } else {
-      const yesterday = new Date(today);
-      yesterday.setDate(yesterday.getDate() - 1);
-      const yestStr = yesterday.toISOString().split("T")[0];
-
       if (streak.last_checkin === today) {
         return res.status(400).json({ message: "Already checked in today" });
       }
 
-      if (streak.last_checkin === yestStr) newStreak = streak.streak + 1;
-
-      streak.streak = newStreak;
+      streak.streak = streak.streak + 1;
       streak.last_checkin = today;
       await streak.save();
     }

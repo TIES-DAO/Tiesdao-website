@@ -9,7 +9,8 @@ import Contact from "./components/Contact";
 import Community from "./components/Community";
 import Footer from "./components/Footer";
 import Team from "./components/Team";
-import DailyStreak from "./components/DailyStreak";
+import Web3Education from "./components/Web3Education";
+import Feedback from "./components/Feedback";
 
 import Quiz from "./components/Quiz";
 import QuizLeaderboard from "./components/QuizLeaderboard";
@@ -58,10 +59,15 @@ export default function App() {
             <>
               <Hero />
               <Features />
-              <DailyStreak />
+              <section className="py-16 bg-gray-50 dark:bg-gray-950">
+                <div className="max-w-4xl mx-auto px-4">
+                  <Web3Education />
+                </div>
+              </section>
               <Roadmap />
               <Team />
               <Community />
+              <Feedback />
               <Contact />
               <Footer />
             </>
@@ -131,6 +137,8 @@ export default function App() {
           }
         />
       </Routes>
+
+      <Feedback />
     </>
   );
 }

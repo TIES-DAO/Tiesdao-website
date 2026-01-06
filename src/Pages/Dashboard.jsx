@@ -17,6 +17,7 @@ import {
 import { useAuth } from "../context/AuthContext";
 import { Navigate, Link } from "react-router-dom";
 import API_BASE from "../config/api";
+import Web3Education from "../components/Web3Education";
 
 export default function Dashboard() {
   const { user, loading } = useAuth();
@@ -26,7 +27,7 @@ export default function Dashboard() {
   if (loading) return null;
   if (!user) return <Navigate to="/login" replace />;
 
-  const today = new Date().toISOString().split("T")[0];
+  const today = new Date().toLocaleDateString('en-CA');
   const streak = dashboardData?.streak || 0;
   const checkedInToday = dashboardData?.last_checkin === today;
 
@@ -76,7 +77,9 @@ export default function Dashboard() {
         method: "POST",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
         },
+        body: JSON.stringify({ date: today }),
       });
       const data = await res.json();
       setDashboardData((prev) => ({
@@ -144,6 +147,8 @@ export default function Dashboard() {
         <RewardsCard visible={false} />
 
         <ActivityCard visible />
+
+        <Web3Education />
       </div>
     </section>
   );
