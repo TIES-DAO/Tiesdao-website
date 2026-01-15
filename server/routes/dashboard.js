@@ -32,7 +32,6 @@ router.get("/", authMiddleware, async (req, res) => {
     // 🔥 LEADERBOARD (Highest → Lowest streak)
     const leaderboard = await DailyStreak.find()
       .sort({ streak: -1 })
-      .limit(100)
       .populate("user_id", "username");
 
     const topStreakUsers = leaderboard.map((entry) => ({

@@ -237,7 +237,7 @@ function RankCard({ rank, total }) {
 // -------------------------
 // LEADERBOARD
 function LeaderboardCard({ data, currentUser }) {
-  const sorted = [...data].sort((a, b) => b.streak - a.streak).slice(0, 50);
+  const sorted = [...data].sort((a, b) => b.streak - a.streak);
 
   return (
     <motion.div className="rounded-2xl bg-white dark:bg-gray-900 p-6 shadow-md border border-gray-100 dark:border-gray-800">
