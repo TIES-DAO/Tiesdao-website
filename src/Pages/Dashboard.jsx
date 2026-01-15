@@ -13,6 +13,7 @@ import {
   Trophy,
   Gift,
   Share2,
+  Hash,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { Navigate, Link } from "react-router-dom";
@@ -95,6 +96,8 @@ export default function Dashboard() {
   };
 
   const leaderboard = dashboardData?.top_streak_users || [];
+  const userRank = dashboardData?.user_rank;
+  const totalStreakUsers = dashboardData?.total_streak_users;
 
   return (
     <section className="min-h-screen px-4 py-12 bg-gray-50 dark:bg-gray-950">
@@ -143,6 +146,8 @@ export default function Dashboard() {
         />
 
         <LeaderboardCard data={leaderboard} currentUser={user} />
+
+        <RankCard rank={userRank} total={totalStreakUsers} />
 
         <RewardsCard visible={false} />
 
@@ -204,9 +209,35 @@ function StreakCard({
 }
 
 // -------------------------
+function RankCard({ rank, total }) {
+  if (!rank || !total) return null;
+
+  return (
+    <motion.div className="rounded-2xl bg-white dark:bg-gray-900 p-6 shadow-md border border-gray-100 dark:border-gray-800">
+      <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
+        <Hash size={18} className="text-orange-500" /> Your Rank
+      </h3>
+
+      <div className="text-center">
+        <div className="text-4xl font-black text-orange-500 mb-2">
+          #{rank}
+        </div>
+        <p className="text-sm text-gray-500">
+          out of {total} active streakers
+        </p>
+      </div>
+
+      <div className="mt-4 text-xs text-gray-400 text-center">
+        Keep checking in daily to climb the ranks!
+      </div>
+    </motion.div>
+  );
+}
+
+// -------------------------
 // LEADERBOARD
 function LeaderboardCard({ data, currentUser }) {
-  const sorted = [...data].sort((a, b) => b.streak - a.streak).slice(0, 20);
+  const sorted = [...data].sort((a, b) => b.streak - a.streak).slice(0, 50);
 
   return (
     <motion.div className="rounded-2xl bg-white dark:bg-gray-900 p-6 shadow-md border border-gray-100 dark:border-gray-800">

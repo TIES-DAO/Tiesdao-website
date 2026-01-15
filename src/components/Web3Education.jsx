@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, memo } from "react";
 import { motion } from "framer-motion";
 import { Globe, Send, DollarSign, Image, FileText, TrendingUp, Smartphone, BookOpen, Users, Shield } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import API_BASE from "../config/api";
 
-export default function Web3Education() {
+const Web3Education = memo(function Web3Education() {
   const { user } = useAuth();
   const [email, setEmail] = useState(user?.email || "");
   const [question, setQuestion] = useState("");
@@ -165,4 +165,8 @@ export default function Web3Education() {
       )}
     </motion.div>
   );
-}
+});
+
+Web3Education.displayName = 'Web3Education';
+
+export default Web3Education;

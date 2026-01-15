@@ -1,10 +1,10 @@
-import { useState } from "react";
+ import { useState, memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageSquare, Send, X, Mail } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import API_BASE from "../config/api";
 
-export default function Feedback() {
+const Feedback = memo(function Feedback() {
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [email, setEmail] = useState(user?.email || "");
@@ -161,4 +161,8 @@ export default function Feedback() {
       </AnimatePresence>
     </>
   );
-}
+});
+
+Feedback.displayName = 'Feedback';
+
+export default Feedback;

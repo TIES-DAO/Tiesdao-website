@@ -9,6 +9,9 @@ import {
   Loader2,
   Sparkles,
   Link2,
+  UserCheck,
+  UserX,
+  Calendar,
 } from "lucide-react";
 import API_BASE from "../config/api";
 
@@ -189,6 +192,89 @@ export default function Referral() {
             </div>
           </motion.div>
         </div>
+
+        {/* REFERRED USERS */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 p-8 mb-8"
+        >
+          <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+            <Users size={20} className="text-purple-400" />
+            Your Referrals ({referralData?.referredUsers?.length || 0})
+          </h3>
+
+          {referralData?.referredUsers && referralData.referredUsers.length > 0 ? (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-white/10">
+                    <th className="text-left py-3 px-4 text-gray-400 font-medium">User</th>
+                    <th className="text-left py-3 px-4 text-gray-400 font-medium">Joined</th>
+                    <th className="text-left py-3 px-4 text-gray-400 font-medium">Points</th>
+                    <th className="text-left py-3 px-4 text-gray-400 font-medium">Quizzes</th>
+                    <th className="text-left py-3 px-4 text-gray-400 font-medium">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {referralData.referredUsers.map((user, index) => (
+                    <tr key={index} className="border-b border-white/5 hover:bg-white/5 transition">
+                      <td className="py-4 px-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white font-bold text-sm">
+                            {(user.username || user.email).charAt(0).toUpperCase()}
+                          </div>
+                          <div>
+                            <p className="text-white font-medium">
+                              {user.username || user.email.split('@')[0]}
+                            </p>
+                            <p className="text-gray-400 text-xs">{user.email}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="py-4 px-4 text-gray-300">
+                        <div className="flex items-center gap-2">
+                          <Calendar size={14} className="text-gray-500" />
+                          {new Date(user.joinedAt).toLocaleDateString()}
+                        </div>
+                      </td>
+                      <td className="py-4 px-4 text-green-400 font-medium">
+                        {user.totalPoints}
+                      </td>
+                      <td className="py-4 px-4 text-blue-400 font-medium">
+                        {user.quizzesCompleted}
+                      </td>
+                      <td className="py-4 px-4">
+                        <div className="flex items-center gap-2">
+                          {user.isActive ? (
+                            <>
+                              <UserCheck size={16} className="text-green-400" />
+                              <span className="text-green-400 text-sm">Active</span>
+                            </>
+                          ) : (
+                            <>
+                              <UserX size={16} className="text-gray-500" />
+                              <span className="text-gray-500 text-sm">Inactive</span>
+                            </>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <Users size={48} className="text-gray-600 mx-auto mb-4" />
+              <p className="text-gray-400 text-lg mb-2">No referrals yet</p>
+              <p className="text-gray-500 text-sm">
+                Share your referral link to start building your network!
+              </p>
+            </div>
+          )}
+        </motion.div>
 
         {/* INFO */}
         <motion.div

@@ -33,17 +33,33 @@ router.get("/info", authMiddleware, async (req, res) => {
     );
 
     // Count users who were referred using this code
-    const referralCount = await User.countDocuments({ 
+    const referralCount = await User.countDocuments({
       referredBy: user.referralCode,
     });
 
     // If actual count is 0 but user has points, calculate based on points
     const calculatedCount = referralCount || Math.floor((user.referralPoints || 0) / 100);
 
+    // Get list of referred users
+    const referredUsers = await User.find({
+      referredBy: user.referralCode,
+    }).select("email username totalPoints quizzesCompleted createdAt");
+
+    // Add activity status
+    const referredUsersWithStatus = referredUsers.map(user => ({
+      email: user.email,
+      username: user.username,
+      totalPoints: user.totalPoints,
+      quizzesCompleted: user.quizzesCompleted,
+      joinedAt: user.createdAt,
+      isActive: user.totalPoints > 0 || user.quizzesCompleted > 0,
+    }));
+
     res.json({
       referralCode: user.referralCode,
       referralPoints: user.referralPoints,
       referralCount: calculatedCount,
+      referredUsers: referredUsersWithStatus,
     });
   } catch (err) {
     res.status(500).json({ error: err.message });

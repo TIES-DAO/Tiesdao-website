@@ -18,11 +18,21 @@ router.get("/", authMiddleware, async (req, res) => {
 
     // CURRENT USER STREAK
     const userStreak = await DailyStreak.findOne({ user_id: userId });
+    const currentStreak = userStreak?.streak || 0;
+
+    // USER'S RANK (count users with higher streak + 1)
+    const usersWithHigherStreak = await DailyStreak.countDocuments({
+      streak: { $gt: currentStreak }
+    });
+    const userRank = usersWithHigherStreak + 1;
+
+    // TOTAL USERS WITH STREAKS
+    const totalStreakUsers = await DailyStreak.countDocuments({ streak: { $gt: 0 } });
 
     // 🔥 LEADERBOARD (Highest → Lowest streak)
     const leaderboard = await DailyStreak.find()
       .sort({ streak: -1 })
-      .limit(20)
+      .limit(100)
       .populate("user_id", "username");
 
     const topStreakUsers = leaderboard.map((entry) => ({
@@ -39,8 +49,10 @@ router.get("/", authMiddleware, async (req, res) => {
         email: user.email,
         username: user.username,
       },
-      streak: userStreak?.streak || 0,
+      streak: currentStreak,
       last_checkin: userStreak?.last_checkin || null,
+      user_rank: userRank,
+      total_streak_users: totalStreakUsers,
       top_streak_users: topStreakUsers,
       rewards: rewards.map((r) => ({
         id: r._id,
