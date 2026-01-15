@@ -29,7 +29,7 @@ router.post("/generate", authMiddleware, async (req, res) => {
 router.get("/info", authMiddleware, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select(
-      "username email referralCode referralPoints"
+      "username email referralCode referralPoints referredBy"
     );
 
     // Count users who were referred using this code
@@ -55,11 +55,24 @@ router.get("/info", authMiddleware, async (req, res) => {
       isActive: user.totalPoints > 0 || user.quizzesCompleted > 0,
     }));
 
+    // Get referrer info if user was referred
+    let referrerInfo = null;
+    if (user.referredBy) {
+      const referrer = await User.findOne({ referralCode: user.referredBy }).select("username email");
+      if (referrer) {
+        referrerInfo = {
+          username: referrer.username,
+          email: referrer.email,
+        };
+      }
+    }
+
     res.json({
       referralCode: user.referralCode,
       referralPoints: user.referralPoints,
       referralCount: calculatedCount,
       referredUsers: referredUsersWithStatus,
+      referrer: referrerInfo,
     });
   } catch (err) {
     res.status(500).json({ error: err.message });

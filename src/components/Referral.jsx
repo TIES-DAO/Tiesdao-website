@@ -163,6 +163,33 @@ export default function Referral() {
             )}
           </motion.div>
 
+          {/* REFERRER INFO */}
+          {referralData?.referrer && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="rounded-3xl bg-gradient-to-br from-purple-500/20 to-pink-600/10 border border-purple-500/30 p-6"
+            >
+              <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                <Users size={18} className="text-purple-400" />
+                Referred By
+              </h3>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white font-bold">
+                  {(referralData.referrer.username || referralData.referrer.email).charAt(0).toUpperCase()}
+                </div>
+                <div>
+                  <p className="text-white font-medium">
+                    {referralData.referrer.username || referralData.referrer.email}
+                  </p>
+                  <p className="text-gray-400 text-sm">
+                    Thanks for joining through their referral!
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
           {/* STATS */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
