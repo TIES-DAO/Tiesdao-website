@@ -227,9 +227,9 @@ export default function Referral() {
                           </div>
                           <div>
                             <p className="text-white font-medium">
-                              {user.username || user.email.split('@')[0]}
+                              {user.username || user.email}
                             </p>
-                            <p className="text-gray-400 text-xs">{user.email}</p>
+                            {!user.username && <p className="text-gray-400 text-xs">Email user</p>}
                           </div>
                         </div>
                       </td>
