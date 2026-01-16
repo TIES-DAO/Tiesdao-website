@@ -147,7 +147,7 @@ export default function Dashboard() {
 
         <LeaderboardCard data={leaderboard} currentUser={user} />
 
-        {dashboardData?.streak > 0 && <RankCard rank={userRank} total={totalStreakUsers} />}
+        <RankCard rank={userRank} total={totalStreakUsers} />
 
         <RewardsCard visible={false} />
 
