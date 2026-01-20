@@ -1,105 +1,209 @@
-# 🚀 TIE-DAO React Landing Page - Complete Project Documentation
+# TIE DAO - Human-First Web3 Community Platform
 
-## 📋 Project Overview
+<div align="center">
 
-**TIE-DAO** is a comprehensive Web3-enabled educational platform built with React and Node.js. It features:
-- 🎓 **Quiz System** - Create and take quizzes with points
-- 👥 **Referral Program** - Earn points by inviting friends
-- 📊 **Leaderboards** - Compete with other users
-- 🔐 **Admin Dashboard** - Manage quizzes, users, and view analytics
-- 💾 **MongoDB Database** - Persistent data storage
-- 🔑 **JWT Authentication** - Secure user authentication
+![TIE DAO Logo](public/dao.png)
 
----
+[![React](https://img.shields.io/badge/React-18.2.0-61DAFB?style=for-the-badge&logo=react&logoColor=white)](https://reactjs.org/)
+[![Vite](https://img.shields.io/badge/Vite-5.0.0-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
+[![TailwindCSS](https://img.shields.io/badge/Tailwind-3.4.0-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![Express](https://img.shields.io/badge/Express-4.22.1-000000?style=for-the-badge&logo=express&logoColor=white)](https://expressjs.com/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-Mongoose-47A248?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
+[![Vercel](https://img.shields.io/badge/Vercel-Deployed-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://vercel.com/)
 
-## 🏗️ Project Architecture
+**A human-first Web3 community platform connecting builders, founders, and contributors through trust, reputation, and real collaboration.**
 
-```
-TIE-DAO Platform
-├── Frontend (React + Vite)
-│   ├── Pages
-│   │   ├── Login.jsx              → User login
-│   │   ├── Signup.jsx             → User registration
-│   │   ├── Dashboard.jsx          → User home dashboard
-│   │   ├── AdminLogin.jsx         → Admin password authentication
-│   │   └── AdminDashboard.jsx     → Admin control panel
-│   │
-│   ├── Components
-│   │   ├── Hero.jsx               → Landing page
-│   │   ├── Features.jsx           → Feature showcase
-│   │   ├── Quiz.jsx               → Quiz interface
-│   │   ├── QuizLeaderboard.jsx    → Quiz rankings
-│   │   ├── Referral.jsx           → Referral system
-│   │   ├── ReferralLeaderboard.jsx → Referral rankings
-│   │   ├── ConfirmModal.jsx       → Custom confirmation modal
-│   │   ├── Navbar.jsx             → Navigation bar
-│   │   ├── Footer.jsx             → Footer
-│   │   └── Other UI components
-│   │
-│   ├── Context
-│   │   ├── AuthContext.jsx        → Authentication state
-│   │   └── ThemeContext.jsx       → Theme management
-│   │
-│   ├── Config
-│   │   └── api.js                 → API base URL
-│   │
-│   └── App.jsx                    → Main app component
-│
-└── Backend (Node.js + Express)
-    ├── Models
-    │   ├── User.js                → User schema with quiz & referral fields
-    │   ├── Quiz.js                → Quiz structure with questions
-    │   └── QuizAttempt.js         → Quiz submission tracking
-    │
-    ├── Routes
-    │   ├── auth.js                → Login, signup, password reset
-    │   ├── quiz.js                → Quiz CRUD and submission
-    │   ├── referral.js            → Referral code & leaderboard
-    │   ├── admin.js               → Admin dashboard endpoints
-    │   ├── dashboard.js           → User dashboard data
-    │   ├── contact.js             → Contact form
-    │   └── dailyStreak.js         → Daily streak tracking
-    │
-    ├── Middleware
-    │   ├── auth.js                → JWT authentication
-    │   └── authMiddleware.js      → Protected routes
-    │
-    ├── Controllers
-    │   └── authController.js      → Auth logic
-    │
-    └── API (Vercel)
-        └── index.js               → Main server entry point
-```
+[Live Demo](https://tiesdao.vercel.app/) • [Report Bug](https://github.com/your-repo/issues) • [Request Feature](https://github.com/your-repo/issues)
+
+</div>
 
 ---
 
-## 🔧 Technology Stack
+## 📋 Table of Contents
+
+- [About The Project](#-about-the-project)
+- [Features](#-features)
+- [Tech Stack](#-tech-stack)
+- [Project Structure](#-project-structure)
+- [Getting Started](#-getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Frontend Installation](#frontend-installation)
+  - [Backend Installation](#backend-installation)
+- [Environment Variables](#-environment-variables)
+- [API Reference](#-api-reference)
+- [Deployment](#-deployment)
+- [Contributing](#-contributing)
+- [License](#-license)
+
+---
+
+## 🎯 About The Project
+
+TIE DAO (TIES DAO) is a comprehensive Web3 community platform designed to foster genuine collaboration and engagement among blockchain enthusiasts, developers, and founders. Unlike traditional platforms focused on hype, TIE DAO emphasizes human connections, reputation building, and meaningful contributions.
+
+### Key Highlights
+
+- 🌐 **Human-First Approach**: Focus on real collaboration over speculation
+- 🎮 **Gamified Engagement**: Quizzes, streaks, and leaderboards to encourage participation
+- 🤝 **Referral System**: Grow the community through trusted connections
+- 📊 **Admin Dashboard**: Comprehensive analytics and user management
+- 🌙 **Dark/Light Mode**: Full theme support for user preference
+- 📱 **Responsive Design**: Optimized for all device sizes
+
+---
+
+## ✨ Features
+
+### Public Features
+| Feature | Description |
+|---------|-------------|
+| **Landing Page** | Beautiful hero section with animated components |
+| **Features Showcase** | Yaps, Jobs, Leaderboards, and Escrow features |
+| **Web3 Education** | Educational content about blockchain and Web3 |
+| **Roadmap** | Project development timeline |
+| **Team Section** | Meet the team behind TIE DAO |
+| **Community Links** | Social media and community connections |
+| **Contact Form** | Direct communication channel |
+| **Feedback System** | User feedback collection |
+
+### User Features (Authenticated)
+| Feature | Description |
+|---------|-------------|
+| **User Dashboard** | Personal stats, streaks, and progress tracking |
+| **Daily Check-in** | Streak system with milestone rewards |
+| **Quiz System** | Web3 knowledge quizzes with points |
+| **Quiz Leaderboard** | Compete with other community members |
+| **Referral Program** | Generate referral codes and track referrals |
+| **Referral Leaderboard** | Top referrers ranking |
+| **Password Reset** | Email-based OTP password recovery |
+
+### Admin Features
+| Feature | Description |
+|---------|-------------|
+| **Admin Dashboard** | Comprehensive platform analytics |
+| **User Management** | View, suspend, and manage users |
+| **Quiz Management** | Create, edit, and delete quizzes |
+| **Analytics Charts** | Visual data representation with Recharts |
+| **User Analytics** | Individual user activity tracking |
+
+---
+
+## 🛠 Tech Stack
 
 ### Frontend
-```
-- React 18+             → UI framework
-- Vite                  → Build tool
-- Tailwind CSS          → Styling
-- Framer Motion         → Animations
-- Recharts              → Data visualization
-- Lucide React          → Icons
-- Supabase              → Database (optional)
-```
+| Technology | Purpose |
+|------------|---------|
+| **React 18** | UI library with hooks |
+| **Vite 5** | Build tool and dev server |
+| **React Router 7** | Client-side routing |
+| **Tailwind CSS 3.4** | Utility-first styling |
+| **Framer Motion 11** | Animations and transitions |
+| **Lucide React** | Icon library |
+| **React Icons** | Additional icons |
+| **Recharts** | Data visualization |
+| **Supabase JS** | Authentication client |
 
 ### Backend
-```
-- Node.js               → Runtime
-- Express.js            → Web framework
-- MongoDB               → Database
-- Mongoose             → ODM (Object Document Mapper)
-- JWT                   → Authentication
-- Bcrypt                → Password hashing
-```
+| Technology | Purpose |
+|------------|---------|
+| **Express 4** | Node.js web framework |
+| **MongoDB** | NoSQL database |
+| **Mongoose 9** | MongoDB ODM |
+| **JWT** | Authentication tokens |
+| **bcryptjs** | Password hashing |
+| **Nodemailer** | Email sending |
+| **CORS** | Cross-origin resource sharing |
 
 ### Deployment
+| Service | Purpose |
+|---------|---------|
+| **Vercel** | Frontend & Backend hosting |
+| **MongoDB Atlas** | Cloud database |
+
+---
+
+## 📁 Project Structure
+
 ```
-- Vercel                → Frontend & API hosting
-- MongoDB Atlas         → Cloud database
+tie-dao-react-landing/
+├── public/                     # Static assets
+│   └── dao.png                 # Logo image
+├── server/                     # Backend API
+│   ├── api/
+│   │   └── index.js            # Express app entry point
+│   ├── controllers/
+│   │   └── authController.js   # Authentication logic
+│   ├── middleware/
+│   │   ├── auth.js             # JWT middleware
+│   │   └── authMiddleware.js   # Auth helpers
+│   ├── models/
+│   │   ├── User.js             # User schema
+│   │   ├── Quiz.js             # Quiz schema
+│   │   ├── QuizAttempt.js      # Quiz attempt tracking
+│   │   ├── DailyStreak.js      # Streak tracking
+│   │   ├── Reward.js           # Rewards schema
+│   │   └── Collaboration.js    # Collaboration schema
+│   ├── routes/
+│   │   ├── auth.js             # Auth routes
+│   │   ├── admin.js            # Admin routes
+│   │   ├── quiz.js             # Quiz routes
+│   │   ├── referral.js         # Referral routes
+│   │   ├── dailyStreak.js      # Streak routes
+│   │   ├── dashboard.js        # Dashboard routes
+│   │   ├── contact.js          # Contact form routes
+│   │   └── feedback.js         # Feedback routes
+│   ├── .env.example            # Backend env template
+│   ├── package.json            # Backend dependencies
+│   └── vercel.json             # Backend Vercel config
+├── src/                        # Frontend source
+│   ├── assets/                 # Images and media
+│   ├── components/             # React components
+│   │   ├── Navbar.jsx          # Navigation bar
+│   │   ├── Hero.jsx            # Hero section
+│   │   ├── Features.jsx        # Features showcase
+│   │   ├── Roadmap.jsx         # Project roadmap
+│   │   ├── Team.jsx            # Team section
+│   │   ├── Community.jsx       # Community links
+│   │   ├── Contact.jsx         # Contact form
+│   │   ├── Footer.jsx          # Footer component
+│   │   ├── Web3Education.jsx   # Educational content
+│   │   ├── Feedback.jsx        # Feedback widget
+│   │   ├── Quiz.jsx            # Quiz component
+│   │   ├── QuizLeaderboard.jsx # Quiz rankings
+│   │   ├── Referral.jsx        # Referral system
+│   │   ├── ReferralLeaderboard.jsx # Referral rankings
+│   │   ├── Dashboard.jsx       # User dashboard
+│   │   └── ConfirmModal.jsx    # Confirmation dialogs
+│   ├── config/
+│   │   └── api.js              # API configuration
+│   ├── context/
+│   │   ├── AuthContext.jsx     # Authentication state
+│   │   └── ThemeContext.jsx    # Theme management
+│   ├── lib/
+│   │   └── supabase.js         # Supabase client
+│   ├── Pages/
+│   │   ├── login.jsx           # Login page
+│   │   ├── signup.jsx          # Registration page
+│   │   ├── ForgotPassword.jsx  # Password reset
+│   │   ├── Dashboard.jsx       # User dashboard page
+│   │   ├── Leaderboard.jsx     # Leaderboard page
+│   │   ├── AdminLogin.jsx      # Admin login
+│   │   ├── AdminDashboard.jsx  # Admin panel
+│   │   └── SuperDashboard.jsx  # Super admin panel
+│   ├── routes/
+│   │   ├── ProtectedRoute.jsx  # Auth route guard
+│   │   └── AdminRoute.jsx      # Admin route guard
+│   ├── App.jsx                 # Main app component
+│   ├── main.jsx                # React entry point
+│   └── index.css               # Global styles
+├── .env.example                # Frontend env template
+├── .gitignore                  # Git ignore rules
+├── index.html                  # HTML entry point
+├── package.json                # Frontend dependencies
+├── postcss.config.js           # PostCSS configuration
+├── tailwind.config.js          # Tailwind configuration
+├── vite.config.js              # Vite configuration
+└── vercel.json                 # Frontend Vercel config
 ```
 
 ---
@@ -107,626 +211,263 @@ TIE-DAO Platform
 ## 🚀 Getting Started
 
 ### Prerequisites
-```bash
-- Node.js 16+
-- npm or yarn
-- MongoDB Atlas account
-- Git
-```
 
-### Installation
+Ensure you have the following installed:
 
-**1. Clone Repository**
-```bash
-git clone <repository-url>
-cd tie-dao-react-landing
-```
+- **Node.js** (v18 or higher)
+- **npm** or **yarn**
+- **MongoDB** (local or Atlas account)
+- **Git**
 
-**2. Install Dependencies**
-```bash
-# Frontend
-npm install
+### Frontend Installation
 
-# Backend
-cd server
-npm install
-cd ..
-```
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/your-username/tie-dao-react-landing.git
+   cd tie-dao-react-landing
+   ```
 
-**3. Environment Setup**
-Create `.env` in the `server/` directory:
-```
-MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/tiesdao
-JWT_SECRET=your_super_secret_jwt_key_12345
-PORT=5000
-NODE_ENV=development
-```
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-**4. Start Development Servers**
-```bash
-# Terminal 1 - Frontend
-npm run dev
+3. **Configure environment variables**
+   ```bash
+   cp .env.example .env
+   ```
+   Edit `.env` with your configuration:
+   ```env
+   VITE_API_URL=http://localhost:5000
+   ```
 
-# Terminal 2 - Backend
-cd server
-npm start
-```
+4. **Start development server**
+   ```bash
+   npm run dev
+   ```
+   The app will be available at `http://localhost:5173`
 
-**5. Access Application**
-- Frontend: `http://localhost:5173`
-- Backend API: `http://localhost:5000`
+### Backend Installation
 
----
+1. **Navigate to server directory**
+   ```bash
+   cd server
+   ```
 
-## 📚 Feature Documentation
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-### 🔐 Authentication System
+3. **Configure environment variables**
+   ```bash
+   cp .env.example .env
+   ```
+   Edit `.env` with your configuration (see [Environment Variables](#-environment-variables))
 
-#### Signup Flow
-```javascript
-1. User enters email, username, password
-2. Password hashed with bcrypt
-3. User created in MongoDB
-4. JWT token generated and stored
-5. User redirected to dashboard
-```
-
-**Endpoint**: `POST /api/auth/signup`
-```json
-{
-  "email": "user@example.com",
-  "username": "john_doe",
-  "password": "secure_password_123"
-}
-```
-
-#### Login Flow
-```javascript
-1. User enters email and password
-2. Password verified with bcrypt
-3. JWT token generated
-4. Token stored in localStorage
-5. User redirected to dashboard
-```
-
-**Endpoint**: `POST /api/auth/login`
-```json
-{
-  "email": "user@example.com",
-  "password": "secure_password_123"
-}
-```
-
-#### Forgot Password (Implemented)
-```javascript
-1. User enters email
-2. Verification email sent (optional)
-3. Reset token generated
-4. User sets new password
-5. Password updated in database
-```
-
-**Endpoint**: `POST /api/auth/forgot-password`
-
-### 🎓 Quiz System
-
-#### Quiz Creation (Admin)
-1. Admin creates quiz with:
-   - Title, description, category
-   - Difficulty level, points value
-   - Multiple questions with options
-2. Quiz saved to database
-3. Marked as active/inactive
-
-**Admin Endpoint**: `POST /api/admin/quizzes`
-
-#### Quiz Taking (User)
-1. User views quiz list: `GET /api/quiz`
-2. Starts quiz: fetches details with `GET /api/quiz/:id`
-3. Selects answers
-4. Submits quiz: `POST /api/quiz/:id/submit`
-5. Points calculated and awarded
-
-**Points Calculation**:
-```
-Score = (Correct Answers / Total Questions) × Quiz Points
-```
-
-### 👥 Referral System
-
-#### Generate Referral Code
-```javascript
-1. User generates unique referral code
-2. Code stored in user profile
-3. Shareable link created
-4. Displayed on referral page
-```
-
-**Endpoint**: `POST /api/referral/generate`
-
-#### Use Referral Code
-```javascript
-1. New user signs up with referral code
-2. System verifies code exists
-3. Referrer awarded 100 points
-4. New user awarded 50 points
-5. Both users linked in database
-```
-
-#### Referral Leaderboard
-```javascript
-1. Fetch all users sorted by referral points
-2. Calculate referral count from:
-   - Actual referredBy field, OR
-   - Calculate from points (points ÷ 100)
-3. Display ranking
-```
-
-**Endpoint**: `GET /api/referral/leaderboard`
-
-### 📊 Admin Dashboard
-
-#### Features
-1. **Overview Tab**
-   - Total users, quizzes, attempts
-   - Active users, success rate
-   - Charts and statistics
-
-2. **Users Tab**
-   - Search users by email/username
-   - View user details
-   - Suspend/unsuspend users
-   - Reset user points
-   - Delete users
-
-3. **Quizzes Tab**
-   - Create new quizzes
-   - Edit quiz details
-   - Duplicate quizzes
-   - Delete quizzes
-   - View attempts
-
-4. **Analytics Tab**
-   - Quiz performance metrics
-   - Question difficulty analysis
-   - User attempt statistics
-   - Success rates
-
-5. **Reports Tab**
-   - Export user data (JSON)
-   - Export quiz attempts (JSON)
-   - Verify referral integrity
-   - Check for broken chains
-
-#### Admin Authentication
-```javascript
-// Access: /admin
-// Password: TIE_DAO_ADMIN_2025 (CHANGE THIS IN PRODUCTION!)
-// Authentication: Base64 encoded token
-```
+4. **Start the server**
+   ```bash
+   npm start
+   ```
+   The API will be available at `http://localhost:5000`
 
 ---
 
-## 🗄️ Database Schema
+## 🔐 Environment Variables
 
-### User Model
-```javascript
-{
-  _id: ObjectId,
-  email: String (unique),
-  username: String (unique),
-  password: String (hashed),
-  role: String, // "user" or "admin"
-  referralCode: String (unique),
-  referredBy: String,
-  quizPoints: Number (default: 0),
-  referralPoints: Number (default: 0),
-  totalPoints: Number (default: 0),
-  quizzesCompleted: Number (default: 0),
-  suspended: Boolean (default: false),
-  createdAt: Date,
-  updatedAt: Date
-}
-```
+### Frontend (`.env`)
 
-### Quiz Model
-```javascript
-{
-  _id: ObjectId,
-  title: String,
-  description: String,
-  category: String,
-  points: Number,
-  difficulty: String, // "easy", "medium", "hard"
-  questions: [
-    {
-      question: String,
-      options: [String],
-      correctAnswer: Number,
-      explanation: String
-    }
-  ],
-  createdBy: ObjectId (ref: User),
-  isActive: Boolean (default: true),
-  createdAt: Date,
-  updatedAt: Date
-}
-```
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `VITE_API_URL` | Backend API URL | `http://localhost:5000` |
 
-### QuizAttempt Model
-```javascript
-{
-  _id: ObjectId,
-  userId: ObjectId (ref: User),
-  quizId: ObjectId (ref: Quiz),
-  score: Number, // percentage 0-100
-  totalQuestions: Number,
-  pointsEarned: Number,
-  answers: [
-    {
-      questionId: Number,
-      userAnswer: Number,
-      isCorrect: Boolean
-    }
-  ],
-  completedAt: Date,
-  createdAt: Date,
-  updatedAt: Date
-}
-```
+### Backend (`server/.env`)
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `MONGO_URI` | MongoDB connection string | `mongodb+srv://user:pass@cluster.mongodb.net/tiedao` |
+| `JWT_SECRET` | Secret key for JWT tokens | `your-super-secret-key-here` |
+| `EMAIL_USER` | Gmail address for sending emails | `your-email@gmail.com` |
+| `EMAIL_PASS` | Gmail app password | `your-app-password` |
+| `RECEIVE_EMAIL` | Email to receive contact forms | `admin@example.com` |
+| `PORT` | Server port | `5000` |
+| `NODE_ENV` | Environment mode | `development` or `production` |
+| `FRONTEND_URL` | Frontend URL for CORS | `https://tiesdao.vercel.app` |
 
 ---
 
-## 🔌 API Endpoints
+## 📡 API Reference
 
-### Authentication Routes
-```
-POST   /api/auth/signup                 → Register new user
-POST   /api/auth/login                  → Login user
-POST   /api/auth/forgot-password        → Request password reset
-POST   /api/auth/reset-password         → Reset password with token
-POST   /api/auth/profile                → Get user profile
-PUT    /api/auth/profile                → Update user profile
-POST   /api/auth/logout                 → Logout user
-```
+### Authentication Endpoints
 
-### Quiz Routes
-```
-GET    /api/quiz                        → List all active quizzes
-GET    /api/quiz/:id                    → Get quiz details with questions
-POST   /api/quiz/:id/submit             → Submit quiz answers
-GET    /api/quiz/leaderboard/quiz       → Quiz performance leaderboard
-GET    /api/quiz/user/history           → User's quiz history
-```
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/auth/register` | Register new user |
+| `POST` | `/api/auth/login` | User login |
+| `POST` | `/api/auth/forgot-password` | Request password reset |
+| `POST` | `/api/auth/reset-password` | Reset password with OTP |
 
-### Referral Routes
-```
-POST   /api/referral/generate           → Generate referral code
-GET    /api/referral/code               → Get user's referral code
-GET    /api/referral/leaderboard        → Referral rankings
-POST   /api/referral/use                → Apply referral code
-```
+### User Endpoints
 
-### Admin Routes
-```
-POST   /api/admin/verify-password       → Verify admin password
-GET    /api/admin/stats                 → Dashboard statistics
-GET    /api/admin/users                 → List all users
-GET    /api/admin/users/:userId         → Get user details
-DELETE /api/admin/users/:userId         → Delete user
-PATCH  /api/admin/users/:userId/suspend → Suspend/unsuspend user
-PATCH  /api/admin/users/:userId/reset-points → Reset user points
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/dashboard` | Get user dashboard data |
+| `POST` | `/api/daily-streak/checkin` | Daily check-in |
 
-GET    /api/admin/quizzes               → List all quizzes
-POST   /api/admin/quizzes               → Create quiz
-PUT    /api/admin/quizzes/:quizId       → Update quiz
-DELETE /api/admin/quizzes/:quizId       → Delete quiz
-POST   /api/admin/quizzes/:quizId/duplicate → Duplicate quiz
+### Quiz Endpoints
 
-GET    /api/admin/analytics/quizzes     → Quiz analytics
-GET    /api/admin/analytics/users/:userId → User analytics
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/quiz` | Get all quizzes |
+| `GET` | `/api/quiz/:id` | Get quiz by ID |
+| `POST` | `/api/quiz/:id/submit` | Submit quiz answers |
 
-GET    /api/admin/verify/referrals      → Verify referral chains
-POST   /api/admin/export/users          → Export users data
-POST   /api/admin/export/attempts       → Export quiz attempts
-```
+### Referral Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/referral/info` | Get referral info |
+| `POST` | `/api/referral/generate` | Generate referral code |
+
+### Admin Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/admin/stats` | Get platform statistics |
+| `GET` | `/api/admin/users` | Get all users |
+| `POST` | `/api/admin/quiz` | Create new quiz |
+| `DELETE` | `/api/admin/quiz/:id` | Delete quiz |
+
+### Utility Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/` | API status check |
+| `GET` | `/health` | Health check |
+| `GET` | `/api/mongo-status` | MongoDB connection status |
+| `POST` | `/api/mongo-reconnect` | Force MongoDB reconnection |
 
 ---
 
-## 🎨 UI/UX Features
+## 🌐 Deployment
 
-### Design System
-- **Color Scheme**: Dark theme with blue/cyan accents
-- **Glassmorphism**: Semi-transparent cards with backdrop blur
-- **Neon Accents**: Cyan, blue, purple gradients
-- **Animations**: Smooth Framer Motion transitions
-- **Icons**: Lucide React (no emojis)
+### Frontend Deployment (Vercel)
 
-### Responsive Design
-```
-Mobile (< 640px)    → Single column, stacked layout
-Tablet (640-1024px) → 2-column layout
-Desktop (> 1024px)  → Full 4-column layout
-```
+1. **Connect your repository to Vercel**
 
-### Components
+2. **Configure build settings**
+   - Framework Preset: `Vite`
+   - Build Command: `npm run build`
+   - Output Directory: `dist`
 
-#### ConfirmModal
-Professional modal replacement for `alert()` and `confirm()`
-- Three types: delete (red), warning (yellow), success (green)
-- Smooth animations
-- Auto-dismiss on success
-- Keyboard accessible
+3. **Add environment variables**
+   ```
+   VITE_API_URL=https://your-backend-url.vercel.app
+   ```
 
-#### Navbar
-- Responsive navigation
-- Logo and brand
-- User menu (login/logout)
-- Admin access
+4. **Deploy**
 
-#### Leaderboards
-- Real-time ranking
-- User statistics
-- Point display
-- Search functionality
+### Backend Deployment (Vercel)
 
----
+1. **Navigate to server directory**
 
-## 🔍 Key Logic Explained
+2. **Ensure `vercel.json` is configured**
+   ```json
+   {
+     "version": 2,
+     "builds": [
+       {
+         "src": "api/index.js",
+         "use": "@vercel/node"
+       }
+     ],
+     "routes": [
+       {
+         "src": "/(.*)",
+         "dest": "api/index.js"
+       }
+     ]
+   }
+   ```
 
-### Points System
-```javascript
-// Quiz Points
-quizPoints = (correctAnswers / totalQuestions) × quizValue
+3. **Deploy via Vercel CLI or dashboard**
+   ```bash
+   vercel --prod
+   ```
 
-// Referral Points
-referrerPoints = +100 per successful referral
-refereePoints = +50 when using code
+4. **Add environment variables in Vercel dashboard**
 
-// Total Points
-totalPoints = quizPoints + referralPoints
-```
+### MongoDB Atlas Setup
 
-### User Ranking
-```javascript
-// Sorted by totalPoints (descending)
-// Leaderboard displays: username, points, rank
-// Real-time updates on quiz/referral completion
-```
-
-### Referral Chain
-```javascript
-User A (referrer) → referralCode: "ABC123"
-    ↓
-User B (referee) → referredBy: "ABC123"
-    ↓
-User B invites → referralCode: "XYZ789"
-    ↓
-User C → referredBy: "XYZ789"
-
-// Verifies no circular references
-// Calculates depth and width
-```
+1. Create a free cluster at [MongoDB Atlas](https://www.mongodb.com/atlas)
+2. Create a database user
+3. Whitelist IP addresses (use `0.0.0.0/0` for Vercel)
+4. Get connection string and add to environment variables
 
 ---
 
-## ⚠️ Important Security Notes
+## 🤝 Contributing
 
-### Passwords
-- ⚠️ Change admin password from `TIE_DAO_ADMIN_2025`
-- Use environment variable: `ADMIN_PASSWORD`
-- Never commit to public repo
+Contributions are welcome! Please follow these steps:
 
-### Environment Variables
-```
-.env file structure:
-MONGO_URI=your_connection_string
-JWT_SECRET=your_secret_key
-ADMIN_PASSWORD=your_secure_password
-PORT=5000
-```
+1. **Fork the repository**
 
-### Best Practices
-- ✅ Use HTTPS in production
-- ✅ Validate all inputs on backend
-- ✅ Hash passwords with bcrypt
-- ✅ Use secure JWT secrets
-- ✅ Implement rate limiting
-- ✅ Add CORS restrictions
-- ✅ Regular database backups
+2. **Create a feature branch**
+   ```bash
+   git checkout -b feature/amazing-feature
+   ```
 
----
+3. **Commit your changes**
+   ```bash
+   git commit -m 'Add some amazing feature'
+   ```
 
-## 🧪 Testing Checklist
+4. **Push to the branch**
+   ```bash
+   git push origin feature/amazing-feature
+   ```
 
-### Authentication
-- [ ] Signup creates new user
-- [ ] Login works with correct credentials
-- [ ] JWT token stored in localStorage
-- [ ] Protected routes blocked without token
-- [ ] Logout clears token
-- [ ] Forgot password works
-- [ ] Password reset works
+5. **Open a Pull Request**
 
-### Quiz System
-- [ ] Admin can create quiz
-- [ ] Users can see quiz list
-- [ ] Quiz details load with questions
-- [ ] Users can answer questions
-- [ ] Points calculated correctly
-- [ ] Results display properly
-- [ ] Leaderboard updates
+### Code Style Guidelines
 
-### Referral System
-- [ ] User can generate code
-- [ ] Code is unique
-- [ ] New user can use code
-- [ ] Points awarded correctly
-- [ ] Leaderboard shows referrals
-- [ ] Chains don't have cycles
-
-### Admin Dashboard
-- [ ] Admin can login
-- [ ] Analytics display correctly
-- [ ] Users can be managed
-- [ ] Quizzes can be created/deleted
-- [ ] Data exports work
-- [ ] Referral verify works
-
----
-
-## 📦 Deployment
-
-### Environment Setup
-
-**Production Environment Variables**:
-```
-NODE_ENV=production
-MONGO_URI=mongodb+srv://prod_user:prod_pass@prod-cluster.mongodb.net/tiesdao-prod
-JWT_SECRET=your_very_secure_secret_key_minimum_32_chars
-ADMIN_PASSWORD=your_secure_admin_password
-PORT=5000
-```
-
-### Deploy to Vercel
-
-**Frontend**:
-1. Push to GitHub
-2. Connect GitHub repo to Vercel
-3. Set environment variables in Vercel dashboard
-4. Deploy
-
-**Backend**:
-1. Create `vercel.json` in root
-2. Configure serverless functions
-3. Deploy backend separately or use Vercel Functions
-
-### MongoDB Setup
-1. Create MongoDB Atlas account
-2. Create cluster
-3. Get connection string
-4. Add connection string to .env
-5. Create database indexes for performance
-
----
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-**"Cannot GET /api/quiz"**
-- Check backend is running
-- Verify routes are imported in `server/api/index.js`
-- Check API_BASE in frontend config
-
-**"Quiz has no questions"**
-- Fetch full quiz details with `GET /api/quiz/:id`
-- Verify questions array exists in database
-- Check admin created quiz with questions
-
-**Login not working**
-- Verify JWT_SECRET matches frontend/backend
-- Check MongoDB connection
-- Ensure user exists in database
-
-**Analytics empty**
-- Verify quiz attempts exist in database
-- Check analytics endpoint returns data
-- Check quizAnalytics state is updated
-
-**Points not updating**
-- Verify quiz submission endpoint is called
-- Check user ID is passed correctly
-- Verify MongoDB write permissions
-
-### Debug Mode
-```javascript
-// Enable console logging
-localStorage.setItem('DEBUG', 'true');
-
-// Check network requests in DevTools
-F12 → Network tab → API calls
-```
-
----
-
-## 📚 Additional Resources
-
-- [React Documentation](https://react.dev)
-- [Tailwind CSS](https://tailwindcss.com)
-- [MongoDB Docs](https://docs.mongodb.com)
-- [Express.js](https://expressjs.com)
-- [JWT Intro](https://jwt.io)
-- [Framer Motion](https://www.framer.com/motion)
-
----
-
-## 👥 Contributing
-
-### Code Style
-- Use modern ES6+ syntax
+- Use functional components with hooks
+- Follow ESLint rules
+- Use meaningful variable and function names
 - Add comments for complex logic
-- Keep functions under 50 lines
-- Use meaningful variable names
-- Test before committing
-
-### Pull Request Process
-1. Create feature branch
-2. Make changes
-3. Test thoroughly
-4. Create pull request
-5. Get code review
-6. Merge to main
+- Keep components small and focused
 
 ---
 
-## 📝 License
+## 📄 License
 
-This project is proprietary to TIE-DAO. All rights reserved.
-
----
-
-## 📞 Support
-
-For issues and questions:
-1. Check troubleshooting section
-2. Review documentation files
-3. Check console for error messages
-4. Contact development team
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-## 🎉 Project Status
+## 📞 Contact & Support
 
-**Current Version**: 1.0.0
-**Status**: ✅ Production Ready
-**Last Updated**: January 2, 2026
-
-### Features Implemented
-- ✅ User authentication (signup, login)
-- ✅ Forgot password feature
-- ✅ Quiz system (create, take, score)
-- ✅ Quiz leaderboard
-- ✅ Referral program
-- ✅ Referral leaderboard
-- ✅ Admin dashboard
-- ✅ User management
-- ✅ Quiz management
-- ✅ Analytics
-- ✅ Data export
-- ✅ Custom modals
-- ✅ Mobile responsive design
-
-### Planned Features (Phase 2)
-- [ ] Daily streak tracking
-- [ ] Badge system
-- [ ] Quiz categories filtering
-- [ ] Advanced search
-- [ ] Two-factor authentication
-- [ ] Social sharing
-- [ ] Mobile app
-- [ ] API documentation (Swagger)
+- **Website**: [tiesdao.vercel.app](https://tiesdao.vercel.app)
+- **Twitter/X**: [@ties_dao](https://x.com/ties_dao)
 
 ---
 
-**Built with ❤️ for the TIE-DAO Community**
+## 🙏 Acknowledgments
+
+- [React](https://reactjs.org/) - UI Library
+- [Vite](https://vitejs.dev/) - Build Tool
+- [Tailwind CSS](https://tailwindcss.com/) - CSS Framework
+- [Framer Motion](https://www.framer.com/motion/) - Animation Library
+- [Lucide](https://lucide.dev/) - Icon Library
+- [Vercel](https://vercel.com/) - Deployment Platform
+- [MongoDB](https://www.mongodb.com/) - Database
+
+---
+
+<div align="center">
+
+**Built with ❤️ by the TIE DAO Team**
+
+⭐ Star this repo if you find it helpful!
+
+</div>
