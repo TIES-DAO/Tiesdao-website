@@ -25,7 +25,7 @@ const app = express();
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:3000",
-  "https://www.tiesdao.com",
+  "https://tiesdao.com",
   process.env.FRONTEND_URL || "https://tiesdao.vercel.app",
 ];
 
