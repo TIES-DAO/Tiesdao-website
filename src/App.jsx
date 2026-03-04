@@ -11,7 +11,7 @@ import Footer from "./components/Footer";
 import Team from "./components/Team";
 import Web3Education from "./components/Web3Education";
 import Feedback from "./components/Feedback";
-
+import Collaboration from "./components/Collaboration";
 import Quiz from "./components/Quiz";
 import QuizLeaderboard from "./components/QuizLeaderboard";
 import Referral from "./components/Referral";
@@ -64,6 +64,7 @@ export default function App() {
                   <Web3Education />
                 </div>
               </section>
+              <Collaboration />
               <Roadmap />
               <Team />
               <Community />
