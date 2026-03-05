@@ -21,7 +21,7 @@ export default function Collaboration() {
           <motion.img
             whileHover={{ scale: 1.1 }}
             transition={{ duration: 0.5 }}
-            src="https://your-image-link-here.jpg"
+            src="https://freeimage.host/i/qCZMLiP"
             alt="Collaborator"
             className="h-full w-full object-cover"
           />
@@ -31,11 +31,11 @@ export default function Collaboration() {
         {/* Content */}
         <div className="p-8 relative">
           <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Collaborator Name
+            ZyberChain
           </h3>
 
           <p className="text-gray-500 dark:text-gray-400 mt-2">
-            Web3 Engineer / Founder / Designer
+            Web3 Engineer
           </p>
 
           {/* Buttons */}
@@ -43,7 +43,7 @@ export default function Collaboration() {
             {/* X Link */}
             <motion.a
               whileHover={{ x: 5 }}
-              href="https://x.com/your-link"
+              href="https://x.com/zyberchain"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-sm font-semibold 
@@ -55,7 +55,7 @@ export default function Collaboration() {
             {/* Project Website */}
             <motion.a
               whileHover={{ x: 5 }}
-              href="https://your-project-website.com"
+              href="https://zyberchain.com/signup?ref=74b5e7aa"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-sm font-semibold
