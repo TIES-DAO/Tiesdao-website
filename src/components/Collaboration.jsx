@@ -9,8 +9,8 @@ export default function Collaboration() {
       className="py-28 px-6 flex justify-center bg-gradient-to-b from-transparent to-gray-100 dark:to-black"
     >
       <motion.div
-        whileHover={{ y: -15, scale: 1.04 }}
-        transition={{ type: "spring", stiffness: 180 }}
+        whileHover={{ y: -15, scale: 1.05 }}
+        transition={{ type: "spring", stiffness: 200 }}
         className="group relative w-full max-w-sm rounded-3xl overflow-hidden
         bg-white dark:bg-[#0c0c0c]
         border border-gray-200 dark:border-white/10
@@ -19,12 +19,14 @@ export default function Collaboration() {
         {/* Image */}
         <div className="h-72 relative overflow-hidden">
           <motion.img
-            whileHover={{ scale: 1.1 }}
-            transition={{ duration: 0.5 }}
-            src=".../SAVE_20260304_204952.jpg"
-            alt="Collaborator"
+            whileHover={{ scale: 1.12 }}
+            transition={{ duration: 0.6 }}
+            src="https://files.fm/thumb_show.php?i=p9dmtvtk9u"
+            alt="ZyberChain"
             className="h-full w-full object-cover"
           />
+
+          {/* Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
         </div>
 
@@ -35,42 +37,44 @@ export default function Collaboration() {
           </h3>
 
           <p className="text-gray-500 dark:text-gray-400 mt-2">
-            Web3 Engineer
+            Web3 Infrastructure Partner
           </p>
 
-          {/* Buttons */}
-          <div className="mt-6 flex flex-wrap gap-4">
-            {/* X Link */}
+          {/* Links */}
+          <div className="mt-6 flex gap-5">
+            {/* X Profile */}
             <motion.a
-              whileHover={{ x: 5 }}
+              whileHover={{ x: 6 }}
               href="https://x.com/zyberchain"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-sm font-semibold 
+              className="flex items-center gap-2 text-sm font-semibold 
               text-blue-500 hover:text-blue-400 transition"
             >
-              <FaXTwitter size={16} /> X Profile
+              <FaXTwitter size={16} />
+              X Profile
             </motion.a>
 
-            {/* Project Website */}
+            {/* Website */}
             <motion.a
-              whileHover={{ x: 5 }}
+              whileHover={{ x: 6 }}
               href="https://zyberchain.com/signup?ref=74b5e7aa"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-sm font-semibold
+              className="flex items-center gap-2 text-sm font-semibold
               text-purple-600 hover:text-purple-500 transition"
             >
-              <Globe size={16} /> Project
+              <Globe size={16} />
+              Website
             </motion.a>
           </div>
         </div>
 
-        {/* Soft Glow Hover Effect */}
+        {/* Glow Hover Effect */}
         <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-500 pointer-events-none">
           <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-blue-500 via-purple-500 to-cyan-400 blur-2xl opacity-20" />
         </div>
       </motion.div>
     </section>
   );
-}
+            }
