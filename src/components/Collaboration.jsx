@@ -21,7 +21,7 @@ export default function Collaboration() {
           <motion.img
             whileHover={{ scale: 1.1 }}
             transition={{ duration: 0.5 }}
-            src="https://freeimage.host/i/qCZMLiP"
+            src=".../SAVE_20260304_204952.jpg"
             alt="Collaborator"
             className="h-full w-full object-cover"
           />
