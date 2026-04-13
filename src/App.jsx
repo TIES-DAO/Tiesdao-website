@@ -12,6 +12,7 @@ import Team from "./components/Team";
 import Web3Education from "./components/Web3Education";
 import Feedback from "./components/Feedback";
 import Collaboration from "./components/Collaboration";
+import EventCard from "./components/Event"; // ✅ IMPORT EVENT
 import Quiz from "./components/Quiz";
 import QuizLeaderboard from "./components/QuizLeaderboard";
 import Referral from "./components/Referral";
@@ -44,7 +45,13 @@ export default function App() {
   }, [location, navigate]);
 
   /* ❌ Hide navbar on auth pages and admin */
-  const hideNavbarRoutes = ["/login", "/register", "/forgot-password", "/admin-login", "/admin"];
+  const hideNavbarRoutes = [
+    "/login",
+    "/register",
+    "/forgot-password",
+    "/admin-login",
+    "/admin",
+  ];
   const hideNavbar = hideNavbarRoutes.includes(location.pathname);
 
   return (
@@ -59,11 +66,16 @@ export default function App() {
             <>
               <Hero />
               <Features />
+
               <section className="py-16 bg-gray-50 dark:bg-gray-950">
                 <div className="max-w-4xl mx-auto px-4">
                   <Web3Education />
                 </div>
               </section>
+
+              {/* 🚀 EVENT COUNTDOWN */}
+              <EventCard />
+
               <Collaboration />
               <Roadmap />
               <Team />
@@ -138,8 +150,6 @@ export default function App() {
           }
         />
       </Routes>
-
-      <Feedback />
     </>
   );
 }
