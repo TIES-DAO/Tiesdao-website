@@ -12,7 +12,7 @@ import Team from "./components/Team";
 import Web3Education from "./components/Web3Education";
 import Feedback from "./components/Feedback";
 import Collaboration from "./components/Collaboration";
-import EventCard from "./components/Event"; // ✅ IMPORT EVENT
+import EventCard from "./components/event"; // ✅ IMPORT EVENT
 import Quiz from "./components/Quiz";
 import QuizLeaderboard from "./components/QuizLeaderboard";
 import Referral from "./components/Referral";
