@@ -26,7 +26,7 @@ return () => clearInterval(interval);
 
 }, []);
 
-return ( <section className="py-28 px-6 flex justify-center bg-gradient-to-b from-transparent to-gray-100 dark:to-black"> <motion.div whileHover={{ y: -15, scale: 1.05 }} transition={{ type: "spring", stiffness: 200 }} className="group relative w-full max-w-sm rounded-3xl overflow-hidden bg-white dark:bg-[#0c0c0c] border border-gray-200 dark:border-white/10 shadow-2xl" > {/* Image */} <div className="h-72 relative overflow-hidden"> <motion.img whileHover={{ scale: 1.12 }} transition={{ duration: 0.6 }} src="https://images.unsplash.com/photo-1505373877841-8d25f7d46678" alt="Event" className="h-full w-full object-cover" />
+return ( <section className="py-28 px-6 flex justify-center bg-gradient-to-b from-transparent to-gray-100 dark:to-black"> <motion.div whileHover={{ y: -15, scale: 1.05 }} transition={{ type: "spring", stiffness: 200 }} className="group relative w-full max-w-md rounded-3xl overflow-hidden bg-white dark:bg-[#0c0c0c] border border-gray-200 dark:border-white/10 shadow-2xl" > {/* Image */} <div className="h-72 relative overflow-hidden"> <motion.img whileHover={{ scale: 1.12 }} transition={{ duration: 0.6 }} src="https://images.unsplash.com/photo-1505373877841-8d25f7d46678" alt="Event" className="h-full w-full object-cover" />
 
 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
 
@@ -49,19 +49,19 @@ return ( <section className="py-28 px-6 flex justify-center bg-gradient-to-b fro
       </p>
 
       {/* Countdown */}
-      <div className="grid grid-cols-4 gap-4 mt-6 text-center">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8">
         {Object.entries(timeLeft).map(([key, value]) => (
           <motion.div
             key={key}
-            className="bg-gray-100 dark:bg-white/10 rounded-xl p-3"
+            className="flex flex-col items-center justify-center bg-gray-100 dark:bg-white/10 rounded-xl py-4"
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            whileHover={{ scale: 1.1 }}
+            whileHover={{ scale: 1.08 }}
           >
-            <p className="text-xl font-bold text-gray-900 dark:text-white">
-              {value}
+            <p className="text-2xl font-bold text-gray-900 dark:text-white">
+              {String(value).padStart(2, "0")}
             </p>
-            <span className="text-xs text-gray-500 uppercase">
+            <span className="text-xs text-gray-500 uppercase tracking-wider mt-1">
               {key}
             </span>
           </motion.div>
@@ -72,7 +72,7 @@ return ( <section className="py-28 px-6 flex justify-center bg-gradient-to-b fro
       <motion.button
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        className="mt-6 px-6 py-2 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold shadow-lg"
+        className="mt-8 px-6 py-3 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold shadow-lg"
       >
         Join Event
       </motion.button>
