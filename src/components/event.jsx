@@ -8,7 +8,8 @@ import {
 } from "react-icons/fa";
 
 export default function EventCard() {
-  const eventDate = new Date("2026-07-01T00:00:00").getTime();
+  /* ✅ UPDATED TO JULY 25, 2026 */
+  const eventDate = new Date("2026-07-25T00:00:00").getTime();
 
   const [timeLeft, setTimeLeft] = useState(getTimeLeft());
   const [isLive, setIsLive] = useState(false);
@@ -56,11 +57,7 @@ export default function EventCard() {
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
-        whileHover={{
-          y: -10,
-          rotateX: 4,
-          rotateY: -4,
-        }}
+        whileHover={{ y: -10, rotateX: 4, rotateY: -4 }}
         transition={{ duration: 0.45 }}
         className="group relative w-full max-w-md rounded-3xl overflow-hidden
         bg-white/95 dark:bg-[#0c0c0c]
@@ -68,60 +65,28 @@ export default function EventCard() {
         shadow-[0_20px_60px_rgba(0,0,0,0.18)]"
         style={{ transformStyle: "preserve-3d" }}
       >
-        {/* IMAGE SECTION */}
+        {/* IMAGE */}
         <div className="relative h-80 overflow-hidden">
-          {/* Loader */}
           {!imgLoaded && (
             <div className="absolute inset-0 animate-pulse bg-gray-300 dark:bg-gray-800 z-10" />
           )}
 
-          {/* Main Image */}
           <motion.img
             src={eventImage}
             alt="July Mega Event"
             onLoad={() => setImgLoaded(true)}
-            onError={(e) => {
-              e.target.src =
-                "https://images.unsplash.com/photo-1511578314322-379afb476865?q=80&w=1200&auto=format&fit=crop";
-            }}
             initial={{ scale: 1.2, opacity: 0 }}
             animate={{
               scale: imgLoaded ? 1 : 1.2,
               opacity: imgLoaded ? 1 : 0,
             }}
-            whileHover={{ scale: 1.08 }}
             transition={{ duration: 0.8 }}
             className="w-full h-full object-cover"
           />
 
-          {/* Cinematic Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-transparent" />
 
-          {/* Floating Particles */}
-          <div className="absolute inset-0 pointer-events-none overflow-hidden">
-            {[...Array(8)].map((_, i) => (
-              <motion.span
-                key={i}
-                className="absolute w-2 h-2 bg-white/30 rounded-full"
-                initial={{
-                  x: Math.random() * 400,
-                  y: 350,
-                  opacity: 0,
-                }}
-                animate={{
-                  y: -20,
-                  opacity: [0, 1, 0],
-                }}
-                transition={{
-                  duration: 4 + i,
-                  repeat: Infinity,
-                  delay: i * 0.5,
-                }}
-              />
-            ))}
-          </div>
-
-          {/* Top Badge */}
+          {/* Badge */}
           <div className="absolute top-4 left-4 z-20">
             {isLive ? (
               <span className="bg-red-600 text-white text-xs px-3 py-1 rounded-full animate-pulse">
@@ -129,26 +94,21 @@ export default function EventCard() {
               </span>
             ) : (
               <span className="bg-white/20 backdrop-blur-md text-white text-xs px-3 py-1 rounded-full border border-white/20">
-                JULY EVENT
+                JULY 25 EVENT
               </span>
             )}
           </div>
 
-          {/* Bottom Text */}
-          <motion.div
-            initial={{ y: 25, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            className="absolute bottom-5 left-5 right-5 z-20"
-          >
+          {/* Text */}
+          <div className="absolute bottom-5 left-5 right-5 z-20">
             <h2 className="text-3xl font-bold text-white">
-              July Mega Event 🚀
+              July 25 Mega Event 🚀
             </h2>
 
             <p className="text-sm text-white/80 mt-1">
               Learn • Connect • Earn Opportunities
             </p>
-          </motion.div>
+          </div>
         </div>
 
         {/* CONTENT */}
@@ -157,7 +117,7 @@ export default function EventCard() {
           <div className="flex items-center justify-between mb-5 text-sm text-gray-500 dark:text-gray-400">
             <div className="flex items-center gap-2">
               <FaCalendarAlt />
-              <span>July 1, 2026</span>
+              <span>July 25, 2026</span>
             </div>
 
             <div className="flex items-center gap-2">
@@ -166,7 +126,7 @@ export default function EventCard() {
             </div>
           </div>
 
-          {/* COUNTDOWN */}
+          {/* Countdown */}
           <div className="grid grid-cols-4 gap-3">
             {Object.entries(timeLeft).map(([key, value]) => (
               <AnimatePresence mode="wait" key={key}>
@@ -175,8 +135,6 @@ export default function EventCard() {
                   initial={{ y: 14, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   exit={{ y: -14, opacity: 0 }}
-                  whileHover={{ scale: 1.06 }}
-                  transition={{ duration: 0.25 }}
                   className="rounded-2xl bg-gray-100 dark:bg-white/5
                   border border-gray-200 dark:border-white/10
                   py-4 text-center"
@@ -193,17 +151,17 @@ export default function EventCard() {
             ))}
           </div>
 
-          {/* Subtitle */}
+          {/* Footer Text */}
           <div className="mt-5 flex items-center justify-center gap-2 text-sm text-gray-500 dark:text-gray-400">
             <FaClock />
             <span>
               {isLive
                 ? "The event has started"
-                : "Countdown to launch"}
+                : "Countdown to July 25 launch"}
             </span>
           </div>
 
-          {/* CTA */}
+          {/* Button */}
           <motion.a
             href={eventLink}
             target="_blank"
@@ -218,12 +176,7 @@ export default function EventCard() {
             Join Event Now <FaArrowRight />
           </motion.a>
         </div>
-
-        {/* Glow Border */}
-        <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-500">
-          <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-blue-500 via-purple-500 to-cyan-400 blur-2xl opacity-15" />
-        </div>
       </motion.div>
     </section>
   );
-        }
+            }
