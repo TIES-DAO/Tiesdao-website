@@ -1,6 +1,11 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
-import { FaCalendarAlt, FaClock, FaArrowRight } from "react-icons/fa";
+import {
+  FaCalendarAlt,
+  FaClock,
+  FaArrowRight,
+  FaUsers,
+} from "react-icons/fa";
 
 export default function EventCard() {
   const eventDate = new Date("2026-07-01T00:00:00").getTime();
@@ -15,7 +20,13 @@ export default function EventCard() {
 
     if (distance <= 0) {
       setIsLive(true);
-      return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+
+      return {
+        days: 0,
+        hours: 0,
+        minutes: 0,
+        seconds: 0,
+      };
     }
 
     return {
@@ -34,89 +45,162 @@ export default function EventCard() {
     return () => clearInterval(interval);
   }, []);
 
-  // 🔗 Your event link
-  const eventLink = "https://chat.whatsapp.com/E4phioOQ7W45u6yXFt9lPS?mode=gi_t";
+  const eventLink =
+    "https://chat.whatsapp.com/E4phioOQ7W45u6yXFt9lPS?mode=gi_t";
 
-  // 🖼️ BEST PRACTICE → Use local image
-  const eventImage = "../assets/play.jpg"; // put image inside public folder
+  const eventImage =
+    "https://files.fm/thumb_show.php?i=j56a4746ry";
 
   return (
-    <section className="py-28 px-6 flex justify-center bg-gradient-to-b from-transparent to-gray-100 dark:to-black">
+    <section className="py-24 px-6 flex justify-center bg-gradient-to-b from-transparent via-gray-50 to-gray-100 dark:from-black dark:via-black dark:to-black">
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
-        whileHover={{ y: -15, scale: 1.05 }}
-        transition={{ type: "spring", stiffness: 120 }}
+        whileHover={{
+          y: -10,
+          rotateX: 4,
+          rotateY: -4,
+        }}
+        transition={{ duration: 0.45 }}
         className="group relative w-full max-w-md rounded-3xl overflow-hidden
-        bg-white dark:bg-[#0c0c0c]
+        bg-white/95 dark:bg-[#0c0c0c]
         border border-gray-200 dark:border-white/10
-        shadow-2xl"
+        shadow-[0_20px_60px_rgba(0,0,0,0.18)]"
+        style={{ transformStyle: "preserve-3d" }}
       >
-        {/* Image */}
-        <div className="h-72 relative overflow-hidden">
-          {/* Skeleton Loader */}
+        {/* IMAGE SECTION */}
+        <div className="relative h-80 overflow-hidden">
+          {/* Loader */}
           {!imgLoaded && (
-            <div className="absolute inset-0 animate-pulse bg-gray-300 dark:bg-gray-700" />
+            <div className="absolute inset-0 animate-pulse bg-gray-300 dark:bg-gray-800 z-10" />
           )}
 
+          {/* Main Image */}
           <motion.img
             src={eventImage}
-            alt="Event"
+            alt="July Mega Event"
             onLoad={() => setImgLoaded(true)}
             onError={(e) => {
               e.target.src =
-                "https://via.placeholder.com/600x400?text=Event+Image";
+                "https://images.unsplash.com/photo-1511578314322-379afb476865?q=80&w=1200&auto=format&fit=crop";
             }}
-            initial={{ scale: 1.1 }}
-            animate={{ scale: imgLoaded ? 1 : 1.1, opacity: imgLoaded ? 1 : 0 }}
-            transition={{ duration: 0.6 }}
-            className="h-full w-full object-cover brightness-90"
+            initial={{ scale: 1.2, opacity: 0 }}
+            animate={{
+              scale: imgLoaded ? 1 : 1.2,
+              opacity: imgLoaded ? 1 : 0,
+            }}
+            whileHover={{ scale: 1.08 }}
+            transition={{ duration: 0.8 }}
+            className="w-full h-full object-cover"
           />
 
-          {/* Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+          {/* Cinematic Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-transparent" />
 
-          {/* LIVE Badge */}
-          {isLive && (
-            <div className="absolute top-4 left-4 bg-red-600 text-white text-xs px-3 py-1 rounded-full animate-pulse">
-              🔴 LIVE NOW
-            </div>
-          )}
+          {/* Floating Particles */}
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            {[...Array(8)].map((_, i) => (
+              <motion.span
+                key={i}
+                className="absolute w-2 h-2 bg-white/30 rounded-full"
+                initial={{
+                  x: Math.random() * 400,
+                  y: 350,
+                  opacity: 0,
+                }}
+                animate={{
+                  y: -20,
+                  opacity: [0, 1, 0],
+                }}
+                transition={{
+                  duration: 4 + i,
+                  repeat: Infinity,
+                  delay: i * 0.5,
+                }}
+              />
+            ))}
+          </div>
+
+          {/* Top Badge */}
+          <div className="absolute top-4 left-4 z-20">
+            {isLive ? (
+              <span className="bg-red-600 text-white text-xs px-3 py-1 rounded-full animate-pulse">
+                🔴 LIVE NOW
+              </span>
+            ) : (
+              <span className="bg-white/20 backdrop-blur-md text-white text-xs px-3 py-1 rounded-full border border-white/20">
+                JULY EVENT
+              </span>
+            )}
+          </div>
+
+          {/* Bottom Text */}
+          <motion.div
+            initial={{ y: 25, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            className="absolute bottom-5 left-5 right-5 z-20"
+          >
+            <h2 className="text-3xl font-bold text-white">
+              July Mega Event 🚀
+            </h2>
+
+            <p className="text-sm text-white/80 mt-1">
+              Learn • Connect • Earn Opportunities
+            </p>
+          </motion.div>
         </div>
 
-        {/* Content */}
-        <div className="p-8 text-center">
-          <h3 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center justify-center gap-2">
-            <FaCalendarAlt /> July Mega Event 🚀
-          </h3>
+        {/* CONTENT */}
+        <div className="p-7">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-5 text-sm text-gray-500 dark:text-gray-400">
+            <div className="flex items-center gap-2">
+              <FaCalendarAlt />
+              <span>July 1, 2026</span>
+            </div>
 
-          <p className="text-gray-500 dark:text-gray-400 mt-2 flex items-center justify-center gap-2">
-            <FaClock /> Countdown to Launch
-          </p>
+            <div className="flex items-center gap-2">
+              <FaUsers />
+              <span>Open Access</span>
+            </div>
+          </div>
 
-          {/* Countdown */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8">
+          {/* COUNTDOWN */}
+          <div className="grid grid-cols-4 gap-3">
             {Object.entries(timeLeft).map(([key, value]) => (
-              <div key={key} className="flex flex-col items-center">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={value}
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    exit={{ y: -20, opacity: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="w-full bg-gray-100 dark:bg-white/10 rounded-xl py-4 flex flex-col items-center justify-center"
-                  >
-                    <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                      {String(value).padStart(2, "0")}
-                    </p>
-                    <span className="text-xs text-gray-500 uppercase tracking-wider mt-1">
-                      {key}
-                    </span>
-                  </motion.div>
-                </AnimatePresence>
-              </div>
+              <AnimatePresence mode="wait" key={key}>
+                <motion.div
+                  key={value}
+                  initial={{ y: 14, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: -14, opacity: 0 }}
+                  whileHover={{ scale: 1.06 }}
+                  transition={{ duration: 0.25 }}
+                  className="rounded-2xl bg-gray-100 dark:bg-white/5
+                  border border-gray-200 dark:border-white/10
+                  py-4 text-center"
+                >
+                  <p className="text-xl font-bold text-gray-900 dark:text-white">
+                    {String(value).padStart(2, "0")}
+                  </p>
+
+                  <span className="text-[10px] uppercase tracking-[2px] text-gray-500">
+                    {key}
+                  </span>
+                </motion.div>
+              </AnimatePresence>
             ))}
+          </div>
+
+          {/* Subtitle */}
+          <div className="mt-5 flex items-center justify-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+            <FaClock />
+            <span>
+              {isLive
+                ? "The event has started"
+                : "Countdown to launch"}
+            </span>
           </div>
 
           {/* CTA */}
@@ -124,19 +208,20 @@ export default function EventCard() {
             href={eventLink}
             target="_blank"
             rel="noopener noreferrer"
-            whileHover={{ scale: 1.08 }}
-            whileTap={{ scale: 0.95 }}
-            className="mt-8 inline-flex items-center gap-2 px-6 py-3 rounded-full 
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.96 }}
+            className="mt-6 w-full inline-flex items-center justify-center gap-2
+            rounded-2xl px-6 py-4 font-semibold text-white
             bg-gradient-to-r from-blue-500 via-purple-500 to-cyan-400
-            text-white font-semibold shadow-lg"
+            shadow-lg"
           >
-            Join Event <FaArrowRight />
+            Join Event Now <FaArrowRight />
           </motion.a>
         </div>
 
-        {/* Glow Effect */}
-        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-500 pointer-events-none">
-          <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-blue-500 via-purple-500 to-cyan-400 blur-2xl opacity-20" />
+        {/* Glow Border */}
+        <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-500">
+          <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-blue-500 via-purple-500 to-cyan-400 blur-2xl opacity-15" />
         </div>
       </motion.div>
     </section>
