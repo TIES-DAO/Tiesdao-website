@@ -9,7 +9,7 @@ import {
   X,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
 import { useAuth } from "../context/AuthContext";
 import { useState } from "react";
@@ -19,10 +19,18 @@ export default function Navbar() {
   const { dark, toggleTheme } = useTheme();
   const { user, setUser } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const navItems = ["Home", "Features", "Roadmap", "Community", "Contact"];
+  /* ✅ ADDED EVENT + COLLABORATION */
+  const navItems = [
+    "Home",
+    "Features",
+    "Event",
+    "Collaboration",
+    "Roadmap",
+    "Community",
+    "Contact",
+  ];
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -54,16 +62,14 @@ export default function Navbar() {
 
           {/* DESKTOP NAV */}
           <div className="hidden lg:flex items-center gap-8 text-sm">
-            {navItems.map((item) => {
-              const isHome = item === "Home";
-              return isHome ? (
+            {navItems.map((item) =>
+              item === "Home" ? (
                 <Link
                   key={item}
                   to="/"
-                  className="relative font-semibold text-gray-300 hover:text-white transition"
+                  className="font-semibold text-gray-300 hover:text-white transition"
                 >
                   {item}
-                  <span className="absolute -bottom-1 left-0 h-[3px] w-0 bg-gradient-to-r from-blue-500 to-purple-500 group-hover:w-full transition-all" />
                 </Link>
               ) : (
                 <a
@@ -73,8 +79,8 @@ export default function Navbar() {
                 >
                   {item}
                 </a>
-              );
-            })}
+              )
+            )}
           </div>
 
           {/* ACTIONS */}
@@ -176,9 +182,13 @@ export default function Navbar() {
 
               {user ? (
                 <>
-                  <Link to="/dashboard" className="text-green-400 font-semibold">
+                  <Link
+                    to="/dashboard"
+                    className="text-green-400 font-semibold"
+                  >
                     Dashboard
                   </Link>
+
                   <button
                     onClick={handleLogout}
                     className="text-red-400 font-semibold text-left"
@@ -187,7 +197,10 @@ export default function Navbar() {
                   </button>
                 </>
               ) : (
-                <Link to="/login" className="text-blue-400 font-semibold">
+                <Link
+                  to="/login"
+                  className="text-blue-400 font-semibold"
+                >
                   Login
                 </Link>
               )}
