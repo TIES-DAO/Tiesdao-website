@@ -8,8 +8,8 @@ import {
 } from "react-icons/fa";
 
 export default function EventCard() {
-  /* ✅ UPDATED TO JULY 25, 2026 */
-  const eventDate = new Date("2026-07-25T00:00:00").getTime();
+  /* ✅ JULY 25, 2026 LOCAL TIME */
+  const eventDate = new Date(2026, 6, 25, 0, 0, 0).getTime();
 
   const [timeLeft, setTimeLeft] = useState(getTimeLeft());
   const [isLive, setIsLive] = useState(false);
@@ -20,27 +20,29 @@ export default function EventCard() {
     const distance = eventDate - now;
 
     if (distance <= 0) {
-      setIsLive(true);
-
       return {
         days: 0,
         hours: 0,
         minutes: 0,
         seconds: 0,
+        live: true,
       };
     }
 
     return {
-      days: Math.floor(distance / (1000 * 60 * 60 * 24)),
+      days: Math.ceil(distance / (1000 * 60 * 60 * 24)),
       hours: Math.floor((distance / (1000 * 60 * 60)) % 24),
       minutes: Math.floor((distance / (1000 * 60)) % 60),
       seconds: Math.floor((distance / 1000) % 60),
+      live: false,
     };
   }
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setTimeLeft(getTimeLeft());
+      const updated = getTimeLeft();
+      setTimeLeft(updated);
+      setIsLive(updated.live);
     }, 1000);
 
     return () => clearInterval(interval);
@@ -99,7 +101,7 @@ export default function EventCard() {
             )}
           </div>
 
-          {/* Text */}
+          {/* Title */}
           <div className="absolute bottom-5 left-5 right-5 z-20">
             <h2 className="text-3xl font-bold text-white">
               July 25 Mega Event 🚀
@@ -128,10 +130,10 @@ export default function EventCard() {
 
           {/* Countdown */}
           <div className="grid grid-cols-4 gap-3">
-            {Object.entries(timeLeft).map(([key, value]) => (
+            {["days", "hours", "minutes", "seconds"].map((key) => (
               <AnimatePresence mode="wait" key={key}>
                 <motion.div
-                  key={value}
+                  key={timeLeft[key]}
                   initial={{ y: 14, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   exit={{ y: -14, opacity: 0 }}
@@ -140,7 +142,7 @@ export default function EventCard() {
                   py-4 text-center"
                 >
                   <p className="text-xl font-bold text-gray-900 dark:text-white">
-                    {String(value).padStart(2, "0")}
+                    {String(timeLeft[key]).padStart(2, "0")}
                   </p>
 
                   <span className="text-[10px] uppercase tracking-[2px] text-gray-500">
@@ -151,7 +153,7 @@ export default function EventCard() {
             ))}
           </div>
 
-          {/* Footer Text */}
+          {/* Footer */}
           <div className="mt-5 flex items-center justify-center gap-2 text-sm text-gray-500 dark:text-gray-400">
             <FaClock />
             <span>
@@ -179,4 +181,4 @@ export default function EventCard() {
       </motion.div>
     </section>
   );
-            }
+      }
