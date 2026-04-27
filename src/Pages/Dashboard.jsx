@@ -7,7 +7,6 @@ import {
   Crown,
   Wallet,
   BarChart3,
-  CheckCircle2,
   Home,
   BookOpen,
   Trophy,
@@ -28,7 +27,7 @@ export default function Dashboard() {
   if (loading) return null;
   if (!user) return <Navigate to="/login" replace />;
 
-  const today = new Date().toLocaleDateString('en-CA');
+  const today = new Date().toLocaleDateString("en-CA");
   const streak = dashboardData?.streak || 0;
   const checkedInToday = dashboardData?.last_checkin === today;
 
@@ -56,6 +55,7 @@ export default function Dashboard() {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
+
       const data = await res.json();
       setDashboardData(data);
     } catch (err) {
@@ -74,6 +74,7 @@ export default function Dashboard() {
 
     try {
       setCheckInLoading(true);
+
       const res = await fetch(`${API_BASE}/api/daily-streak/checkin`, {
         method: "POST",
         headers: {
@@ -82,7 +83,9 @@ export default function Dashboard() {
         },
         body: JSON.stringify({ date: today }),
       });
+
       const data = await res.json();
+
       setDashboardData((prev) => ({
         ...prev,
         streak: data.streak,
@@ -170,10 +173,7 @@ function StreakCard({
   loading,
 }) {
   return (
-    <motion.div
-      whileHover={{ y: -4 }}
-      className="rounded-3xl bg-white dark:bg-gray-900 p-8 shadow-xl border border-gray-100 dark:border-gray-800"
-    >
+    <motion.div className="rounded-3xl bg-white dark:bg-gray-900 p-8 shadow-xl border border-gray-100 dark:border-gray-800">
       <div className="h-14 w-14 flex items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-purple-600 text-white">
         <TrendingUp size={26} />
       </div>
@@ -209,6 +209,63 @@ function StreakCard({
 }
 
 // -------------------------
+// LEADERBOARD (FINAL FIX)
+function LeaderboardCard({ data, currentUser }) {
+  const sorted = [...data].sort((a, b) => b.streak - a.streak);
+
+  const topTen = sorted.slice(0, 10);
+
+  const userIndex = sorted.findIndex(
+    (u) => u.username === currentUser.username
+  );
+
+  const isInTopTen = userIndex >= 0 && userIndex < 10;
+
+  return (
+    <motion.div className="rounded-2xl bg-white dark:bg-gray-900 p-6 shadow-md border border-gray-100 dark:border-gray-800">
+      <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
+        <Crown className="text-yellow-500" size={18} /> Top Streaks
+      </h3>
+
+      {/* TOP 10 */}
+      <ul className="space-y-2 max-h-64 overflow-y-auto text-sm">
+        {topTen.map((u, i) => (
+          <li
+            key={u.username}
+            className={`flex justify-between px-4 py-2 rounded-lg ${
+              u.username === currentUser.username
+                ? "bg-blue-50 dark:bg-blue-900/30 font-semibold"
+                : "bg-gray-50 dark:bg-gray-800"
+            }`}
+          >
+            <span>
+              #{i + 1} {u.username}
+            </span>
+            <span>{u.streak}</span>
+          </li>
+        ))}
+      </ul>
+
+      {/* USER POSITION */}
+      {!isInTopTen && userIndex !== -1 && (
+        <div className="mt-4 border-t border-gray-200 dark:border-gray-700 pt-3">
+          <p className="text-xs text-gray-500 mb-2 text-center">
+            Your Position
+          </p>
+
+          <div className="flex justify-between px-4 py-2 rounded-lg bg-blue-50 dark:bg-blue-900/30 font-semibold text-sm">
+            <span>
+              #{userIndex + 1} {currentUser.username}
+            </span>
+            <span>{sorted[userIndex].streak}</span>
+          </div>
+        </div>
+      )}
+    </motion.div>
+  );
+}
+
+// -------------------------
 function RankCard({ rank, total }) {
   if (!rank || !total) return null;
 
@@ -226,48 +283,11 @@ function RankCard({ rank, total }) {
           out of {total} active streakers
         </p>
       </div>
-
-      <div className="mt-4 text-xs text-gray-400 text-center">
-        Keep checking in daily to climb the ranks!
-      </div>
     </motion.div>
   );
 }
 
 // -------------------------
-// LEADERBOARD
-function LeaderboardCard({ data, currentUser }) {
-  const sorted = [...data].sort((a, b) => b.streak - a.streak);
-
-  return (
-    <motion.div className="rounded-2xl bg-white dark:bg-gray-900 p-6 shadow-md border border-gray-100 dark:border-gray-800">
-      <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
-        <Crown className="text-yellow-500" size={18} /> Top Streaks
-      </h3>
-
-      <ul className="space-y-2 max-h-64 overflow-y-auto text-sm">
-        {sorted.map((u, i) => (
-          <li
-            key={i}
-            className={`flex justify-between px-4 py-2 rounded-lg ${
-              u.username === currentUser.username
-                ? "bg-blue-50 dark:bg-blue-900/30 font-semibold"
-                : "bg-gray-50 dark:bg-gray-800"
-            }`}
-          >
-            <span>
-              #{i + 1} {u.username}
-            </span>
-            <span>{u.streak}</span>
-          </li>
-        ))}
-      </ul>
-    </motion.div>
-  );
-}
-
-// -------------------------
-// REWARDS
 function RewardsCard({ visible }) {
   if (!visible) return null;
 
@@ -275,10 +295,7 @@ function RewardsCard({ visible }) {
     <motion.div className="rounded-2xl bg-white dark:bg-gray-900 p-6 shadow-md border border-gray-100 dark:border-gray-800 text-center">
       <Wallet className="mx-auto text-purple-600" size={28} />
       <h3 className="mt-3 font-bold">Rewards</h3>
-      <p className="text-sm text-gray-500 mt-1">
-        Submit wallets to receive rewards
-      </p>
-      <button className="mt-4 w-full py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition">
+      <button className="mt-4 w-full py-2 rounded-lg bg-purple-600 text-white">
         Claim Reward
       </button>
     </motion.div>
@@ -286,7 +303,6 @@ function RewardsCard({ visible }) {
 }
 
 // -------------------------
-// ACTIVITY
 function ActivityCard({ visible }) {
   if (!visible) return null;
 
@@ -302,4 +318,4 @@ function ActivityCard({ visible }) {
       </ul>
     </motion.div>
   );
-}
+  }
