@@ -21,6 +21,7 @@ import Web3Education from "../components/Web3Education";
 
 export default function Dashboard() {
   const { user, loading } = useAuth();
+
   const [dashboardData, setDashboardData] = useState(null);
   const [checkInLoading, setCheckInLoading] = useState(false);
 
@@ -28,8 +29,11 @@ export default function Dashboard() {
   if (!user) return <Navigate to="/login" replace />;
 
   const today = new Date().toLocaleDateString("en-CA");
+
   const streak = dashboardData?.streak || 0;
-  const checkedInToday = dashboardData?.last_checkin === today;
+
+  const checkedInToday =
+    dashboardData?.last_checkin === today;
 
   // -------------------------
   // STREAK MILESTONES
@@ -40,26 +44,40 @@ export default function Dashboard() {
     if (v < 60) return 60;
     if (v < 100) return 100;
     if (v < 365) return 365;
+
     return Math.ceil(v / 100) * 100;
   };
 
   const milestone = getNextMilestone(streak);
-  const progress = Math.min((streak / milestone) * 100, 100);
+
+  const progress = Math.min(
+    (streak / milestone) * 100,
+    100
+  );
 
   // -------------------------
   // FETCH DASHBOARD
   const fetchDashboard = async () => {
     try {
-      const res = await fetch(`${API_BASE}/api/dashboard`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const res = await fetch(
+        `${API_BASE}/api/dashboard`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem(
+              "token"
+            )}`,
+          },
+        }
+      );
 
       const data = await res.json();
+
       setDashboardData(data);
     } catch (err) {
-      console.error("Dashboard fetch error:", err);
+      console.error(
+        "Dashboard fetch error:",
+        err
+      );
     }
   };
 
@@ -75,14 +93,22 @@ export default function Dashboard() {
     try {
       setCheckInLoading(true);
 
-      const res = await fetch(`${API_BASE}/api/daily-streak/checkin`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ date: today }),
-      });
+      const res = await fetch(
+        `${API_BASE}/api/daily-streak/checkin`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem(
+              "token"
+            )}`,
+            "Content-Type":
+              "application/json",
+          },
+          body: JSON.stringify({
+            date: today,
+          }),
+        }
+      );
 
       const data = await res.json();
 
@@ -98,9 +124,29 @@ export default function Dashboard() {
     }
   };
 
-  const leaderboard = dashboardData?.top_streak_users || [];
-  const userRank = dashboardData?.user_rank;
-  const totalStreakUsers = dashboardData?.total_streak_users;
+  // -------------------------
+  // LEADERBOARD LOGIC
+  const leaderboard =
+    dashboardData?.top_streak_users || [];
+
+  // ✅ ONE SOURCE OF TRUTH
+  const sortedLeaderboard = [
+    ...leaderboard,
+  ].sort((a, b) => b.streak - a.streak);
+
+  // ✅ USER POSITION
+  const userIndex =
+    sortedLeaderboard.findIndex(
+      (u) => u.username === user.username
+    );
+
+  const computedRank =
+    userIndex !== -1
+      ? userIndex + 1
+      : null;
+
+  const totalStreakUsers =
+    sortedLeaderboard.length;
 
   return (
     <section className="min-h-screen px-4 py-12 bg-gray-50 dark:bg-gray-950">
@@ -109,6 +155,7 @@ export default function Dashboard() {
         <h1 className="text-4xl font-extrabold text-gray-900 dark:text-white">
           Dashboard
         </h1>
+
         <p className="mt-2 text-gray-500">
           Welcome back,{" "}
           <span className="font-semibold text-blue-600">
@@ -120,21 +167,48 @@ export default function Dashboard() {
       {/* NAV */}
       <div className="max-w-6xl mx-auto mb-8 flex gap-3 justify-center flex-wrap">
         {[
-          { label: "Streak", path: "/dashboard", icon: Home },
-          { label: "Quizzes", path: "/quiz", icon: BookOpen },
-          { label: "Quiz Board", path: "/quiz-leaderboard", icon: Trophy },
-          { label: "Referrals", path: "/referral", icon: Gift },
-          { label: "Referral Board", path: "/referral-leaderboard", icon: Share2 },
-        ].map(({ label, path, icon: Icon }) => (
-          <Link
-            key={label}
-            to={path}
-            className="px-5 py-2 rounded-lg bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-sm font-medium hover:border-blue-500 transition flex items-center gap-2"
-          >
-            <Icon size={16} />
-            {label}
-          </Link>
-        ))}
+          {
+            label: "Streak",
+            path: "/dashboard",
+            icon: Home,
+          },
+          {
+            label: "Quizzes",
+            path: "/quiz",
+            icon: BookOpen,
+          },
+          {
+            label: "Quiz Board",
+            path: "/quiz-leaderboard",
+            icon: Trophy,
+          },
+          {
+            label: "Referrals",
+            path: "/referral",
+            icon: Gift,
+          },
+          {
+            label: "Referral Board",
+            path:
+              "/referral-leaderboard",
+            icon: Share2,
+          },
+        ].map(
+          ({
+            label,
+            path,
+            icon: Icon,
+          }) => (
+            <Link
+              key={label}
+              to={path}
+              className="px-5 py-2 rounded-lg bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-sm font-medium hover:border-blue-500 transition flex items-center gap-2"
+            >
+              <Icon size={16} />
+              {label}
+            </Link>
+          )
+        )}
       </div>
 
       {/* GRID */}
@@ -148,9 +222,15 @@ export default function Dashboard() {
           loading={checkInLoading}
         />
 
-        <LeaderboardCard data={leaderboard} currentUser={user} />
+        <LeaderboardCard
+          data={sortedLeaderboard}
+          currentUser={user}
+        />
 
-        <RankCard rank={userRank} total={totalStreakUsers} />
+        <RankCard
+          rank={computedRank}
+          total={totalStreakUsers}
+        />
 
         <RewardsCard visible={false} />
 
@@ -178,13 +258,20 @@ function StreakCard({
         <TrendingUp size={26} />
       </div>
 
-      <h3 className="mt-6 text-5xl font-extrabold">{streak}</h3>
-      <p className="text-sm text-gray-500 mt-1">Daily Streak</p>
+      <h3 className="mt-6 text-5xl font-extrabold">
+        {streak}
+      </h3>
+
+      <p className="text-sm text-gray-500 mt-1">
+        Daily Streak
+      </p>
 
       <div className="mt-6 h-3 bg-gray-200 dark:bg-gray-800 rounded-full overflow-hidden">
         <motion.div
           initial={{ width: 0 }}
-          animate={{ width: `${progress}%` }}
+          animate={{
+            width: `${progress}%`,
+          }}
           className="h-full bg-gradient-to-r from-blue-500 to-purple-600"
         />
       </div>
@@ -195,36 +282,52 @@ function StreakCard({
 
       <button
         onClick={onCheckIn}
-        disabled={checkedInToday || loading}
+        disabled={
+          checkedInToday || loading
+        }
         className={`mt-6 w-full py-3 rounded-xl font-semibold transition ${
           checkedInToday
             ? "bg-green-100 text-green-700"
             : "bg-blue-600 text-white hover:bg-blue-700"
         }`}
       >
-        {checkedInToday ? "Checked In" : "Check In Today"}
+        {checkedInToday
+          ? "Checked In"
+          : "Check In Today"}
       </button>
     </motion.div>
   );
 }
 
 // -------------------------
-// LEADERBOARD (FINAL FIX)
-function LeaderboardCard({ data, currentUser }) {
-  const sorted = [...data].sort((a, b) => b.streak - a.streak);
+// LEADERBOARD
+function LeaderboardCard({
+  data,
+  currentUser,
+}) {
+  const sorted = data;
 
   const topTen = sorted.slice(0, 10);
 
-  const userIndex = sorted.findIndex(
-    (u) => u.username === currentUser.username
-  );
+  const userIndex =
+    sorted.findIndex(
+      (u) =>
+        u.username ===
+        currentUser.username
+    );
 
-  const isInTopTen = userIndex >= 0 && userIndex < 10;
+  const isInTopTen =
+    userIndex >= 0 &&
+    userIndex < 10;
 
   return (
     <motion.div className="rounded-2xl bg-white dark:bg-gray-900 p-6 shadow-md border border-gray-100 dark:border-gray-800">
       <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
-        <Crown className="text-yellow-500" size={18} /> Top Streaks
+        <Crown
+          className="text-yellow-500"
+          size={18}
+        />{" "}
+        Top Streaks
       </h3>
 
       {/* TOP 10 */}
@@ -233,7 +336,8 @@ function LeaderboardCard({ data, currentUser }) {
           <li
             key={u.username}
             className={`flex justify-between px-4 py-2 rounded-lg ${
-              u.username === currentUser.username
+              u.username ===
+              currentUser.username
                 ? "bg-blue-50 dark:bg-blue-900/30 font-semibold"
                 : "bg-gray-50 dark:bg-gray-800"
             }`}
@@ -241,46 +345,65 @@ function LeaderboardCard({ data, currentUser }) {
             <span>
               #{i + 1} {u.username}
             </span>
+
             <span>{u.streak}</span>
           </li>
         ))}
       </ul>
 
       {/* USER POSITION */}
-      {!isInTopTen && userIndex !== -1 && (
-        <div className="mt-4 border-t border-gray-200 dark:border-gray-700 pt-3">
-          <p className="text-xs text-gray-500 mb-2 text-center">
-            Your Position
-          </p>
+      {!isInTopTen &&
+        userIndex !== -1 && (
+          <div className="mt-4 border-t border-gray-200 dark:border-gray-700 pt-3">
+            <p className="text-xs text-gray-500 mb-2 text-center">
+              Your Position
+            </p>
 
-          <div className="flex justify-between px-4 py-2 rounded-lg bg-blue-50 dark:bg-blue-900/30 font-semibold text-sm">
-            <span>
-              #{userIndex + 1} {currentUser.username}
-            </span>
-            <span>{sorted[userIndex].streak}</span>
+            <div className="flex justify-between px-4 py-2 rounded-lg bg-blue-50 dark:bg-blue-900/30 font-semibold text-sm">
+              <span>
+                #{userIndex + 1}{" "}
+                {currentUser.username}
+              </span>
+
+              <span>
+                {
+                  sorted[userIndex]
+                    .streak
+                }
+              </span>
+            </div>
           </div>
-        </div>
-      )}
+        )}
     </motion.div>
   );
 }
 
 // -------------------------
-function RankCard({ rank, total }) {
+// RANK CARD
+function RankCard({
+  rank,
+  total,
+}) {
   if (!rank || !total) return null;
 
   return (
     <motion.div className="rounded-2xl bg-white dark:bg-gray-900 p-6 shadow-md border border-gray-100 dark:border-gray-800">
       <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
-        <Hash size={18} className="text-orange-500" /> Your Rank
+        <Hash
+          size={18}
+          className="text-orange-500"
+        />{" "}
+        Your Rank
       </h3>
 
       <div className="text-center">
         <div className="text-4xl font-black text-orange-500 mb-2">
           #{rank}
         </div>
+
         <p className="text-sm text-gray-500">
-          out of {total} active streakers
+          out of {total} active
+          streakers
         </p>
       </div>
     </motion.div>
@@ -288,13 +411,21 @@ function RankCard({ rank, total }) {
 }
 
 // -------------------------
+// REWARDS
 function RewardsCard({ visible }) {
   if (!visible) return null;
 
   return (
     <motion.div className="rounded-2xl bg-white dark:bg-gray-900 p-6 shadow-md border border-gray-100 dark:border-gray-800 text-center">
-      <Wallet className="mx-auto text-purple-600" size={28} />
-      <h3 className="mt-3 font-bold">Rewards</h3>
+      <Wallet
+        className="mx-auto text-purple-600"
+        size={28}
+      />
+
+      <h3 className="mt-3 font-bold">
+        Rewards
+      </h3>
+
       <button className="mt-4 w-full py-2 rounded-lg bg-purple-600 text-white">
         Claim Reward
       </button>
@@ -303,19 +434,28 @@ function RewardsCard({ visible }) {
 }
 
 // -------------------------
+// ACTIVITY
 function ActivityCard({ visible }) {
   if (!visible) return null;
 
   return (
     <motion.div className="rounded-2xl bg-white dark:bg-gray-900 p-6 shadow-md border border-gray-100 dark:border-gray-800">
       <h3 className="font-bold text-lg mb-3 flex items-center gap-2">
-        <BarChart3 size={18} /> Activity
+        <BarChart3 size={18} />{" "}
+        Activity
       </h3>
+
       <ul className="text-sm text-gray-500 space-y-2">
-        <li>Daily check-in completed</li>
-        <li>Leaderboard updated</li>
+        <li>
+          Daily check-in completed
+        </li>
+
+        <li>
+          Leaderboard updated
+        </li>
+
         <li>Rewards pending</li>
       </ul>
     </motion.div>
   );
-  }
+    }
