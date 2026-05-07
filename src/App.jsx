@@ -65,6 +65,7 @@ export default function App() {
           element={
             <>
               <Hero />
+              <EventCard />
               <Features />
 
               <section className="py-16 bg-gray-50 dark:bg-gray-950">
@@ -74,7 +75,7 @@ export default function App() {
               </section>
 
               {/* 🚀 EVENT COUNTDOWN */}
-              <EventCard />
+              
 
               <Collaboration />
               <Roadmap />
