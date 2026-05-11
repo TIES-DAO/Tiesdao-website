@@ -141,13 +141,6 @@ export default function Hero() {
             </span>
             Projects
           </div>
-
-          <div>
-            <span className="block text-2xl font-bold text-black dark:text-white">
-              $1.1K
-            </span>
-            Monthly Rewards
-          </div>
         </motion.div>
       </motion.div>
 
@@ -194,4 +187,4 @@ export default function Hero() {
       </AnimatePresence>
     </section>
   );
-}
+              }
