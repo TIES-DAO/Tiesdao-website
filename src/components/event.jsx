@@ -5,6 +5,7 @@ import {
   FaClock,
   FaArrowRight,
   FaUsers,
+  FaTicketAlt,
 } from "react-icons/fa";
 
 export default function EventCard() {
@@ -48,8 +49,13 @@ export default function EventCard() {
     return () => clearInterval(interval);
   }, []);
 
+  /* ✅ MAIN EVENT LINK */
   const eventLink =
     "https://chat.whatsapp.com/E4phioOQ7W45u6yXFt9lPS?mode=gi_t";
+
+  /* ✅ BUY TICKET LINK */
+  const ticketLink =
+    "https://www.lofte.live/events/6a01f839a87e839a3030ee07"; // <-- ADD YOUR TICKET LINK HERE
 
   const eventImage =
     "https://files.fm/thumb_show.php?i=j56a4746ry";
@@ -89,7 +95,7 @@ export default function EventCard() {
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-transparent" />
 
           {/* Badge */}
-          <div className="absolute top-4 left-4 z-20">
+          <div className="absolute top-4 left-4 z-20 flex gap-2">
             {isLive ? (
               <span className="bg-red-600 text-white text-xs px-3 py-1 rounded-full animate-pulse">
                 🔴 LIVE NOW
@@ -99,6 +105,22 @@ export default function EventCard() {
                 JULY 25 EVENT
               </span>
             )}
+
+            {/* ✅ TICKET LIVE BADGE */}
+            <motion.span
+              animate={{
+                scale: [1, 1.08, 1],
+              }}
+              transition={{
+                duration: 1.8,
+                repeat: Infinity,
+              }}
+              className="bg-gradient-to-r from-yellow-400 to-orange-500
+              text-black text-xs px-3 py-1 rounded-full font-semibold
+              shadow-lg"
+            >
+              🎟 Tickets Live
+            </motion.span>
           </div>
 
           {/* Title */}
@@ -163,22 +185,54 @@ export default function EventCard() {
             </span>
           </div>
 
-          {/* Button */}
-          <motion.a
-            href={eventLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.96 }}
-            className="mt-6 w-full inline-flex items-center justify-center gap-2
-            rounded-2xl px-6 py-4 font-semibold text-white
-            bg-gradient-to-r from-blue-500 via-purple-500 to-cyan-400
-            shadow-lg"
+          {/* ✅ TICKET NOTICE */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-5 rounded-2xl border border-yellow-400/30
+            bg-yellow-400/10 px-4 py-3 text-center"
           >
-            Join Event Now <FaArrowRight />
-          </motion.a>
+            <p className="text-sm font-medium text-yellow-600 dark:text-yellow-300">
+              🎟 Event tickets are officially LIVE now!
+            </p>
+          </motion.div>
+
+          {/* BUTTONS */}
+          <div className="mt-6 flex flex-col gap-4">
+            {/* JOIN EVENT */}
+            <motion.a
+              href={eventLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.96 }}
+              className="w-full inline-flex items-center justify-center gap-2
+              rounded-2xl px-6 py-4 font-semibold text-white
+              bg-gradient-to-r from-blue-500 via-purple-500 to-cyan-400
+              shadow-lg"
+            >
+              Join Event Now <FaArrowRight />
+            </motion.a>
+
+            {/* ✅ BUY TICKETS */}
+            <motion.a
+              href={ticketLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.96 }}
+              className="w-full inline-flex items-center justify-center gap-2
+              rounded-2xl px-6 py-4 font-semibold
+              border border-gray-300 dark:border-white/10
+              bg-black text-white dark:bg-white dark:text-black
+              shadow-lg"
+            >
+              <FaTicketAlt />
+              Buy Tickets
+            </motion.a>
+          </div>
         </div>
       </motion.div>
     </section>
   );
-      }
+        }
