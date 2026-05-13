@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Ticket, ArrowRight } from "lucide-react";
+import { ArrowRight, Sparkles } from "lucide-react";
 import Logo from "../assets/tdao.jpg";
 
 export default function Hero() {
@@ -12,7 +12,7 @@ export default function Hero() {
       {/* Background */}
       <div className="absolute inset-0 -z-10 overflow-hidden">
         {/* Logo */}
-        <div className="absolute inset-0 flex items-center justify-center opacity-30 dark:opacity-40">
+        <div className="absolute inset-0 flex items-center justify-center opacity-20 dark:opacity-30">
           <img
             src={Logo}
             alt="TIES DAO Logo"
@@ -25,25 +25,25 @@ export default function Hero() {
         <div className="absolute bottom-10 right-10 h-[300px] w-[300px] rounded-full bg-purple-500/20 blur-[120px]" />
         <div className="absolute top-10 left-10 h-[250px] w-[250px] rounded-full bg-pink-500/20 blur-[120px]" />
 
-        {/* Grid Overlay */}
+        {/* Grid */}
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px]" />
       </div>
 
-      {/* Main Content */}
+      {/* Main */}
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.9 }}
         className="relative z-10 max-w-5xl text-center"
       >
-        {/* Top Badge */}
+        {/* Badge */}
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.2 }}
           className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-5 py-2 text-sm text-gray-700 dark:text-gray-300 backdrop-blur-xl shadow-lg"
         >
-          <span className="h-2 w-2 rounded-full bg-blue-500 animate-pulse" />
+          <Sparkles size={14} className="text-blue-500" />
           Human-First Web3 Collaboration
         </motion.div>
 
@@ -56,66 +56,46 @@ export default function Hero() {
           </span>
         </h1>
 
-        {/* Subtext */}
+        {/* Text */}
         <p className="mt-6 max-w-2xl mx-auto text-base sm:text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
           TIES DAO connects builders, founders, and contributors through trust,
           reputation, and meaningful collaboration — not hype.
         </p>
 
-        {/* CTA Buttons */}
+        {/* CTA */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
           className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-5"
         >
-          {/* Join DAO */}
+          {/* Main CTA */}
           <motion.a
             href="https://x.com/ties_dao"
             target="_blank"
             rel="noopener noreferrer"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.96 }}
-            className="group flex items-center gap-2 rounded-2xl bg-blue-600 px-8 py-4 text-sm font-semibold text-white shadow-2xl shadow-blue-600/30 transition-all hover:bg-blue-500"
-          >
-            Join TIES DAO
-            <ArrowRight
-              size={18}
-              className="transition-transform duration-300 group-hover:translate-x-1"
-            />
-          </motion.a>
-
-          {/* Buy Ticket */}
-          <motion.a
-            href="https://www.lofte.live/events/6a01f839a87e839a3030ee07"
-            target="_blank"
-            rel="noopener noreferrer"
             whileHover={{
               scale: 1.05,
-              boxShadow: "0px 0px 30px rgba(168,85,247,0.5)",
+              boxShadow: "0px 0px 40px rgba(59,130,246,0.45)",
             }}
             whileTap={{ scale: 0.96 }}
-            animate={{
-              y: [0, -5, 0],
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-            className="group relative flex items-center gap-3 overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-r from-purple-600 via-pink-500 to-blue-500 px-8 py-4 text-sm font-semibold text-white shadow-2xl"
+            className="group relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600 px-9 py-4 text-sm font-semibold text-white shadow-2xl"
           >
-            {/* Shine Effect */}
             <span className="absolute inset-0 -translate-x-full bg-white/20 transition-transform duration-700 group-hover:translate-x-full" />
 
-            <Ticket size={18} className="relative z-10" />
-            <span className="relative z-10">Buy Tickets</span>
+            <span className="relative z-10 flex items-center gap-2">
+              Join TIES DAO
+              <ArrowRight
+                size={18}
+                className="transition-transform duration-300 group-hover:translate-x-1"
+              />
+            </span>
           </motion.a>
 
-          {/* Explore App */}
+          {/* Secondary CTA */}
           <button
             onClick={() => setComingSoon(true)}
-            className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 px-8 py-4 text-sm font-semibold text-gray-700 dark:text-gray-300 backdrop-blur-xl transition hover:bg-white/10"
+            className="rounded-2xl border border-white/10 bg-white/5 px-8 py-4 text-sm font-semibold text-gray-700 dark:text-gray-300 backdrop-blur-xl transition-all hover:bg-white/10 hover:scale-105"
           >
             Explore the App
           </button>
@@ -126,25 +106,29 @@ export default function Hero() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6 }}
-          className="mt-16 flex flex-wrap items-center justify-center gap-10 text-sm text-gray-700 dark:text-gray-300"
+          className="mt-20 grid grid-cols-2 gap-8 max-w-md mx-auto"
         >
-          <div>
-            <span className="block text-2xl font-bold text-black dark:text-white">
+          <div className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl">
+            <span className="block text-3xl font-black text-black dark:text-white">
               1K+
             </span>
-            Builders
+            <span className="text-sm text-gray-600 dark:text-gray-300">
+              Builders
+            </span>
           </div>
 
-          <div>
-            <span className="block text-2xl font-bold text-black dark:text-white">
+          <div className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl">
+            <span className="block text-3xl font-black text-black dark:text-white">
               200+
             </span>
-            Projects
+            <span className="text-sm text-gray-600 dark:text-gray-300">
+              Projects
+            </span>
           </div>
         </motion.div>
       </motion.div>
 
-      {/* Coming Soon Modal */}
+      {/* Modal */}
       <AnimatePresence>
         {comingSoon && (
           <motion.div
@@ -187,4 +171,4 @@ export default function Hero() {
       </AnimatePresence>
     </section>
   );
-              }
+                    }
