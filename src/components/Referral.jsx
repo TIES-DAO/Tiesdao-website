@@ -93,10 +93,10 @@ export default function Referral() {
             <Share2 className="text-black" size={26} />
           </div>
           <div>
-            <h1 className="text-4xl font-black text-white">
+            <h1 className="text-4xl font-black text-gray-900 dark:text-white">
               Referral Program
             </h1>
-            <p className="text-gray-400 text-sm">
+            <p className="text-gray-500 dark:text-gray-400 text-sm">
               Invite friends. Earn points. Climb the ranks.
             </p>
           </div>
@@ -111,7 +111,7 @@ export default function Referral() {
             animate={{ opacity: 1, y: 0 }}
             className="rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 p-8"
           >
-            <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
               <Link2 size={20} className="text-green-400" />
               Your Referral Link
             </h3>
@@ -124,7 +124,7 @@ export default function Referral() {
                   </code>
                 </div>
 
-                <p className="text-sm text-gray-400 mb-6">
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
                   Share this link and earn rewards for every signup.
                 </p>
 
@@ -150,7 +150,7 @@ export default function Referral() {
               </>
             ) : (
               <>
-                <p className="text-gray-400 mb-6">
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
                   Generate your unique referral code to start earning points.
                 </p>
                 <button
@@ -170,7 +170,7 @@ export default function Referral() {
               animate={{ opacity: 1, y: 0 }}
               className="rounded-3xl bg-gradient-to-br from-purple-500/20 to-pink-600/10 border border-purple-500/30 p-6"
             >
-              <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
                 <Users size={18} className="text-purple-400" />
                 Referred By
               </h3>
@@ -179,10 +179,10 @@ export default function Referral() {
                   {(referralData.referrer.username || referralData.referrer.email).charAt(0).toUpperCase()}
                 </div>
                 <div>
-                  <p className="text-white font-medium">
+                  <p className="text-gray-900 dark:text-white font-medium">
                     {referralData.referrer.username || referralData.referrer.email}
                   </p>
-                  <p className="text-gray-400 text-sm">
+                  <p className="text-gray-500 dark:text-gray-400 text-sm">
                     Thanks for joining through their referral!
                   </p>
                 </div>
@@ -202,7 +202,7 @@ export default function Referral() {
               <p className="text-sm text-green-300 mb-2 flex items-center gap-2">
                 <Sparkles size={14} /> Referral Points
               </p>
-              <p className="text-4xl font-black text-white">
+              <p className="text-4xl font-black text-gray-900 dark:text-white">
                 {Math.round(referralData?.referralPoints || 0)}
               </p>
             </div>
@@ -211,7 +211,7 @@ export default function Referral() {
             <div className="rounded-3xl bg-gradient-to-br from-blue-500/20 to-cyan-600/10 border border-blue-500/30 p-6 flex items-center justify-between">
               <div>
                 <p className="text-sm text-blue-300 mb-2">Active Referrals</p>
-                <p className="text-4xl font-black text-white">
+                <p className="text-4xl font-black text-gray-900 dark:text-white">
                   {referralData?.referralCount || 0}
                 </p>
               </div>
@@ -227,7 +227,7 @@ export default function Referral() {
           transition={{ delay: 0.2 }}
           className="rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 p-8 mb-8"
         >
-          <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
             <Users size={20} className="text-purple-400" />
             Your Referrals ({referralData?.referredUsers?.length || 0})
           </h3>
@@ -237,11 +237,11 @@ export default function Referral() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-white/10">
-                    <th className="text-left py-3 px-4 text-gray-400 font-medium">User</th>
-                    <th className="text-left py-3 px-4 text-gray-400 font-medium">Joined</th>
-                    <th className="text-left py-3 px-4 text-gray-400 font-medium">Points</th>
-                    <th className="text-left py-3 px-4 text-gray-400 font-medium">Quizzes</th>
-                    <th className="text-left py-3 px-4 text-gray-400 font-medium">Status</th>
+                    <th className="text-left py-3 px-4 text-gray-500 dark:text-gray-400 font-medium">User</th>
+                    <th className="text-left py-3 px-4 text-gray-500 dark:text-gray-400 font-medium">Joined</th>
+                    <th className="text-left py-3 px-4 text-gray-500 dark:text-gray-400 font-medium">Points</th>
+                    <th className="text-left py-3 px-4 text-gray-500 dark:text-gray-400 font-medium">Quizzes</th>
+                    <th className="text-left py-3 px-4 text-gray-500 dark:text-gray-400 font-medium">Status</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -253,14 +253,14 @@ export default function Referral() {
                             {(user.username || user.email).charAt(0).toUpperCase()}
                           </div>
                           <div>
-                            <p className="text-white font-medium">
+                            <p className="text-gray-900 dark:text-white font-medium">
                               {user.username || user.email}
                             </p>
-                            {!user.username && <p className="text-gray-400 text-xs">Email user</p>}
+                            {!user.username && <p className="text-gray-500 dark:text-gray-400 text-xs">Email user</p>}
                           </div>
                         </div>
                       </td>
-                      <td className="py-4 px-4 text-gray-300">
+                      <td className="py-4 px-4 text-gray-600 dark:text-gray-300">
                         <div className="flex items-center gap-2">
                           <Calendar size={14} className="text-gray-500" />
                           {new Date(user.joinedAt).toLocaleDateString()}
@@ -295,8 +295,8 @@ export default function Referral() {
           ) : (
             <div className="text-center py-8">
               <Users size={48} className="text-gray-600 mx-auto mb-4" />
-              <p className="text-gray-400 text-lg mb-2">No referrals yet</p>
-              <p className="text-gray-500 text-sm">
+              <p className="text-gray-500 dark:text-gray-400 text-lg mb-2">No referrals yet</p>
+              <p className="text-gray-600 dark:text-gray-500 text-sm">
                 Share your referral link to start building your network!
               </p>
             </div>
@@ -310,12 +310,12 @@ export default function Referral() {
           transition={{ delay: 0.2 }}
           className="rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 p-8"
         >
-          <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+          <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
             <Info size={18} className="text-blue-400" />
             How it works
           </h3>
 
-          <ul className="space-y-3 text-gray-300 text-sm">
+          <ul className="space-y-3 text-gray-600 dark:text-gray-300 text-sm">
             {[
               "Share your referral link with friends",
               "They sign up using your link",

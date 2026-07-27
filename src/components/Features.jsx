@@ -26,19 +26,14 @@ export default function Features() {
   ];
 
   return (
-    <section id="features"  className="relative min-h-screen flex items-center justify-center overflow-hidden px-6">
+    <div className="relative flex items-center justify-center">
       {/* Background glow */}
       <div className="absolute inset-0 -z-10">
         <div className="absolute top-1/4 left-1/3 h-[400px] w-[400px] rounded-full bg-blue-600/30 dark:bg-blue-500/20 blur-[120px]" />
         <div className="absolute bottom-1/4 right-1/4 h-[300px] w-[300px] rounded-full bg-purple-500/20 dark:bg-purple-700/20 blur-[100px]" />
       </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, ease: "easeOut" }}
-        className="max-w-6xl text-center"
-      >
+      <div className="w-full text-center">
         {/* Badge */}
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
@@ -87,7 +82,7 @@ export default function Features() {
             </motion.div>
           ))}
         </div>
-      </motion.div>
-    </section>
+      </div>
+    </div>
   );
 }

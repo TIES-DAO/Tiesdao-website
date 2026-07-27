@@ -1,5 +1,6 @@
 import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import Section from "./components/Section";
 
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
@@ -12,8 +13,8 @@ import Team from "./components/Team";
 import Web3Education from "./components/Web3Education";
 import Feedback from "./components/Feedback";
 import Collaboration from "./components/Collaboration";
-import EventCard from "./components/event"; // ✅ IMPORT EVENT
-import Quiz from "./components/Quiz";
+import EventGallery from "./components/EventGallery"; // ✅ IMPORT EVENT GALLERY
+import Quiz from "./components/Quiz"; 
 import QuizLeaderboard from "./components/QuizLeaderboard";
 import Referral from "./components/Referral";
 import ReferralLeaderboard from "./components/ReferralLeaderboard";
@@ -64,25 +65,23 @@ export default function App() {
           path="/"
           element={
             <>
-              <Hero />
-              <EventCard />
-              <Features />
-
-              <section className="py-16 bg-gray-50 dark:bg-gray-950">
-                <div className="max-w-4xl mx-auto px-4">
-                  <Web3Education />
-                </div>
-              </section>
-
-              {/* 🚀 EVENT COUNTDOWN */}
-              
-
-              <Collaboration />
-              <Roadmap />
-              <Team />
-              <Community />
+              <Section id="home" className="pt-32 sm:pt-40">
+                <Hero />
+              </Section>
+              <Section id="event">
+                <EventGallery />
+              </Section>
+              <Section id="features">
+                <Features />
+              </Section>
+              <Section id="education" className="bg-gray-50 dark:bg-gray-950">
+                <Web3Education />
+              </Section>
+              <Section id="roadmap"><Roadmap /></Section>
+              <Section id="team"><Team /></Section>
+              <Section id="community"><Community /></Section>
+              <Section id="contact"><Contact /></Section>
               <Feedback />
-              <Contact />
               <Footer />
             </>
           }

@@ -4,10 +4,7 @@ import { Globe } from "lucide-react";
 
 export default function Collaboration() {
   return (
-    <section
-      id="collaboration"
-      className="py-28 px-6 flex justify-center bg-gradient-to-b from-transparent to-gray-100 dark:to-black"
-    >
+    <div className="flex justify-center">
       <motion.div
         whileHover={{ y: -15, scale: 1.05 }}
         transition={{ type: "spring", stiffness: 200 }}
@@ -75,6 +72,6 @@ export default function Collaboration() {
           <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-blue-500 via-purple-500 to-cyan-400 blur-2xl opacity-20" />
         </div>
       </motion.div>
-    </section>
+    </div>
   );
             }

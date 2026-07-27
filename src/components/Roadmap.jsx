@@ -46,19 +46,14 @@ export default function Roadmap() {
   ];
 
   return (
-    <section id="roadmap" className="relative py-20 px-6 overflow-hidden">
+    <div className="relative">
       {/* Background glows */}
       <div className="absolute inset-0 -z-10">
         <div className="absolute top-1/4 left-1/3 h-[400px] w-[400px] rounded-full bg-blue-600/30 dark:bg-blue-500/20 blur-[120px]" />
         <div className="absolute bottom-1/4 right-1/4 h-[300px] w-[300px] rounded-full bg-purple-500/20 dark:bg-purple-700/20 blur-[100px]" />
       </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, ease: "easeOut" }}
-        className="max-w-6xl mx-auto"
-      >
+      <div className="max-w-6xl mx-auto">
         {/* Badge */}
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
@@ -96,7 +91,7 @@ export default function Roadmap() {
                 type: "spring",
                 stiffness: 80,
               }}
-              className="relative mb-12 pl-12"
+              className="relative mb-12 pl-8 sm:pl-12"
             >
               {/* Step Icon */}
               <div className="absolute -left-6 top-0 flex h-12 w-12 items-center justify-center rounded-full bg-gray-100/20 dark:bg-gray-800/40 border border-gray-300/30 dark:border-gray-600/50">
@@ -113,7 +108,7 @@ export default function Roadmap() {
             </motion.div>
           ))}
         </div>
-      </motion.div>
-    </section>
+      </div>
+    </div>
   );
 }

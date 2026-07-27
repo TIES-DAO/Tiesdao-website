@@ -62,10 +62,10 @@ export default function QuizLeaderboard() {
             <Trophy className="text-black" size={28} />
           </div>
           <div>
-            <h1 className="text-4xl font-black text-white">
+            <h1 className="text-4xl font-black text-gray-900 dark:text-white">
               Quiz Leaderboard
             </h1>
-            <p className="text-gray-400 text-sm">
+            <p className="text-gray-500 dark:text-gray-400 text-sm">
               Top minds ranked by quiz performance
             </p>
           </div>
@@ -98,11 +98,11 @@ export default function QuizLeaderboard() {
                     size={28}
                   />
 
-                  <h3 className="text-xl font-black text-white">
+                  <h3 className="text-xl font-black text-gray-900 dark:text-white">
                     {user.username || "Anonymous"}
                   </h3>
 
-                  <p className="text-gray-400 text-sm">{user.email}</p>
+                  <p className="text-gray-500 dark:text-gray-400 text-sm">{user.email}</p>
 
                   <div className="mt-4 flex justify-center gap-4 text-sm">
                     <span className="flex items-center gap-1 text-green-400 font-bold">
@@ -126,7 +126,7 @@ export default function QuizLeaderboard() {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: idx * 0.03 }}
-              className="flex items-center justify-between rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 px-6 py-4 hover:border-blue-500/50 transition"
+              className="flex items-center justify-between rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 px-4 sm:px-6 py-4 hover:border-blue-500/50 transition"
             >
               {/* LEFT */}
               <div className="flex items-center gap-4">
@@ -146,15 +146,15 @@ export default function QuizLeaderboard() {
                 </div>
 
                 <div>
-                  <p className="font-semibold text-white">
+                  <p className="font-semibold text-gray-900 dark:text-white">
                     {user.username || "Anonymous User"}
                   </p>
-                  <p className="text-xs text-gray-400">{user.email}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">{user.email}</p>
                 </div>
               </div>
 
               {/* RIGHT */}
-              <div className="flex items-center gap-6 text-sm">
+              <div className="flex flex-col sm:flex-row items-end sm:items-center gap-1 sm:gap-4 text-sm">
                 <span className="flex items-center gap-1 text-green-400 font-bold">
                   <Flame size={14} />
                   {Math.round(user.quizPoints)}

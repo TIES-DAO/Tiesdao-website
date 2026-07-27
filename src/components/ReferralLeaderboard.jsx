@@ -56,10 +56,10 @@ export default function ReferralLeaderboard() {
             <Trophy className="text-black" size={26} />
           </div>
           <div>
-            <h1 className="text-4xl font-black text-white">
+            <h1 className="text-4xl font-black text-gray-900 dark:text-white">
               Referral Leaderboard
             </h1>
-            <p className="text-gray-400 text-sm">
+            <p className="text-gray-500 dark:text-gray-400 text-sm">
               Top influencers ranked by referral points
             </p>
           </div>
@@ -71,14 +71,14 @@ export default function ReferralLeaderboard() {
           animate={{ opacity: 1, y: 0 }}
           className="rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 overflow-hidden"
         >
-          <div className="overflow-x-auto">
-            <table className="w-full">
+          <div className="overflow-x-auto_">
+            <table className="w-full text-sm sm:text-base">
               <thead>
-                <tr className="bg-gradient-to-r from-green-600 to-emerald-700 text-black">
-                  <th className="px-6 py-4 text-left font-bold">Rank</th>
-                  <th className="px-6 py-4 text-left font-bold">Username</th>
-                  <th className="px-6 py-4 text-right font-bold">Referrals</th>
-                  <th className="px-6 py-4 text-right font-bold">Points</th>
+                <tr className="bg-gradient-to-r from-green-600 to-emerald-700 text-black hidden sm:table-row">
+                  <th className="px-4 sm:px-6 py-4 text-left font-bold">Rank</th>
+                  <th className="px-4 sm:px-6 py-4 text-left font-bold">Username</th>
+                  <th className="px-4 sm:px-6 py-4 text-right font-bold">Referrals</th>
+                  <th className="px-4 sm:px-6 py-4 text-right font-bold">Points</th>
                 </tr>
               </thead>
 
@@ -91,38 +91,34 @@ export default function ReferralLeaderboard() {
 
                     return (
                       <motion.tr
-                        key={user._id || idx}
+                        key={user?._id || idx}
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: idx * 0.04 }}
-                        className={`border-b border-white/10 hover:bg-white/5 transition ${
+                        className={`block sm:table-row border-b border-white/10 hover:bg-white/5 transition p-4 sm:p-0 ${
                           idx < 3 ? "bg-green-500/10" : ""
                         }`}
                       >
-                        {/* RANK */}
-                        <td className="px-6 py-4 font-bold text-white">
-                          {medal ? (
-                            <span className="text-2xl">{medal}</span>
-                          ) : (
-                            idx + 1
-                          )}
+                        <td className="sm:px-6 sm:py-4 font-bold text-gray-900 dark:text-white sm:table-cell flex justify-between items-center">
+                          <span className="sm:hidden font-normal text-gray-500 dark:text-gray-400">Rank</span>
+                          <span>{medal ? <span className="text-2xl">{medal}</span> : idx + 1}</span>
                         </td>
 
-                        {/* USERNAME */}
-                        <td className="px-6 py-4 font-semibold text-white">
-                          {user.username || "Anonymous"}
+                        <td className="sm:px-6 sm:py-4 font-semibold text-gray-900 dark:text-white sm:table-cell flex justify-between items-center mt-2 sm:mt-0">
+                          <span className="sm:hidden font-normal text-gray-500 dark:text-gray-400">User</span>
+                          <span>{user.username || "Anonymous"}</span>
                         </td>
 
-                        {/* REFERRAL COUNT */}
-                        <td className="px-6 py-4 text-right">
-                          <span className="inline-block bg-blue-500/20 border border-blue-500/30 text-blue-300 px-3 py-1 rounded-full font-bold">
+                        <td className="sm:px-6 sm:py-4 sm:text-right sm:table-cell flex justify-between items-center mt-2 sm:mt-0">
+                          <span className="sm:hidden font-normal text-gray-500 dark:text-gray-400">Referrals</span>
+                          <span className="inline-block bg-blue-500/20 border border-blue-500/30 text-blue-300 px-3 py-1 rounded-full font-bold text-xs sm:text-sm">
                             {user.referralsCount ?? 0}
                           </span>
                         </td>
 
-                        {/* POINTS */}
-                        <td className="px-6 py-4 text-right">
-                          <span className="inline-flex items-center gap-1 bg-green-500/20 border border-green-500/30 text-green-300 px-3 py-1 rounded-full font-bold">
+                        <td className="sm:px-6 sm:py-4 sm:text-right sm:table-cell flex justify-between items-center mt-2 sm:mt-0">
+                          <span className="sm:hidden font-normal text-gray-500 dark:text-gray-400">Points</span>
+                          <span className="inline-flex items-center gap-1 bg-green-500/20 border border-green-500/30 text-green-300 px-3 py-1 rounded-full font-bold text-xs sm:text-sm">
                             <Sparkles size={14} />
                             {Math.round(user.referralPoints || 0)}
                           </span>
@@ -131,8 +127,8 @@ export default function ReferralLeaderboard() {
                     );
                   })
                 ) : (
-                  <tr>
-                    <td colSpan="4" className="px-6 py-8 text-center text-gray-400">
+                  <tr className="block sm:table-row">
+                    <td colSpan="4" className="px-4 sm:px-6 py-8 text-center text-gray-400 block">
                       No data available
                     </td>
                   </tr>

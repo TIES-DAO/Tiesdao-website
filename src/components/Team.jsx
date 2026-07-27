@@ -25,7 +25,7 @@ export default function Team() {
   ];
 
   return (
-    <section id="team" className="relative py-28 px-6 text-center overflow-hidden">
+    <div className="relative text-center">
       {/* Background glow */}
       <div className="absolute inset-0 -z-10">
         <div className="absolute top-1/3 left-1/4 h-[400px] w-[400px] bg-blue-600/20 blur-[140px] rounded-full animate-pulse" />
@@ -123,6 +123,6 @@ export default function Team() {
           </motion.div>
         ))}
       </div>
-    </section>
+    </div>
   );
 }

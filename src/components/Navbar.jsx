@@ -26,7 +26,6 @@ export default function Navbar() {
     "Home",
     "Features",
     "Event",
-    "Collaboration",
     "Roadmap",
     "Community",
     "Contact",
@@ -67,7 +66,7 @@ export default function Navbar() {
                 <Link
                   key={item}
                   to="/"
-                  className="font-semibold text-gray-300 hover:text-white transition"
+                  className="font-semibold text-gray-600 hover:text-black dark:text-gray-300 dark:hover:text-white transition"
                 >
                   {item}
                 </Link>
@@ -75,7 +74,7 @@ export default function Navbar() {
                 <a
                   key={item}
                   href={`/#${item.toLowerCase()}`}
-                  className="font-semibold text-gray-300 hover:text-white transition"
+                  className="font-semibold text-gray-600 hover:text-black dark:text-gray-300 dark:hover:text-white transition"
                 >
                   {item}
                 </a>
@@ -164,7 +163,7 @@ export default function Navbar() {
                     key={item}
                     to="/"
                     onClick={() => setMobileOpen(false)}
-                    className="text-white font-semibold"
+                    className="text-gray-800 dark:text-white font-semibold"
                   >
                     {item}
                   </Link>
@@ -173,7 +172,7 @@ export default function Navbar() {
                     key={item}
                     href={`/#${item.toLowerCase()}`}
                     onClick={() => setMobileOpen(false)}
-                    className="text-white font-semibold"
+                    className="text-gray-800 dark:text-white font-semibold"
                   >
                     {item}
                   </a>

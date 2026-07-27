@@ -7,8 +7,7 @@ export default function Hero() {
   const [comingSoon, setComingSoon] = useState(false);
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden px-6">
-      
+    <div className="relative flex items-center justify-center -mt-20">
       {/* Background */}
       <div className="absolute inset-0 -z-10 overflow-hidden">
         {/* Logo */}
@@ -106,7 +105,7 @@ export default function Hero() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6 }}
-          className="mt-20 grid grid-cols-2 gap-8 max-w-md mx-auto"
+          className="mt-20 grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-md mx-auto"
         >
           <div className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl">
             <span className="block text-3xl font-black text-black dark:text-white">
@@ -169,6 +168,6 @@ export default function Hero() {
           </motion.div>
         )}
       </AnimatePresence>
-    </section>
+    </div>
   );
-                    }
+}

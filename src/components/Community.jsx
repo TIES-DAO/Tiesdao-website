@@ -23,10 +23,7 @@ export default function Community() {
   ];
 
   return (
-    <section
-      id="community"
-      className="relative py-28 px-6 overflow-hidden text-center"
-    >
+    <div className="relative text-center">
       {/* Background glows */}
       <div className="absolute inset-0 -z-10">
         <div className="absolute top-1/4 left-1/3 h-[400px] w-[400px] rounded-full bg-blue-600/20 dark:bg-blue-500/15 blur-[140px] animate-pulse" />
@@ -34,9 +31,8 @@ export default function Community() {
       </div>
 
       <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, ease: "easeOut" }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
         className="max-w-3xl mx-auto"
       >
         {/* Badge */}
@@ -109,6 +105,6 @@ export default function Community() {
           })}
         </motion.div>
       </motion.div>
-    </section>
+    </div>
   );
 }

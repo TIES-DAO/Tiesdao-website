@@ -37,19 +37,14 @@ export default function Contact() {
   };
 
   return (
-    <section  id="contact"  className="relative py-24 px-6 overflow-hidden">
+    <div className="relative">
       {/* Background glow */}
       <div className="absolute inset-0 -z-10">
         <div className="absolute top-1/4 left-1/3 h-[400px] w-[400px] rounded-full bg-blue-600/30 dark:bg-blue-500/20 blur-[120px]" />
         <div className="absolute bottom-1/4 right-1/4 h-[300px] w-[300px] rounded-full bg-purple-500/20 dark:bg-purple-700/20 blur-[100px]" />
       </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, ease: "easeOut" }}
-        className="max-w-2xl mx-auto text-center"
-      >
+      <div className="max-w-2xl mx-auto text-center">
         {/* Badge */}
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
@@ -230,7 +225,7 @@ export default function Contact() {
 </motion.div>
 
 
-      </motion.div>
-    </section>
+      </div>
+    </div>
   );
 }
