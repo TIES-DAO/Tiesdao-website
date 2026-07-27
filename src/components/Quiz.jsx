@@ -192,14 +192,10 @@ export default function Quiz() {
 
           <button
             onClick={() => {
-              setConfirm({
-                isOpen: true,
-                action: "exitQuiz",
-                type: "warning",
-                title: "Exit Quiz?",
-                message: "Your progress will be lost. Are you sure you want to exit?",
-                data: null,
-              });
+              setResult(null);
+              setSelectedQuiz(null);
+              setAnswers([]);
+              setCurrentQuestion(0);
             }}
             className="mt-8 w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 font-bold text-white transition"
           >
