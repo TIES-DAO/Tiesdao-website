@@ -1,13 +1,33 @@
 import { motion } from "framer-motion";
 import { Camera } from "lucide-react";
 
-// Use Vite's import.meta.glob to automatically import all images from the gallery folder
-const galleryImageModules = import.meta.glob('/src/assets/gallery/*');
+// --- Step 1: Import your images one by one ---
+// Make sure the image files exist in the 'src/assets/gallery/' folder.
+import eventPhoto01 from '../assets/gallery/event_photo_01.jpg';
+import eventPhoto02 from '../assets/gallery/event_photo_02.jpg';
+import eventPhoto03 from '../assets/gallery/event_photo_03.jpg';
+import eventPhoto04 from '../assets/gallery/event_photo_04.jpg';
+import eventPhoto05 from '../assets/gallery/event_photo_05.jpg';
+import eventPhoto06 from '../assets/gallery/event_photo_06.jpg';
+import eventPhoto07 from '../assets/gallery/event_photo_07.jpg';
+import eventPhoto08 from '../assets/gallery/event_photo_08.jpg';
+import eventPhoto09 from '../assets/gallery/event_photo_09.jpg';
+import eventPhoto10 from '../assets/gallery/event_photo_10.jpg';
+import eventPhoto11 from '../assets/gallery/event_photo_11.jpg';
+import eventPhoto12 from '../assets/gallery/event_photo_12.jpg';
+import eventPhoto13 from '../assets/gallery/event_photo_13.jpg';
+import eventPhoto14 from '../assets/gallery/event_photo_14.jpg';
+import eventPhoto15 from '../assets/gallery/event_photo_15.jpg';
+import eventPhoto16 from '../assets/gallery/event_photo_16.jpg';
 
-// Correctly resolve image paths for both development and production
-const imagePaths = Object.keys(galleryImageModules).map(
-  (path) => new URL(path, import.meta.url).href
-);
+// --- Step 2: Add the imported images to an array ---
+// The order you place them here is the order they will appear in the gallery.
+const imagePaths = [
+  eventPhoto01, eventPhoto02, eventPhoto03, eventPhoto04, eventPhoto05,
+  eventPhoto06, eventPhoto07, eventPhoto08, eventPhoto09, eventPhoto10,
+  eventPhoto11, eventPhoto12, eventPhoto13, eventPhoto14, eventPhoto15,
+  eventPhoto16, 
+];
 
 const EventGallery = () => {
   return (
