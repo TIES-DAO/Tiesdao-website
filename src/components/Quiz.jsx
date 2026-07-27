@@ -8,6 +8,7 @@ import {
   Loader2,
   Sparkles,
   Target,
+  Check,
   X,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
@@ -25,6 +26,7 @@ export default function Quiz() {
   const [result, setResult] = useState(null);
   const [quizDetails, setQuizDetails] = useState(null);
   const [loadingQuiz, setLoadingQuiz] = useState(false);
+  const [attemptedQuizIds, setAttemptedQuizIds] = useState(new Set());
   const [confirm, setConfirm] = useState({
     isOpen: false,
     action: null,
@@ -36,6 +38,7 @@ export default function Quiz() {
 
   useEffect(() => {
     fetchQuizzes();
+    fetchAttemptedQuizzes();
   }, []);
 
   const fetchQuizzes = async () => {
@@ -57,6 +60,24 @@ export default function Quiz() {
       setQuizzes([]);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchAttemptedQuizzes = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/api/quiz/my-attempts`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      if (!res.ok) throw new Error("Failed to fetch attempts");
+      const attempts = await res.json();
+      if (Array.isArray(attempts)) {
+        setAttemptedQuizIds(new Set(attempts.map(a => a.quizId)));
+      }
+    } catch (err) {
+      console.error("Error fetching quiz attempts:", err);
+      // Silently fail, user can still take quizzes
     }
   };
 
@@ -143,8 +164,14 @@ export default function Quiz() {
           body: JSON.stringify({ answers }),
         }
       );
+
+      if (!res.ok) {
+        throw new Error("Failed to submit quiz.");
+      }
+
       const data = await res.json();
       setResult(data);
+      setAttemptedQuizIds(prev => new Set(prev).add(selectedQuiz._id));
     } finally {
       setSubmitting(false);
     }
@@ -338,9 +365,16 @@ export default function Quiz() {
               </div>
 
               <button
-                onClick={() => handleStartQuiz(quiz)}
-                disabled={loadingQuiz}
-                className="w-full py-3 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:opacity-90 font-bold text-white flex items-center justify-center gap-2 disabled:opacity-50"
+                onClick={() => !attemptedQuizIds.has(quiz._id) && handleStartQuiz(quiz)}
+                disabled={loadingQuiz || attemptedQuizIds.has(quiz._id)}
+                className={`w-full py-3 rounded-xl font-bold text-white flex items-center justify-center gap-2 transition-all
+                  ${
+                    attemptedQuizIds.has(quiz._id)
+                      ? 'bg-green-600/50 cursor-not-allowed'
+                      : loadingQuiz
+                      ? 'bg-gray-500 opacity-50 cursor-wait'
+                      : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:opacity-90'
+                  }`}
               >
                 {loadingQuiz ? (
                   <>
@@ -348,9 +382,13 @@ export default function Quiz() {
                     Loading...
                   </>
                 ) : (
-                  <>
-                    Start Quiz <ArrowRight size={16} />
-                  </>
+                  attemptedQuizIds.has(quiz._id) ? (
+                    <>
+                      Completed <Check size={16} />
+                    </>
+                  ) : (
+                    <>Start Quiz <ArrowRight size={16} /></>
+                  )
                 )}
               </button>
             </motion.div>
