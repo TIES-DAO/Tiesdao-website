@@ -2,9 +2,12 @@ import { motion } from "framer-motion";
 import { Camera } from "lucide-react";
 
 // Use Vite's import.meta.glob to automatically import all images from the gallery folder
-const galleryImages = import.meta.glob('/src/assets/gallery/*');
+const galleryImageModules = import.meta.glob('/src/assets/gallery/*');
 
-const imagePaths = Object.keys(galleryImages);
+// Correctly resolve image paths for both development and production
+const imagePaths = Object.keys(galleryImageModules).map(
+  (path) => new URL(path, import.meta.url).href
+);
 
 const EventGallery = () => {
   return (
