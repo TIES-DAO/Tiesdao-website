@@ -153,7 +153,7 @@ export default function Dashboard() {
       {/* HEADER */}
       <div className="max-w-6xl mx-auto mt-24 mb-10 text-center">
         <h1 className="text-4xl font-extrabold text-gray-900 dark:text-white">
-          Dashboard
+          Dashboard..
         </h1>
 
         <p className="mt-2 text-gray-500">

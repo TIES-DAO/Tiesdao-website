@@ -29,7 +29,8 @@ const allowedOrigins = [
   process.env.FRONTEND_URL || "https://tiesdao.vercel.app",
 ];
 
-app.use(cors({ 
+
+app.use(cors({
   origin: (origin, callback) => {
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
@@ -37,7 +38,7 @@ app.use(cors({
       callback(new Error("Not allowed by CORS"));
     }
   },
-  credentials: true 
+  credentials: true
 }));
 app.use(express.json());
 
@@ -273,7 +274,7 @@ app.use((err, req, res, next) => {
 });
 
 /* Start server (for local development) */
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 if (process.env.NODE_ENV !== "production") {
   app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
