@@ -19,4 +19,6 @@ const quizAttemptSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+quizAttemptSchema.index({ userId: 1, quizId: 1 }, { unique: true });
+
 export default mongoose.model("QuizAttempt", quizAttemptSchema);

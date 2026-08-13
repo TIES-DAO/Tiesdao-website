@@ -16,6 +16,16 @@ router.get("/", async (req, res) => {
   }
 });
 
+// ✅ GET IDS OF QUIZZES THE CURRENT USER HAS ALREADY ATTEMPTED
+router.get("/my-attempts", authMiddleware, async (req, res) => {
+  try {
+    const attempts = await QuizAttempt.find({ userId: req.user.id }).select("quizId");
+    res.json(attempts);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // ✅ GET SINGLE QUIZ WITH QUESTIONS
 router.get("/:id", async (req, res) => {
   try {
@@ -37,6 +47,11 @@ router.post("/:id/submit", authMiddleware, async (req, res) => {
     const quiz = await Quiz.findById(quizId);
     if (!quiz) return res.status(404).json({ error: "Quiz not found" });
 
+    const existingAttempt = await QuizAttempt.findOne({ userId, quizId });
+    if (existingAttempt) {
+      return res.status(409).json({ error: "Quiz already completed" });
+    }
+
     let score = 0;
     const answersWithCorrect = answers.map((answer, idx) => ({
       questionId: idx,
@@ -57,7 +72,14 @@ router.post("/:id/submit", authMiddleware, async (req, res) => {
       answers: answersWithCorrect,
     });
 
-    await attempt.save();
+    try {
+      await attempt.save();
+    } catch (saveErr) {
+      if (saveErr.code === 11000) {
+        return res.status(409).json({ error: "Quiz already completed" });
+      }
+      throw saveErr;
+    }
 
     // Update user points
     const user = await User.findById(userId);
@@ -84,7 +106,7 @@ router.get("/leaderboard/quiz", async (req, res) => {
     const leaderboard = await User.find()
       .select("username email quizPoints quizzesCompleted")
       .sort({ quizPoints: -1 })
-      .limit(100);
+      .limit(10);
 
     res.json(leaderboard);
   } catch (err) {

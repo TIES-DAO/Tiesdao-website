@@ -37,9 +37,6 @@ router.get("/info", authMiddleware, async (req, res) => {
       referredBy: user.referralCode,
     });
 
-    // If actual count is 0 but user has points, calculate based on points
-    const calculatedCount = referralCount || Math.floor((user.referralPoints || 0) / 100);
-
     // Get list of referred users
     const referredUsers = await User.find({
       referredBy: user.referralCode,
@@ -70,7 +67,7 @@ router.get("/info", authMiddleware, async (req, res) => {
     res.json({
       referralCode: user.referralCode,
       referralPoints: user.referralPoints,
-      referralCount: calculatedCount,
+      referralCount,
       referredUsers: referredUsersWithStatus,
       referrer: referrerInfo,
     });
@@ -82,64 +79,27 @@ router.get("/info", authMiddleware, async (req, res) => {
 // ✅ GET REFERRAL LEADERBOARD
 router.get("/leaderboard/referral", async (req, res) => {
   try {
-    const users = await User.find({ referralCode: { $exists: true, $ne: null } })
-      .select("username email referralPoints referralCode _id")
-      .sort({ referralPoints: -1 })
-      .limit(100);
+    const [users, referralCounts] = await Promise.all([
+      User.find({ referralCode: { $exists: true, $ne: null } })
+        .select("username email referralPoints referralCode _id")
+        .sort({ referralPoints: -1 })
+        .limit(10),
+      User.aggregate([
+        { $match: { referredBy: { $ne: null } } },
+        { $group: { _id: "$referredBy", count: { $sum: 1 } } },
+      ]),
+    ]);
 
-    // Count referrals for each user
-    const leaderboard = await Promise.all(
-      users.map(async (user) => {
-        const referralsCount = await User.countDocuments({
-          referredBy: user.referralCode,
-        });
-        
-        // If actual referral count is 0 but user has referral points,
-        // calculate based on points (100 points = 1 referral)
-        const calculatedCount = referralsCount || Math.floor((user.referralPoints || 0) / 100);
-        
-        return {
-          ...user.toObject(),
-          referralsCount: calculatedCount,
-        };
-      })
+    const countsByReferralCode = new Map(
+      referralCounts.map((entry) => [entry._id, entry.count])
     );
 
+    const leaderboard = users.map((user) => ({
+      ...user.toObject(),
+      referralsCount: countsByReferralCode.get(user.referralCode) || 0,
+    }));
+
     res.json(leaderboard);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// ✅ APPLY REFERRAL CODE (for new users)
-router.post("/apply/:referralCode", authMiddleware, async (req, res) => {
-  try {
-    const { referralCode } = req.params;
-    const userId = req.user.id;
-
-    // Find referrer
-    const referrer = await User.findOne({ referralCode });
-    if (!referrer) {
-      return res.status(404).json({ error: "Invalid referral code" });
-    }
-
-    // Award points to referrer (100 points per referral)
-    referrer.referralPoints += 100;
-    referrer.totalPoints = referrer.quizPoints + referrer.referralPoints;
-    await referrer.save();
-
-    // Save referral code on new user so we can track who referred them
-    const newUser = await User.findById(userId);
-    newUser.referredBy = referralCode;
-    newUser.referralPoints += 50;
-    newUser.totalPoints = newUser.quizPoints + newUser.referralPoints;
-    await newUser.save();
-
-    res.json({
-      message: "Referral applied successfully!",
-      bonusPoints: 50,
-      referrerReward: 100,
-    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

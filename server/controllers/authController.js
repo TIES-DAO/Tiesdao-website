@@ -32,6 +32,7 @@ export const register = async (req, res) => {
           await referrer.save();
 
           // Give new user a bonus (50 points)
+          user.referredBy = referralCode;
           user.referralPoints += 50;
           user.totalPoints = user.quizPoints + user.referralPoints;
           await user.save();

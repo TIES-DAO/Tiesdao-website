@@ -189,33 +189,42 @@ router.get("/stats", verifyAdminPassword, async (req, res) => {
 // ✅ GET QUIZ ANALYTICS
 router.get("/analytics/quizzes", verifyAdminPassword, async (req, res) => {
   try {
-    const quizzes = await Quiz.find();
-    const analytics = await Promise.all(
-      quizzes.map(async (quiz) => {
-        const attempts = await QuizAttempt.find({ quizId: quiz._id });
-        const avgScore = attempts.length > 0
-          ? (attempts.reduce((sum, a) => sum + a.score, 0) / attempts.length).toFixed(2)
-          : 0;
-        const totalAttempts = attempts.length;
-        const questionStats = quiz.questions.map((q, idx) => {
-          const correctCount = attempts.filter(a => a.answers[idx]?.isCorrect).length;
-          return {
-            questionId: idx,
-            question: q.question,
-            correctCount,
-            correctPercentage: attempts.length > 0 ? ((correctCount / attempts.length) * 100).toFixed(2) : 0,
-          };
-        });
+    const [quizzes, allAttempts] = await Promise.all([
+      Quiz.find(),
+      QuizAttempt.find(),
+    ]);
+
+    const attemptsByQuizId = new Map();
+    for (const attempt of allAttempts) {
+      const key = attempt.quizId.toString();
+      if (!attemptsByQuizId.has(key)) attemptsByQuizId.set(key, []);
+      attemptsByQuizId.get(key).push(attempt);
+    }
+
+    const analytics = quizzes.map((quiz) => {
+      const attempts = attemptsByQuizId.get(quiz._id.toString()) || [];
+      const avgScore = attempts.length > 0
+        ? (attempts.reduce((sum, a) => sum + a.score, 0) / attempts.length).toFixed(2)
+        : 0;
+      const totalAttempts = attempts.length;
+      const questionStats = quiz.questions.map((q, idx) => {
+        const correctCount = attempts.filter(a => a.answers[idx]?.isCorrect).length;
         return {
-          _id: quiz._id,
-          title: quiz.title,
-          category: quiz.category,
-          totalAttempts,
-          avgScore,
-          questionStats,
+          questionId: idx,
+          question: q.question,
+          correctCount,
+          correctPercentage: attempts.length > 0 ? ((correctCount / attempts.length) * 100).toFixed(2) : 0,
         };
-      })
-    );
+      });
+      return {
+        _id: quiz._id,
+        title: quiz.title,
+        category: quiz.category,
+        totalAttempts,
+        avgScore,
+        questionStats,
+      };
+    });
     res.json(analytics);
   } catch (err) {
     res.status(500).json({ error: err.message });
